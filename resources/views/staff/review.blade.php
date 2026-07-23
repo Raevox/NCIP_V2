@@ -46,7 +46,7 @@ body, .main {
     margin: 0;
 }
 
-/* ===== Filter Card (merged) ===== */
+/* ===== Filter Card ===== */
 .filter-card {
     background: #fff;
     border-radius: 14px;
@@ -377,7 +377,7 @@ body, .main {
         </h2>
     </div>
 
-    <!-- Filter Card (merged from IP Records page) -->
+    <!-- Filter Card -->
     <div class="filter-card">
         <div class="filter-header">
             <h6>
@@ -404,7 +404,7 @@ body, .main {
                     <!-- Municipality -->
                     <div class="col-lg-2 col-md-6">
                         <label class="form-label">Municipality</label>
-                        <select name="municipality" class="form-select">
+                        <select name="municipality" id="municipalitySelect" class="form-select">
                             <option value="">All</option>
                             @foreach($municipalities ?? [] as $municipality)
                                 <option value="{{ $municipality }}" {{ request('municipality') == $municipality ? 'selected' : '' }}>
@@ -419,6 +419,7 @@ body, .main {
                         <label class="form-label">Date</label>
                         <input type="date"
                                name="date"
+                               id="dateInput"
                                class="form-control"
                                value="{{ request('date') }}">
                     </div>
@@ -428,6 +429,7 @@ body, .main {
                         <label class="form-label">Place of Origin</label>
                         <input type="text"
                                name="place_origin"
+                               id="placeOriginInput"
                                placeholder="e.g. Nueva Ecija"
                                value="{{ request('place_origin') }}"
                                class="form-control"
@@ -437,7 +439,7 @@ body, .main {
                     <!-- Purpose -->
                     <div class="col-lg-3 col-md-4">
                         <label class="form-label">Purpose</label>
-                        <select name="purpose" class="form-select">
+                        <select name="purpose" id="purposeSelect" class="form-select">
                             <option value="">All</option>
                             @php
                                 $purposeOptions = [
@@ -462,7 +464,7 @@ body, .main {
                             <i class="fas fa-filter"></i>
                             Apply Filters
                         </button>
-                        <a href="{{ route('staff.review') }}" class="btn-green-outline">
+                        <a href="{{ route('staff.review') }}" class="btn-green-outline" id="resetFiltersBtn">
                             <i class="fas fa-redo"></i>
                             Reset
                         </a>
@@ -472,220 +474,121 @@ body, .main {
         </div>
     </div>
 
-
-    <div class="tabs-container">
-        <!-- Tabs Navigation -->
-        <div class="tabs-nav">
-            <div class="tab-item">
-                <a class="tab-link active" data-tab="underReview">
-                    <i class="fas fa-hourglass-half"></i> Under Review
-                    <span class="tab-badge" id="underReviewCount">{{ $underReview->total() }}</span>
-                </a>
-            </div>
-            <div class="tab-item">
-                <a class="tab-link" data-tab="approved">
-                    <i class="fas fa-check-circle"></i> Approved
-                    <span class="tab-badge" id="approvedCount">{{ $approved->total() }}</span>
-                </a>
-            </div>
-            <div class="tab-item">
-                <a class="tab-link" data-tab="returned">
-                    <i class="fas fa-undo"></i> Returned
-                    <span class="tab-badge" id="returnedCount">{{ $returned->total() }}</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Tab Content -->
-        <div class="tab-content-wrapper" id="tableContainer">
-            <!-- Under Review Tab -->
-            <div id="underReview" class="tab-pane active">
-                @if($underReview->count() > 0)
-                    <table class="review-table">
-                        <thead>
-                            <tr>
-                                <th>Applicant</th>
-                                <th>Date Submitted</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($underReview as $app)
-                                @php
-                                    $firstName = $app->applicant->first_name ?? 'N';
-                                    $lastName  = $app->applicant->last_name ?? 'A';
-                                    $initials  = strtoupper(substr($firstName, 0, 1) . substr($lastName, 0, 1));
-                                    $fullName  = trim($firstName . ' ' . $lastName);
-                                @endphp
-                                <tr>
-                                    <td>
-                                        <div class="name-cell">
-                                            <div class="name-avatar">{{ $initials }}</div>
-                                            <span class="name-text">{{ $fullName }}</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="date-text">{{ $app->created_at->format('M d, Y') }}</span>
-                                    </td>
-                                    <td>
-                                        <span class="status-badge under-review">Under Review</span>
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('staff.review.show', $app->id) }}" class="btn-view">
-                                            <i class="fas fa-eye"></i> View
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-
-                    @if($underReview->hasPages())
-                        <div class="pagination-wrapper">
-                            {{ $underReview->appends(request()->query())->links() }}
-                        </div>
-                    @endif
-                @else
-                    <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <p>No applications under review</p>
-                    </div>
-                @endif
-            </div>
-
-            <!-- Approved Tab -->
-            <div id="approved" class="tab-pane">
-                @if($approved->count() > 0)
-                    <table class="review-table">
-                        <thead>
-                            <tr>
-                                <th>Applicant</th>
-                                <th>Date Submitted</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($approved as $app)
-                                @php
-                                    $firstName = $app->applicant->first_name ?? 'N';
-                                    $lastName  = $app->applicant->last_name ?? 'A';
-                                    $initials  = strtoupper(substr($firstName, 0, 1) . substr($lastName, 0, 1));
-                                    $fullName  = trim($firstName . ' ' . $lastName);
-                                @endphp
-                                <tr>
-                                    <td>
-                                        <div class="name-cell">
-                                            <div class="name-avatar">{{ $initials }}</div>
-                                            <span class="name-text">{{ $fullName }}</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="date-text">{{ $app->created_at->format('M d, Y') }}</span>
-                                    </td>
-                                    <td>
-                                        <span class="status-badge approved">Approved</span>
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('staff.review.show', $app->id) }}" class="btn-view">
-                                            <i class="fas fa-eye"></i> View
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-
-                    @if($approved->hasPages())
-                        <div class="pagination-wrapper">
-                            {{ $approved->appends(request()->query())->links() }}
-                        </div>
-                    @endif
-                @else
-                    <div class="empty-state">
-                        <i class="fas fa-check-circle"></i>
-                        <p>No approved applications yet</p>
-                    </div>
-                @endif
-            </div>
-
-            <!-- Returned Tab -->
-            <div id="returned" class="tab-pane">
-                @if($returned->count() > 0)
-                    <table class="review-table">
-                        <thead>
-                            <tr>
-                                <th>Applicant</th>
-                                <th>Date Submitted</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($returned as $app)
-                                @php
-                                    $firstName = $app->applicant->first_name ?? 'N';
-                                    $lastName  = $app->applicant->last_name ?? 'A';
-                                    $initials  = strtoupper(substr($firstName, 0, 1) . substr($lastName, 0, 1));
-                                    $fullName  = trim($firstName . ' ' . $lastName);
-                                @endphp
-                                <tr>
-                                    <td>
-                                        <div class="name-cell">
-                                            <div class="name-avatar">{{ $initials }}</div>
-                                            <span class="name-text">{{ $fullName }}</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="date-text">{{ $app->created_at->format('M d, Y') }}</span>
-                                    </td>
-                                    <td>
-                                        <span class="status-badge returned">Returned</span>
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('staff.review.show', $app->id) }}" class="btn-view">
-                                            <i class="fas fa-eye"></i> View
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-
-                    @if($returned->hasPages())
-                        <div class="pagination-wrapper">
-                            {{ $returned->appends(request()->query())->links() }}
-                        </div>
-                    @endif
-                @else
-                    <div class="empty-state">
-                        <i class="fas fa-undo"></i>
-                        <p>No returned applications yet</p>
-                    </div>
-                @endif
-            </div>
-        </div>
+    <div id="tabsWrapper">
+        @include('staff.partials.review-tabs-content')
     </div>
 </div>
 
-
 <script>
-// Tab switching
-document.querySelectorAll('.tab-link').forEach(link => {
-    link.addEventListener('click', function(e) {
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const municipalitySelect = document.getElementById('municipalitySelect');
+    const dateInput = document.getElementById('dateInput');
+    const placeOriginInput = document.getElementById('placeOriginInput');
+    const purposeSelect = document.getElementById('purposeSelect');
+    const filterForm = document.getElementById('filterForm');
+    const tabsWrapper = document.getElementById('tabsWrapper');
+
+    let currentTab = 'underReview';
+    let debounceTimeout;
+
+    // ----- Tab switching (delegated so it survives AJAX re-renders) -----
+    tabsWrapper.addEventListener('click', function(e) {
+        const link = e.target.closest('.tab-link');
+        if (!link) return;
         e.preventDefault();
-        const tabId = this.dataset.tab;
 
-        document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        currentTab = link.dataset.tab;
 
-        this.classList.add('active');
-        document.getElementById(tabId).classList.add('active');
+        tabsWrapper.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+        tabsWrapper.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+
+        link.classList.add('active');
+        const pane = document.getElementById(currentTab);
+        if (pane) pane.classList.add('active');
+    });
+
+    // ----- AJAX filter (realtime) -----
+    function performSearch() {
+        const formData = new FormData(filterForm);
+        const params = new URLSearchParams(formData);
+
+        fetch('{{ route("staff.review") }}?ajax=1&' + params.toString(), {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html',
+            },
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok: ' + response.status);
+            return response.text();
+        })
+        .then(html => {
+            tabsWrapper.innerHTML = html;
+
+            // Restore active tab after the DOM swap
+            tabsWrapper.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+            tabsWrapper.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+
+            const activeLink = tabsWrapper.querySelector(`.tab-link[data-tab="${currentTab}"]`);
+            const activePane = document.getElementById(currentTab);
+            if (activeLink) activeLink.classList.add('active');
+            if (activePane) activePane.classList.add('active');
+        })
+        .catch(error => {
+            console.error('Filter error:', error);
+        });
+    }
+
+    function debouncedSearch() {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(performSearch, 500);
+    }
+
+    // Realtime triggers
+    searchInput.addEventListener('input', debouncedSearch);
+    placeOriginInput.addEventListener('input', debouncedSearch);
+    municipalitySelect.addEventListener('change', performSearch);
+    purposeSelect.addEventListener('change', performSearch);
+    dateInput.addEventListener('change', performSearch);
+
+    // Apply button still works, but now via AJAX instead of full reload
+    filterForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        performSearch();
+    });
+
+    // Reset button: clear fields, then run AJAX search instead of navigating away
+    document.getElementById('resetFiltersBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        filterForm.reset();
+        performSearch();
+    });
+
+    // Pagination links inside the tabs partial (AJAX-aware)
+    tabsWrapper.addEventListener('click', function(e) {
+        const pageLink = e.target.closest('.pagination a');
+        if (!pageLink) return;
+        e.preventDefault();
+
+        const url = pageLink.href + (pageLink.href.includes('?') ? '&' : '?') + 'ajax=1';
+
+        fetch(url, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.text())
+        .then(html => {
+            tabsWrapper.innerHTML = html;
+            tabsWrapper.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+            tabsWrapper.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            const activeLink = tabsWrapper.querySelector(`.tab-link[data-tab="${currentTab}"]`);
+            const activePane = document.getElementById(currentTab);
+            if (activeLink) activeLink.classList.add('active');
+            if (activePane) activePane.classList.add('active');
+        })
+        .catch(error => console.error('Pagination error:', error));
     });
 });
-
-
-
 </script>
 @endsection

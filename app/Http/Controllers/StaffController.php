@@ -44,27 +44,14 @@ class StaffController extends Controller
 
     public function review(Request $request)
     {
-        // Reusable closure so we can build 3 independently-filtered queries
-        $applyFilters = function ($query) use ($request) {
-
+        // Filters that use REAL database columns - safe to apply at query level
+        $applyBaseFilters = function ($query) use ($request) {
             if ($request->filled('search')) {
                 $search = $request->search;
                 $query->whereHas('applicant', function ($q) use ($search) {
                     $q->where('first_name', 'like', "%{$search}%")
                     ->orWhere('last_name', 'like', "%{$search}%");
                 });
-            }
-
-            if ($request->filled('municipality')) {
-                $query->where('step1->municipality_name', $request->municipality);
-            }
-
-            if ($request->filled('place_origin')) {
-                $query->where('step1->place_origin', 'like', '%' . $request->place_origin . '%');
-            }
-
-            if ($request->filled('purpose')) {
-                $query->whereJsonContains('step1->purpose', $request->purpose);
             }
 
             if ($request->filled('date')) {
@@ -74,19 +61,67 @@ class StaffController extends Controller
             return $query;
         };
 
-        $underReview = $applyFilters(
+        // Filters that live inside the step1 TEXT column - must be done in PHP
+        $applyJsonFilters = function ($collection) use ($request) {
+            return $collection->filter(function ($app) use ($request) {
+                $step1 = json_decode($app->step1, true) ?? [];
+
+                if ($request->filled('municipality')) {
+                    if (($step1['municipality_name'] ?? null) !== $request->municipality) {
+                        return false;
+                    }
+                }
+
+                if ($request->filled('place_origin')) {
+                    $origin = $step1['place_origin'] ?? '';
+                    if (stripos($origin, $request->place_origin) === false) {
+                        return false;
+                    }
+                }
+
+                if ($request->filled('purpose')) {
+                    $purposes = $step1['purpose'] ?? [];
+                    if (!is_array($purposes) || !in_array($request->purpose, $purposes)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            })->values();
+        };
+
+        // Manual paginator since filtering happens after fetching
+        $paginate = function ($collection, $pageName) use ($request) {
+            $page = (int) $request->get($pageName, 1);
+            $perPage = 10;
+            $items = $collection->values();
+            $slice = $items->slice(($page - 1) * $perPage, $perPage)->values();
+
+            return new \Illuminate\Pagination\LengthAwarePaginator(
+                $slice,
+                $items->count(),
+                $perPage,
+                $page,
+                ['path' => $request->url(), 'pageName' => $pageName, 'query' => $request->query()]
+            );
+        };
+
+        $underReviewRaw = $applyBaseFilters(
             CocApplication::with('applicant')->where('coc_status', 'Under Review')
-        )->orderBy('created_at', 'desc')->paginate(10, ['*'], 'underReview_page');
+        )->orderBy('created_at', 'desc')->get();
 
-        $approved = $applyFilters(
+        $approvedRaw = $applyBaseFilters(
             CocApplication::with('applicant')->where('coc_status', 'Approved')
-        )->orderBy('created_at', 'desc')->paginate(10, ['*'], 'approved_page');
+        )->orderBy('created_at', 'desc')->get();
 
-        $returned = $applyFilters(
+        $returnedRaw = $applyBaseFilters(
             CocApplication::with('applicant')->where('coc_status', 'Returned')
-        )->orderBy('created_at', 'desc')->paginate(10, ['*'], 'returned_page');
+        )->orderBy('created_at', 'desc')->get();
 
-        // Distinct municipality names for the filter dropdown (pulled from JSON step1 column)
+        $underReview = $paginate($applyJsonFilters($underReviewRaw), 'underReview_page');
+        $approved = $paginate($applyJsonFilters($approvedRaw), 'approved_page');
+        $returned = $paginate($applyJsonFilters($returnedRaw), 'returned_page');
+
         $municipalities = CocApplication::whereNotNull('step1')
             ->pluck('step1')
             ->map(fn($json) => json_decode($json, true)['municipality_name'] ?? null)
@@ -94,6 +129,10 @@ class StaffController extends Controller
             ->unique()
             ->sort()
             ->values();
+
+        if ($request->ajax() || $request->has('ajax')) {
+            return view('staff.partials.review-tabs-content', compact('underReview', 'approved', 'returned'));
+        }
 
         return view('staff.review', compact('underReview', 'approved', 'returned', 'municipalities'));
     }
