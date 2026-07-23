@@ -1,0 +1,292 @@
+/* ================================
+   Reset & Base
+   ================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: #f8fafc;
+  color: #333;
+}
+
+/* ================================
+   Search Bar
+   ================================ */
+.search-wrapper {
+  position: relative;
+  margin-bottom: 15px;
+}
+.search-wrapper i {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #6b7280;
+}
+.search-bar {
+  width: 100%;
+  border-radius: 25px;
+  padding-left: 40px;
+  background: #f1eaf3;
+  border: none;
+  height: 42px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  font-size: 14px;
+}
+
+/* ================================
+   Review Tabs
+   ================================ */
+.custom-tabs {
+  background: #e5e7eb;
+  border-radius: 8px;
+  padding: 5px;
+  margin-bottom: 15px;
+  display: inline-flex;
+  gap: 5px;
+}
+
+.custom-tabs .nav-link {
+  border: none;
+  font-weight: 600;
+  color: #333;
+  background: transparent;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  padding: 8px 18px;
+}
+
+/* Active States */
+.custom-tabs .nav-link.active.pending-tab {
+  background: #3b82f6; /* solid blue */
+  color: #fff;
+}
+.custom-tabs .nav-link.active.approved-tab {
+  background: #10b981; /* solid green */
+  color: #fff;
+}
+.custom-tabs .nav-link.active.returned-tab {
+  background: #ef4444; /* solid red */
+  color: #fff;
+}
+
+/* Hover States - override to status color */
+.custom-tabs .nav-link.pending-tab:hover {
+  background: #facc15 !important; /* yellow */
+  color: #fff !important;
+}
+.custom-tabs .nav-link.approved-tab:hover {
+  background: #10b981 !important; /* green */
+  color: #fff !important;
+}
+.custom-tabs .nav-link.returned-tab:hover {
+  background: #ef4444 !important; /* red */
+  color: #fff !important;
+}
+
+/* ================================
+   Table Container
+   ================================ */
+.table-container {
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+/* Colored border for each tab's container */
+.status-container.status-pending .table-container {
+  border: 2px solid #facc15;
+}
+.status-container.status-approved .table-container {
+  border: 2px solid #10b981;
+}
+.status-container.status-returned .table-container {
+  border: 2px solid #ef4444;
+}
+
+.table thead {
+  background: #f3f4f6;
+}
+.table th {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: none;
+}
+.table td {
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+/* Avatar sa table */
+.table td img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+}
+
+/* ================================
+   Status Badges
+   ================================ */
+.badge-pending {
+  background: #facc15;
+  color: #1f2937;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+.badge-approved {
+  background: #10b981;
+  color: #fff;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+.badge-returned {
+  background: #ef4444;
+  color: #fff;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* ================================
+   Action Button
+   ================================ */
+.btn-view {
+  background: #374151;
+  color: #fff;
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+.btn-view:hover {
+  background: #111827;
+}
+/* Only affect documents preview */
+.documents-preview {
+    margin-top: 20px;
+}
+
+.documents-preview .documents-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.documents-preview .doc-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+}
+
+.documents-preview .doc-label {
+    font-weight: 600;
+    color: #333;
+}
+
+.documents-preview .view-btn {
+    padding: 5px 12px;
+    background: #007bff;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.documents-preview .view-btn:hover {
+    background: #0056b3;
+}
+
+.documents-preview .no-doc {
+    color: #777;
+    font-style: italic;
+}
+.genealogy-paper {
+    background: #fff;
+    border: 2px solid #000;
+    border-radius: 6px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 1200px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    font-size: 14px;
+}
+
+/* Header */
+.genealogy-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+.genealogy-header .title {
+    font-weight: bold;
+    text-align: center;
+    font-size: 16px;
+    border: 1px solid #000;
+    padding: 4px 12px;
+}
+
+/* Rows */
+.tree-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+/* Box */
+.gen-box {
+    border: 1px solid #000;
+    padding: 8px 12px;
+    border-radius: 4px;
+    background: #fafafa;
+    min-width: 160px;
+    text-align: center;
+    font-size: 13px;
+}
+.gen-box.applicant {
+    background: #e9fbee;
+    border-color: #28a745;
+    font-weight: bold;
+}
+
+/* Equal sign */
+.equals {
+    font-weight: bold;
+    margin: 0 6px;
+}
+
+/* Footer */
+.genealogy-footer {
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+}
+.genealogy-footer .applicant-sign {
+    text-align: center;
+}
+

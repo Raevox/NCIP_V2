@@ -1,0 +1,240 @@
+<!doctype html>
+<html>
+    <head>
+        <title>API Debug</title>
+        <style>
+            body {
+                font-family: monospace;
+                padding: 20px;
+                background: #f5f5f5;
+            }
+            .box {
+                background: white;
+                padding: 20px;
+                margin: 10px 0;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+            h2 {
+                color: #333;
+                border-bottom: 2px solid #0066cc;
+                padding-bottom: 10px;
+            }
+            pre {
+                background: #f0f0f0;
+                padding: 10px;
+                overflow-x: auto;
+                border-radius: 3px;
+            }
+            .success {
+                color: green;
+                font-weight: bold;
+            }
+            .error {
+                color: red;
+                font-weight: bold;
+            }
+            .info {
+                color: #0066cc;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>📡 API Debug Dashboard</h1>
+
+        <div class="box">
+            <h2>1️⃣ Database Check</h2>
+            <div id="dbCheck">Loading...</div>
+        </div>
+
+        <div class="box">
+            <h2>2️⃣ Current User</h2>
+            <div id="userCheck">Loading...</div>
+        </div>
+
+        <div class="box">
+            <h2>3️⃣ API Call Test</h2>
+            <button onclick="testAPI()">
+                🔄 Test API (/api/admin/notifications)
+            </button>
+            <div id="apiTest" style="margin-top: 10px"></div>
+        </div>
+
+        <div class="box">
+            <h2>4️⃣ Console Logs</h2>
+            <div
+                id="logs"
+                style="
+                    background: #1a1a1a;
+                    color: #0f0;
+                    padding: 15px;
+                    border-radius: 4px;
+                    max-height: 300px;
+                    overflow-y: auto;
+                "
+            ></div>
+        </div>
+
+        <script>
+            let logMessages = [];
+
+            function log(msg, type = "info") {
+                const timestamp = new Date().toLocaleTimeString();
+                logMessages.push({ msg, type, timestamp });
+                updateLogs();
+            }
+
+            function updateLogs() {
+                const logsDiv = document.getElementById("logs");
+                logsDiv.innerHTML = logMessages
+                    .map((l) => {
+                        const color =
+                            l.type === "error"
+                                ? "#ff4444"
+                                : l.type === "success"
+                                  ? "#00ff00"
+                                  : "#0088ff";
+                        return `<div style="color: ${color};">[${l.timestamp}] ${l.msg}</div>`;
+                    })
+                    .join("");
+                logsDiv.scrollTop = logsDiv.scrollHeight;
+            }
+
+            // Check Database
+            async function checkDB() {
+                const check = document.getElementById("dbCheck");
+                log("Checking database...", "info");
+
+                try {
+                    const response = await fetch(
+                        "/api/admin/notifications?type=all&page=1&per_page=100",
+                    );
+                    const data = await response.json();
+
+                    if (data.total !== undefined) {
+                        check.innerHTML = `
+                        <div class="success">✓ Database is accessible</div>
+                        <pre>Total Notifications: ${data.total}
+Current Page: ${data.current_page}
+Per Page: ${data.per_page}
+Last Page: ${data.last_page}
+
+Response Keys: ${Object.keys(data).join(", ")}</pre>
+                    `;
+                        log(
+                            `Database has ${data.total} notifications`,
+                            "success",
+                        );
+                    } else {
+                        check.innerHTML = `<div class="error">✗ Error response:</div><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                        log("Database check failed", "error");
+                    }
+                } catch (e) {
+                    check.innerHTML = `<div class="error">✗ Connection Error: ${e.message}</div>`;
+                    log(`Connection error: ${e.message}`, "error");
+                }
+            }
+
+            // Check User
+            async function checkUser() {
+                const check = document.getElementById("userCheck");
+                log("Checking authenticated user...", "info");
+
+                try {
+                    const response = await fetch(
+                        "/api/admin/notifications?type=all&page=1",
+                    );
+                    const data = await response.json();
+
+                    // Check if we got valid data
+                    if (response.status === 200) {
+                        check.innerHTML = `
+                        <div class="success">✓ User is authenticated</div>
+                        <pre>Response Status: ${response.status}
+Data received: ${data.total !== undefined ? "YES" : "NO"}
+Total notifications: ${data.total || "?"}</pre>
+                    `;
+                        log("User authenticated successfully", "success");
+                    } else if (response.status === 401) {
+                        check.innerHTML = `<div class="error">✗ Not Authenticated (401)</div>`;
+                        log("User not authenticated (401)", "error");
+                    } else {
+                        check.innerHTML = `<div class="error">✗ HTTP ${response.status}</div><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                        log(
+                            `Authentication check returned HTTP ${response.status}`,
+                            "error",
+                        );
+                    }
+                } catch (e) {
+                    check.innerHTML = `<div class="error">✗ Error: ${e.message}</div>`;
+                    log(`Authentication check error: ${e.message}`, "error");
+                }
+            }
+
+            // Test API
+            async function testAPI() {
+                const apiTest = document.getElementById("apiTest");
+                apiTest.innerHTML = '<div class="info">Testing API...</div>';
+                log("Starting API test...", "info");
+
+                const url =
+                    "/api/admin/notifications?type=all&page=1&per_page=15";
+
+                try {
+                    log(`Calling: ${url}`, "info");
+                    const response = await fetch(url, {
+                        method: "GET",
+                        headers: {
+                            Accept: "application/json",
+                            "X-Requested-With": "XMLHttpRequest",
+                        },
+                        credentials: "same-origin",
+                    });
+
+                    log(
+                        `Response status: ${response.status}`,
+                        response.ok ? "success" : "error",
+                    );
+
+                    const data = await response.json();
+                    log(`Response parsed successfully`, "success");
+
+                    let html = `
+                    <div style="margin-top: 10px;">
+                        <div class="${data.total > 0 ? "success" : "error"}">
+                            Total Notifications: ${data.total}
+                        </div>
+                        <pre style="margin-top: 10px;">${JSON.stringify(data, null, 2)}</pre>
+                `;
+
+                    if (data.data && data.data.length > 0) {
+                        html += `<div class="success">✓ Got ${data.data.length} notifications</div>
+                    <h3>First Notification:</h3>
+                    <pre>${JSON.stringify(data.data[0], null, 2)}</pre>`;
+                        log(
+                            `Successfully retrieved ${data.data.length} notifications`,
+                            "success",
+                        );
+                    } else {
+                        html += `<div class="error">✗ No data in response</div>`;
+                        log("No notifications in response", "error");
+                    }
+
+                    html += "</div>";
+                    apiTest.innerHTML = html;
+                } catch (e) {
+                    apiTest.innerHTML = `<div class="error">✗ Error: ${e.message}</div><pre>${e.stack}</pre>`;
+                    log(`API Error: ${e.message}`, "error");
+                }
+            }
+
+            // Run checks on page load
+            window.addEventListener("load", function () {
+                log("Page loaded, running checks...", "info");
+                checkUser();
+                checkDB();
+                testAPI();
+            });
+        </script>
+    </body>
+</html>

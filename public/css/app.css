@@ -1,0 +1,29 @@
+.paper-container {
+    width: 100%;
+    max-width: 900px;
+    overflow-x: auto;
+    display: flex;
+    justify-content: center;
+}
+
+.paper {
+    width: 100%;
+    max-width: 800px;   /* approx width ng A4 */
+    min-height: 1120px; /* approx height ng A4 */
+    background: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform-origin: top center;
+}
+
+/* Responsive scaling */
+@media (max-width: 768px) {
+    .paper {
+        transform: scale(0.85);
+    }
+}
+@media (max-width: 576px) {
+    .paper {
+        transform: scale(0.7);
+    }
+}

@@ -1,0 +1,587 @@
+/* ================================
+   Reset & Base
+=============================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  background: #e5e5e5;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* ================================
+   Page Container
+=============================== */
+.page-background {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* ================================
+   Main Card
+=============================== */
+.signup-card {
+  display: flex;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1000px;
+  min-height: 600px;
+}
+
+/* ================================
+   Left Panel
+=============================== */
+.left-panel {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 40px 20px;
+}
+
+.left-panel .logo-image {
+  max-width: 280px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* ================================
+   Right Panel
+=============================== */
+.right-panel {
+  flex: 1.2;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+.right-panel h2 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 30px;
+  text-align: center;
+  color: #2c3e50;
+}
+
+/* ================================
+   Alert Messages
+=============================== */
+.alert {
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.alert ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+/* ================================
+   Form Styles
+=============================== */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #374151;
+  font-size: 14px;
+}
+
+.signup-form input,
+.signup-form select {
+  padding: 14px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 14px;
+  width: 100%;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background: #fff;
+}
+
+.signup-form input:focus,
+.signup-form select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.signup-form input::placeholder {
+  color: #9ca3af;
+}
+
+/* ================================
+   Mobile Dropdown Fix
+=============================== */
+.signup-form select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+/* Custom select styling for better mobile experience */
+@media (max-width: 768px) {
+  .signup-form select {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 12px 40px 12px 14px;
+    max-height: 45px;
+  }
+  
+  /* Ensure dropdown doesn't overflow on mobile */
+  .form-group {
+    overflow: visible;
+    z-index: 1;
+  }
+  
+  .form-group:focus-within {
+    z-index: 10;
+  }
+}
+
+/* ================================
+   Password Field Styling
+=============================== */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1;
+  transition: color 0.2s ease;
+  outline: none;
+}
+
+.password-toggle:hover {
+  color: #6b7280;
+}
+
+/* Adjust padding for password inputs to make room for toggle button */
+.password-wrapper input {
+  padding-right: 45px;
+}
+
+/* Two-column row */
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.row.triple {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* File input special styling */
+input[type="file"] {
+  padding: 12px;
+  border: 2px dashed #d1d5db;
+  background: #f9fafb;
+  cursor: pointer;
+}
+
+input[type="file"]:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+#file-preview {
+  font-size: 12px;
+  color: #6b7280;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+/* Button */
+.signup-form button {
+  padding: 16px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.signup-form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.signup-form button:active {
+  transform: translateY(0);
+}
+
+/* Login text */
+.login-text {
+  margin-top: 20px;
+  font-size: 14px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.login-text a {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-text a:hover {
+  text-decoration: underline;
+}
+
+/* ================================
+   Modal Styles
+=============================== */
+#approvalModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+#approvalModal .modal-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  top: 0;
+  left: 0;
+}
+
+#approvalModal .modal-content {
+  position: relative;
+  background: #1f2937;
+  padding: 40px 30px;
+  border-radius: 20px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  color: #fff;
+  z-index: 10;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+#approvalModal .modal-content h3 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+#approvalModal .modal-content p {
+  font-size: 16px;
+  margin-bottom: 25px;
+  color: #d1d5db;
+  line-height: 1.6;
+}
+
+#approvalModal .modal-content button {
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+#approvalModal .modal-content button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* ================================
+   Mobile Responsiveness
+=============================== */
+
+/* Tablet styles */
+@media (max-width: 992px) {
+  .signup-card {
+    max-width: 800px;
+  }
+  
+  .right-panel {
+    padding: 30px;
+  }
+}
+
+/* Mobile landscape and smaller tablets */
+@media (max-width: 768px) {
+  .page-background {
+    padding: 15px;
+    align-items: flex-start;
+    padding-top: 30px;
+  }
+
+  .signup-card {
+    flex-direction: column;
+    max-width: 100%;
+    min-height: auto;
+    border-radius: 15px;
+  }
+
+  .left-panel {
+    order: 1;
+    padding: 30px 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  }
+
+  .left-panel .logo-image {
+    max-width: 200px;
+  }
+
+  .right-panel {
+    order: 2;
+    padding: 30px 25px;
+    flex: none;
+  }
+
+  .right-panel h2 {
+    font-size: 24px;
+    margin-bottom: 25px;
+  }
+
+  .row.triple {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .signup-form {
+    gap: 20px;
+  }
+
+  .signup-form input,
+  .signup-form select {
+    padding: 12px 14px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .signup-form button {
+    padding: 14px;
+    font-size: 16px;
+  }
+}
+
+/* Mobile portrait */
+@media (max-width: 480px) {
+  .page-background {
+    padding: 10px;
+    padding-top: 20px;
+    position: relative;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+  }
+
+  .signup-card {
+    border-radius: 12px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .left-panel {
+    padding: 20px 15px;
+  }
+
+  .left-panel .logo-image {
+    max-width: 150px;
+  }
+
+  .right-panel {
+    padding: 20px;
+    position: relative;
+  }
+
+  .right-panel h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .signup-form input,
+  .signup-form select {
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .login-text {
+    font-size: 13px;
+  }
+
+  /* Mobile dropdown specific fixes */
+  .signup-form select {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Ensure dropdowns don't exceed screen width */
+  .row.triple,
+  .row {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  
+  .form-group {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0; /* Allows flexbox items to shrink below content size */
+  }
+
+  #approvalModal .modal-content {
+    padding: 30px 20px;
+    margin: 20px;
+  }
+
+  #approvalModal .modal-content h3 {
+    font-size: 20px;
+  }
+
+  #approvalModal .modal-content p {
+    font-size: 14px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  .page-background {
+    padding: 8px;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .signup-card {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .right-panel {
+    padding: 15px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .signup-form {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .signup-form input,
+  .signup-form select,
+  .signup-form button {
+    padding: 10px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Extra small screen dropdown fixes */
+  .signup-form select {
+    font-size: 14px;
+    background-size: 12px;
+    padding-right: 30px;
+  }
+  
+  /* Ensure grid doesn't overflow */
+  .row,
+  .row.triple {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .form-group {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* ================================
+   Print Styles
+=============================== */
+@media print {
+  .signup-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+}
