@@ -7,7 +7,7 @@
 @include('applicant.coc.progress-circle', ['currentStep' => 1])
 <div class="container-fluid px-2 px-md-4 py-3 py-md-4">
     <div class="row justify-content-center">
-        <div class="col-12 col-sm-11 col-md-10 col-lg-8 col-xl-7">
+        <div class="col-12 col-lg-11">
             <div class="form-card">
                 <div class="card-header">
                     <h2 class="card-title">NCIP COC Form 1</h2>
@@ -171,17 +171,60 @@
                                 </div>
                             </div>
 
-                            // will be change
+                            <!-- // will be change -->
 
                             <div class="form-group">
-                                <label class="form-label required" for="place_origin">Place of Origin</label>
-                                <input type="text" 
-                                       id="place_origin"
-                                       name="place_origin" 
-                                       class="form-control" 
-                                       autocomplete="off"
-                                       required
-                                       value="{{ old('place_origin', session('coc_step1.place_origin', '')) }}">
+                                <label class="form-label required">Place of Origin</label>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="searchable-select">
+                                            <input type="text"
+                                                id="originProvinceSearch"
+                                                class="form-control search-input"
+                                                placeholder="Search province"
+                                                autocomplete="off"
+                                                required
+                                                value="{{ old('origin_province_name', session('coc_step1.origin_province_name') ?? '') }}">
+                                            <i class="fas fa-chevron-down dropdown-icon"></i>
+                                            <input type="hidden" id="origin_province" required value="{{ old('origin_province', session('coc_step1.origin_province') ?? '') }}">
+                                            <input type="hidden" id="origin_province_name" required value="{{ old('origin_province_name', session('coc_step1.origin_province_name') ?? '') }}">
+                                            <ul id="originProvinceList" class="dropdown-list" role="listbox" aria-label="Origin province options"></ul>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="searchable-select">
+                                            <input type="text"
+                                                id="originMunicipalitySearch"
+                                                class="form-control search-input"
+                                                placeholder="Search municipality"
+                                                autocomplete="off"
+                                                required
+                                                value="{{ old('origin_municipality_name', session('coc_step1.origin_municipality_name') ?? '') }}">
+                                            <i class="fas fa-chevron-down dropdown-icon"></i>
+                                            <input type="hidden" id="origin_municipality" required value="{{ old('origin_municipality', session('coc_step1.origin_municipality') ?? '') }}">
+                                            <input type="hidden" id="origin_municipality_name" required value="{{ old('origin_municipality_name', session('coc_step1.origin_municipality_name') ?? '') }}">
+                                            <ul id="originMunicipalityList" class="dropdown-list" role="listbox" aria-label="Origin municipality options"></ul>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="searchable-select">
+                                            <input type="text"
+                                                id="originBarangaySearch"
+                                                class="form-control search-input"
+                                                placeholder="Search barangay"
+                                                autocomplete="off"
+                                                required
+                                                value="{{ old('origin_barangay_name', session('coc_step1.origin_barangay_name') ?? '') }}">
+                                            <i class="fas fa-chevron-down dropdown-icon"></i>
+                                            <input type="hidden" id="origin_barangay" required value="{{ old('origin_barangay', session('coc_step1.origin_barangay') ?? '') }}">
+                                            <input type="hidden" id="origin_barangay_name" required value="{{ old('origin_barangay_name', session('coc_step1.origin_barangay_name') ?? '') }}">
+                                            <ul id="originBarangayList" class="dropdown-list" role="listbox" aria-label="Origin barangay options"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Combined value actually submitted to the backend, keeps validation/storage unchanged --}}
+                                <input type="hidden" name="place_origin" id="place_origin" value="{{ old('place_origin', session('coc_step1.place_origin', '')) }}">
                             </div>
 
                             <div class="row">
@@ -196,17 +239,27 @@
                                                value="{{ old('date_of_birth', session('coc_step1.date_of_birth', '')) }}">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label" for="ip_group">IP Group</label>
-                                        <input type="text" 
-                                               id="ip_group"
-                                               name="ip_group" 
-                                               class="form-control"
-                                               autocomplete="off"
-                                               value="{{ old('ip_group', session('coc_step1.ip_group', '')) }}">
-                                    </div>
+                               <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="ip_group">IP Group</label>
+                                    <select name="ip_group" id="ip_group" class="form-control" autocomplete="off">
+                                        <option value="">Select</option>
+                                        @php
+                                            $ipGroups = [
+                                                'Bag-o', 'Bontok', 'Kankanaey', 'Applai', 'Alta', 'Dumagat', 'Ibaloi',
+                                                'Kalanguya', 'Gaddang', 'Aeta', 'Ilongot (Bugkalot)', 'Kalinga', 'Bajaw',
+                                                'Ifugao', 'I-wak', 'Itawis', 'Tingian', 'Itneg', 'Ibanag', 'Sinai'
+                                            ];
+                                            $selectedIpGroup = old('ip_group', session('coc_step1.ip_group', ''));
+                                        @endphp
+                                        @foreach($ipGroups as $group)
+                                            <option value="{{ $group }}" {{ $selectedIpGroup == $group ? 'selected' : '' }}>
+                                                {{ $group }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
+                            </div>
                             </div>
                         </div>
 
@@ -368,12 +421,41 @@
 }
 
 /* Searchable Select */
-.searchable-select {
+/* .searchable-select {
     position: relative;
 }
 
 .search-input {
     padding-right: 2.5rem;
+} */
+
+.searchable-select{
+    position: relative;
+    width:100%;
+}
+
+.search-input{
+    width:100%;
+    padding-right:2.5rem;
+}
+
+.form-group .row.g-3 {
+    --bs-gutter-x: 1rem;
+    --bs-gutter-y: 1rem;
+}
+
+.searchable-select {
+    width: 100%;
+}
+
+.search-input {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .form-group .col-md-4 {
+        margin-bottom: .75rem;
+    }
 }
 
 .dropdown-icon {
@@ -707,7 +789,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         function clearDependentDropdowns(parentInputId) {
             const dependencyMap = {
                 'provinceSearch': ['municipalitySearch', 'barangaySearch'],
-                'municipalitySearch': ['barangaySearch']
+                'municipalitySearch': ['barangaySearch'],
+                'originProvinceSearch': ['originMunicipalitySearch', 'originBarangaySearch'],
+                'originMunicipalitySearch': ['originBarangaySearch']
             };
 
             if (dependencyMap[parentInputId]) {
@@ -729,6 +813,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         setupSearch("municipalitySearch", "municipalityList", "municipality", "municipality_name", municipalities, "citymunCode", "citymunDesc", "provCode", "province");
         setupSearch("barangaySearch", "barangayList", "barangay", "barangay_name", barangays, "brgyCode", "brgyDesc", "citymunCode", "municipality");
 
+        setupSearch("originProvinceSearch", "originProvinceList", "origin_province", "origin_province_name", provinces, "provCode", "provDesc");
+        setupSearch("originMunicipalitySearch", "originMunicipalityList", "origin_municipality", "origin_municipality_name", municipalities, "citymunCode", "citymunDesc", "provCode", "origin_province");
+        setupSearch("originBarangaySearch", "originBarangayList", "origin_barangay", "origin_barangay_name", barangays, "brgyCode", "brgyDesc", "citymunCode", "origin_municipality");
+
+        function updatePlaceOrigin() {
+            const barangay = document.getElementById('origin_barangay_name').value;
+            const municipality = document.getElementById('origin_municipality_name').value;
+            const province = document.getElementById('origin_province_name').value;
+
+            const parts = [barangay, municipality, province].filter(p => p && p.trim().length > 0);
+            document.getElementById('place_origin').value = parts.join(', ');
+        }
+
+        ['originBarangaySearch', 'originMunicipalitySearch', 'originProvinceSearch'].forEach(id => {
+            document.getElementById(id).addEventListener('change', updatePlaceOrigin);
+        });
+
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.searchable-select')) {
                 document.querySelectorAll('.dropdown-list').forEach(list => {
@@ -742,11 +843,23 @@ document.addEventListener("DOMContentLoaded", async () => {
             const municipality = document.getElementById("municipality").value;
             const barangay = document.getElementById("barangay").value;
 
+            const originProvince = document.getElementById("origin_province").value;
+            const originMunicipality = document.getElementById("origin_municipality").value;
+            const originBarangay = document.getElementById("origin_barangay").value;
+
             if (!province || !municipality || !barangay) {
                 e.preventDefault();
                 alert("Please select Province, Municipality, and Barangay from the dropdown lists.");
                 return;
             }
+
+            if (!originProvince || !originMunicipality || !originBarangay) {
+                e.preventDefault();
+                alert("Please select Place of Origin (Province, Municipality, Barangay) from the dropdown lists.");
+                return;
+            }
+
+            updatePlaceOrigin();
 
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;

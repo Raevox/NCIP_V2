@@ -598,32 +598,22 @@
           <div>
             <label class="form-label" for="tribe">Indigenous Group / Tribe</label>
             <div class="input-group">
-              <select id="tribe" name="tribe" required>
-                <option disabled selected >Select your IP group</option>
-                <option value="Bag-o">Bag-O</option>
-                <option value="Bontok">Bontok</option>
-                <option value="Kankanaey">Kankanaey</option>
-                <option value="Applai">Applai</option>
-                <option value="Alta">Alta</option>
-                <option value="Dumagat">Dumagat</option>
-                <option value="Ibaloi">Ibaloi</option>
-                <option value="Kalanguya">Kalanguya</option>
-                <option value="Gaddang">Gaddang</option>
-                <option value="Aeta">Aeta</option>
-                <option value="Ilongot">Ilongot</option>
-                <option value="Kalinga">Kalinga</option>
-                <option value="Bajaw">Bajaw</option>
-                <option value="Ifugao">Ifugao</option>
-                <option value="I-wak">I-wak</option>
-                <option value="Itawis">Itawis</option>
-                <option value="Tingian">Tingian</option>
-                <option value="Itneg">Itneg</option>
-                <option value="Ibanag">Ibanag</option>
-                <option value="Sinai">Sinai</option>
-                <option value="Other">Other</option>
-              </select>
-              <!-- <input type="text" id="tribe" name="tribe"
-                     placeholder="Your IP group" value="{{ old('tribe') }}" required> -->
+                @php
+                    $tribes = [
+                        'Bag-o', 'Bontok', 'Kankanaey', 'Applai', 'Alta', 'Dumagat', 'Ibaloi',
+                        'Kalanguya', 'Gaddang', 'Aeta', 'Ilongot (Bugkalot)', 'Kalinga', 'Bajaw',
+                        'Ifugao', 'I-wak', 'Itawis', 'Tingian', 'Itneg', 'Ibanag', 'Sinai'
+                    ];
+                @endphp
+                <select id="tribe" name="tribe" required>
+                    <option disabled {{ old('tribe') ? '' : 'selected' }}>Select your IP group</option>
+                    @foreach($tribes as $tribe)
+                        <option value="{{ $tribe }}" {{ old('tribe') == $tribe ? 'selected' : '' }}>
+                            {{ $tribe }}
+                        </option>
+                    @endforeach
+                    <option value="Other" {{ old('tribe') == 'Other' ? 'selected' : '' }}>Other</option>
+                </select>
             </div>
           </div>
           <div>

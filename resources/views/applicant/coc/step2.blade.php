@@ -7,7 +7,7 @@
     @include('applicant.coc.progress-circle', ['currentStep' => 2])
     <div class="container-fluid px-2 px-md-4 py-3 py-md-4">
         <div class="row justify-content-center">
-            <div class="col-12 col-sm-11 col-md-10 col-lg-9 col-xl-8">
+            <div class="col-12 col-lg-11">
                 <div class="form-container">
                     <div class="form-header">
                         <h2 class="form-title">NATIONAL COMMISSION ON INDIGENOUS PEOPLES</h2>
@@ -20,6 +20,13 @@
                     <div class="form-content">
                         <form id="step2Form" action="{{ route('applicant.coc.step2.store') }}" method="POST">
                             @csrf
+                            @php
+                                $ipGroups = [
+                                    'Bag-o', 'Bontok', 'Kankanaey', 'Applai', 'Alta', 'Dumagat', 'Ibaloi',
+                                    'Kalanguya', 'Gaddang', 'Aeta', 'Ilongot (Bugkalot)', 'Kalinga', 'Bajaw',
+                                    'Ifugao', 'I-wak', 'Itawis', 'Tingian', 'Itneg', 'Ibanag', 'Sinai'
+                                ];
+                            @endphp
 
                             {{-- Educational Background --}}
                             <div class="form-section">
@@ -71,25 +78,19 @@
 
                                         <div class="form-group">
                                             <label class="form-label" for="father_ipgroup">IP Group:</label>
-                                            <input type="text" 
-                                                   name="father_ipgroup" 
-                                                   id="father_ipgroup"
-                                                   class="form-control"
-                                                   placeholder="Enter father's IP group"
-                                                   autocomplete="off"
-                                                   value="{{ old('father_ipgroup', $step2['father_ipgroup'] ?? '') }}" required>
+                                            <select name="father_ipgroup" id="father_ipgroup" class="form-control" required>
+                                                <option value="">Select IP Group</option>
+                                                @foreach($ipGroups as $group)
+                                                    <option value="{{ $group }}" {{ old('father_ipgroup', $step2['father_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label class="form-label" for="father_origin">Place of Origin:</label>
-                                            <input type="text" 
-                                                   name="father_origin" 
-                                                   id="father_origin"
-                                                   class="form-control"
-                                                   placeholder="Enter father's place of origin"
-                                                   autocomplete="off"
-                                                   value="{{ old('father_origin', $step2['father_origin'] ?? '') }}"required>
-                                        </div>
+                                       <x-origin-picker
+                                        name="father"
+                                        label="Place of Origin:"
+                                        :old-value="old('father_origin', $step2['father_origin'] ?? '')"
+                                        :required="true" />
                                     </div>
 
                                     <div class="parent-section">
@@ -108,25 +109,19 @@
 
                                         <div class="form-group">
                                             <label class="form-label" for="mother_ipgroup">IP Group:</label>
-                                            <input type="text" 
-                                                   name="mother_ipgroup" 
-                                                   id="mother_ipgroup"
-                                                   class="form-control"
-                                                   placeholder="Enter mother's IP group"
-                                                   autocomplete="off"
-                                                   value="{{ old('mother_ipgroup', $step2['mother_ipgroup'] ?? '') }}"required>
+                                            <select name="mother_ipgroup" id="mother_ipgroup" class="form-control" required>
+                                                <option value="">Select IP Group</option>
+                                                @foreach($ipGroups as $group)
+                                                    <option value="{{ $group }}" {{ old('mother_ipgroup', $step2['mother_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label class="form-label" for="mother_origin">Place of Origin:</label>
-                                            <input type="text" 
-                                                   name="mother_origin" 
-                                                   id="mother_origin"
-                                                   class="form-control"
-                                                   placeholder="Enter mother's place of origin"
-                                                   autocomplete="off"
-                                                   value="{{ old('mother_origin', $step2['mother_origin'] ?? '') }}"required>
-                                        </div>
+                                        <x-origin-picker
+                                        name="mother"
+                                        label="Place of Origin:"
+                                        :old-value="old('mother_origin', $step2['mother_origin'] ?? '')"
+                                        :required="true" />
                                     </div>
 
                                     {{-- Grandparents Header --}}
@@ -162,25 +157,19 @@
 
                                         <div class="form-group">
                                             <label class="form-label" for="paternal_grandfather_ipgroup">IP Group:</label>
-                                            <input type="text" 
-                                                   name="paternal_grandfather_ipgroup" 
-                                                   id="paternal_grandfather_ipgroup"
-                                                   class="form-control"
-                                                   placeholder="Enter IP group"
-                                                   autocomplete="off"
-                                                   value="{{ old('paternal_grandfather_ipgroup', $step2['paternal_grandfather_ipgroup'] ?? '') }}"required>
+                                            <select name="paternal_grandfather_ipgroup" id="paternal_grandfather_ipgroup" class="form-control" required>
+                                                <option value="">Select IP Group</option>
+                                                @foreach($ipGroups as $group)
+                                                    <option value="{{ $group }}" {{ old('paternal_grandfather_ipgroup', $step2['paternal_grandfather_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label class="form-label" for="paternal_grandfather_origin">Place of Origin:</label>
-                                            <input type="text" 
-                                                   name="paternal_grandfather_origin" 
-                                                   id="paternal_grandfather_origin"
-                                                   class="form-control"
-                                                   placeholder="Enter place of origin"
-                                                   autocomplete="off"
-                                                   value="{{ old('paternal_grandfather_origin', $step2['paternal_grandfather_origin'] ?? '') }}"required>
-                                        </div>
+                                        <x-origin-picker
+                                        name="paternal_grandfather"
+                                        label="Place of Origin:"
+                                        :old-value="old('paternal_grandfather_origin', $step2['paternal_grandfather_origin'] ?? '')"
+                                        :required="true" />
                                     </div>
 
                                     {{-- Maternal Grandfather --}}
@@ -211,25 +200,19 @@
 
                                         <div class="form-group">
                                             <label class="form-label" for="maternal_grandfather_ipgroup">IP Group:</label>
-                                            <input type="text" 
-                                                   name="maternal_grandfather_ipgroup" 
-                                                   id="maternal_grandfather_ipgroup"
-                                                   class="form-control"
-                                                   placeholder="Enter IP group"
-                                                   autocomplete="off"
-                                                   value="{{ old('maternal_grandfather_ipgroup', $step2['maternal_grandfather_ipgroup'] ?? '') }}"required>
+                                            <select name="maternal_grandfather_ipgroup" id="maternal_grandfather_ipgroup" class="form-control" required>
+                                                <option value="">Select IP Group</option>
+                                                @foreach($ipGroups as $group)
+                                                    <option value="{{ $group }}" {{ old('maternal_grandfather_ipgroup', $step2['maternal_grandfather_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label class="form-label" for="maternal_grandfather_origin">Place of Origin:</label>
-                                            <input type="text" 
-                                                   name="maternal_grandfather_origin" 
-                                                   id="maternal_grandfather_origin"
-                                                   class="form-control"
-                                                   placeholder="Enter place of origin"
-                                                   autocomplete="off"
-                                                   value="{{ old('maternal_grandfather_origin', $step2['maternal_grandfather_origin'] ?? '') }}"required>
-                                        </div>
+                                        <x-origin-picker
+                                        name="maternal_grandfathe"
+                                        label="Place of Origin:"
+                                        :old-value="old('maternal_grandfather_origin', $step2['maternal_grandfather_origin'] ?? '')"
+                                        :required="true" />
                                     </div>
 
                                     {{-- Paternal Grandmother --}}
@@ -260,25 +243,19 @@
 
                                         <div class="form-group">
                                             <label class="form-label" for="paternal_grandmother_ipgroup">IP Group:</label>
-                                            <input type="text" 
-                                                   name="paternal_grandmother_ipgroup" 
-                                                   id="paternal_grandmother_ipgroup"
-                                                   class="form-control"
-                                                   placeholder="Enter IP group"
-                                                   autocomplete="off"
-                                                   value="{{ old('paternal_grandmother_ipgroup', $step2['paternal_grandmother_ipgroup'] ?? '') }}"required>
+                                            <select name="paternal_grandmother_ipgroup" id="paternal_grandmother_ipgroup" class="form-control" required>
+                                                <option value="">Select IP Group</option>
+                                                @foreach($ipGroups as $group)
+                                                    <option value="{{ $group }}" {{ old('paternal_grandmother_ipgroup', $step2['paternal_grandmother_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label class="form-label" for="paternal_grandmother_origin">Place of Origin:</label>
-                                            <input type="text" 
-                                                   name="paternal_grandmother_origin" 
-                                                   id="paternal_grandmother_origin"
-                                                   class="form-control"
-                                                   placeholder="Enter place of origin"
-                                                   autocomplete="off"
-                                                   value="{{ old('paternal_grandmother_origin', $step2['paternal_grandmother_origin'] ?? '') }}"required>
-                                        </div>
+                                        <x-origin-picker
+                                        name="paternal_grandmother"
+                                        label="Place of Origin:"
+                                        :old-value="old('paternal_grandmother_origin', $step2['paternal_grandmother_origin'] ?? '')"
+                                        :required="true" />
                                     </div>
 
                                     {{-- Maternal Grandmother --}}
@@ -309,25 +286,19 @@
 
                                         <div class="form-group">
                                             <label class="form-label" for="maternal_grandmother_ipgroup">IP Group:</label>
-                                            <input type="text" 
-                                                   name="maternal_grandmother_ipgroup" 
-                                                   id="maternal_grandmother_ipgroup"
-                                                   class="form-control"
-                                                   placeholder="Enter IP group"
-                                                   autocomplete="off"
-                                                   value="{{ old('maternal_grandmother_ipgroup', $step2['maternal_grandmother_ipgroup'] ?? '') }}"required>
+                                            <select name="maternal_grandmother_ipgroup" id="maternal_grandmother_ipgroup" class="form-control" required>
+                                                <option value="">Select IP Group</option>
+                                                @foreach($ipGroups as $group)
+                                                    <option value="{{ $group }}" {{ old('maternal_grandmother_ipgroup', $step2['maternal_grandmother_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label class="form-label" for="maternal_grandmother_origin">Place of Origin:</label>
-                                            <input type="text" 
-                                                   name="maternal_grandmother_origin" 
-                                                   id="maternal_grandmother_origin"
-                                                   class="form-control"
-                                                   placeholder="Enter place of origin"
-                                                   autocomplete="off"
-                                                   value="{{ old('maternal_grandmother_origin', $step2['maternal_grandmother_origin'] ?? '') }}"required>
-                                        </div>
+                                        <x-origin-picker
+                                        name="maternal_grandmother"
+                                        label="Place of Origin:"
+                                        :old-value="old('maternal_grandmother_origin', $step2['maternal_grandmother_origin'] ?? '')"
+                                        :required="true" />
                                     </div>
                                 </div>
                             </div>

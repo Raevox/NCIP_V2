@@ -584,3 +584,63 @@ body {
     background-color: #dc2626;
 }
 
+/* Origin Picker (searchable province/municipality/barangay dropdowns) */
+.searchable-select {
+    position: relative;
+}
+
+.search-input {
+    padding-right: 2.5rem;
+}
+
+.dropdown-icon {
+    position: absolute;
+    right: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none;
+    font-size: 0.8rem;
+    transition: transform 0.2s;
+}
+
+.searchable-select:focus-within .dropdown-icon {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: clamp(180px, 40vh, 250px);
+    overflow-y: auto;
+    border: 1px solid #28a745;
+    border-radius: 6px;
+    background: white;
+    z-index: 1000;
+    list-style: none;
+    padding: 0;
+    margin: 0.25rem 0 0 0;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.dropdown-list li {
+    padding: 0.65rem 0.85rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f1f1f1;
+    font-size: clamp(0.8rem, 2.1vw, 0.9rem);
+    transition: background-color 0.15s;
+}
+
+.dropdown-list li:hover,
+.dropdown-list li.highlighted {
+    background: #3e7b27;
+    color: white;
+}
+
+.dropdown-list li:last-child {
+    border-bottom: none;
+}
+

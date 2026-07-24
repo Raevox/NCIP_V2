@@ -7,7 +7,7 @@
     @include('applicant.coc.progress-circle', ['currentStep' => 5])
     <div class="container-fluid px-2 px-md-4 py-3 py-md-4">
         <div class="row justify-content-center">
-            <div class="col-12 col-sm-11 col-md-10 col-lg-8 col-xl-7">
+            <div class="col-12 col-lg-11">
                 <div class="upload-card">
                     <div class="card-header">
                         <h2 class="card-title">Upload Required Documents</h2>
