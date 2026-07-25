@@ -9,6 +9,8 @@ use App\Models\IpApplicant;
 use App\Models\CocApplication;
 use App\Models\IpAncestor;
 use App\Models\IpAccount;
+use Spatie\Browsershot\Browsershot;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ApplicantDashboardController extends Controller
 {
@@ -1102,6 +1104,53 @@ public function startNewApplicationWithOldData()
 
     return redirect()->route('applicant.coc.purpose-selection', ['id' => $newApplication->id])
                      ->with('success', 'Previous application data loaded. Please select your purpose for this application.');
+}
+
+public function showGenealogyPrint($id = null)
+{
+    $user = Auth::guard('applicant')->user();
+
+    if ($id) {
+        $application = CocApplication::where('id', $id)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+    } else {
+        $application = CocApplication::where('user_id', $user->id)
+            ->whereIn('status', ['Draft', 'Returned'])
+            ->latest()
+            ->firstOrFail();
+    }
+
+    $step3 = json_decode($application->step3, true) ?? [];
+    $step4 = json_decode($application->step4, true) ?? [];
+
+    return view('applicant.coc.genealogy-print', compact('step3', 'step4'));
+}
+
+
+
+public function downloadGenealogyPdf($id = null)
+{
+    $user = Auth::guard('applicant')->user();
+
+    if ($id) {
+        $application = CocApplication::where('id', $id)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+    } else {
+        $application = CocApplication::where('user_id', $user->id)
+            ->whereIn('status', ['Draft', 'Returned'])
+            ->latest()
+            ->firstOrFail();
+    }
+
+    $step3 = json_decode($application->step3, true) ?? [];
+    $step4 = json_decode($application->step4, true) ?? [];
+
+    $pdf = Pdf::loadView('applicant.coc.genealogy-pdf', compact('step3', 'step4'))
+        ->setPaper('legal', 'landscape');
+
+    return $pdf->download('genealogy-form-' . $application->id . '.pdf');
 }
 
 

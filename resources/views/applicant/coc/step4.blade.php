@@ -411,10 +411,14 @@
 
                             {{-- Download Button --}}
                             <div class="download-section">
-                                <a href="{{ asset('docs/COC-Genealogy-Form-Template-2025.pdf') }}" 
-                                   class="btn btn-download" 
-                                   download="COC-Genealogy-Form-Template-2025.pdf">
-                                    <i class="fas fa-download"></i> Download Genealogy Form
+                                <a href="{{ route('applicant.coc.genealogy-print') }}" 
+                                target="_blank"
+                                class="btn btn-download">
+                                    <i class="fas fa-eye"></i> Preview Genealogy Form
+                                </a>
+                                <a href="{{ route('applicant.coc.genealogy-download') }}" 
+                                class="btn btn-download">
+                                    <i class="fas fa-file-pdf"></i> Download as PDF
                                 </a>
                             </div>
 
