@@ -209,7 +209,7 @@
                                         </div>
 
                                         <x-origin-picker
-                                        name="maternal_grandfathe"
+                                        name="maternal_grandfather"
                                         label="Place of Origin:"
                                         :old-value="old('maternal_grandfather_origin', $step2['maternal_grandfather_origin'] ?? '')"
                                         :required="true" />

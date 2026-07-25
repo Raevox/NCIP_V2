@@ -271,6 +271,7 @@
                                 <th>Application No.</th>
                                 <th>Status</th>
                                 <th>Approved Date</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -287,7 +288,20 @@
                                         {{ $coc->status }}
                                     </span>
                                 </td>
-                                <td>{{ $coc->updated_at->format('M d, Y') }}</td>
+                                <td>
+                                    @if($coc->status === 'Approved')
+                                        {{ $coc->updated_at->format('M d, Y') }}
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($coc->status === 'Draft')
+                                        <a href="{{ route('applicant.coc.step1') }}" class="btn btn-sm" style="background: var(--primary-green); color: white;">
+                                            Continue
+                                        </a>
+                                    @endif
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -318,8 +332,21 @@
                                 <i class="fas fa-calendar-check" style="font-size: 0.7rem;"></i> 
                                 Approved Date
                             </span>
-                            <span class="info-value">{{ $coc->updated_at->format('M d, Y') }}</span>
+                            <span class="info-value">
+                                @if($coc->status === 'Approved')
+                                    {{ $coc->updated_at->format('M d, Y') }}
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
+                            </span>
                         </div>
+                        @if($coc->status === 'Draft')
+                            <div class="info-row">
+                                <a href="{{ route('applicant.coc.step1') }}" class="btn btn-sm w-100" style="background: var(--primary-green); color: white;">
+                                    Continue Filling Form
+                                </a>
+                            </div>
+                        @endif
                     </div>
                 </div>
                 @endforeach
