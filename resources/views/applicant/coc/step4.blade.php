@@ -412,11 +412,12 @@
                             {{-- Download Button --}}
                             <div class="download-section">
                                 <a href="{{ route('applicant.coc.genealogy-print') }}" 
-                                target="_blank"
+                                id="previewGenealogyBtn"
                                 class="btn btn-download">
                                     <i class="fas fa-eye"></i> Preview Genealogy Form
                                 </a>
                                 <a href="{{ route('applicant.coc.genealogy-download') }}" 
+                                id="downloadGenealogyBtn"
                                 class="btn btn-download">
                                     <i class="fas fa-file-pdf"></i> Download as PDF
                                 </a>
@@ -1050,6 +1051,55 @@
             clearInterval(autoSaveInterval);
             sessionStorage.removeItem('coc_step4_draft');
         });
+
+
+        // added by renz buzia for autosave form in download and preview in coc application.
+        function autosaveThenNavigate(url, openInNewTab) {
+            const formData = new FormData(form);
+
+            fetch('{{ route("applicant.coc.step4.autosave") }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    'Accept': 'application/json',
+                },
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(() => {
+                if (openInNewTab) {
+                    window.open(url, '_blank');
+                } else {
+                    window.location.href = url;
+                }
+            })
+            .catch(error => {
+                console.error('Autosave before download failed:', error);
+                // Fallback - navigate anyway so the user isn't stuck, even if autosave failed
+                if (openInNewTab) {
+                    window.open(url, '_blank');
+                } else {
+                    window.location.href = url;
+                }
+            });
+        }
+
+        const previewBtn = document.getElementById('previewGenealogyBtn');
+        const downloadBtn2 = document.getElementById('downloadGenealogyBtn');
+
+        if (previewBtn) {
+            previewBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                autosaveThenNavigate(this.href, true);
+            });
+        }
+
+        if (downloadBtn2) {
+            downloadBtn2.addEventListener('click', function(e) {
+                e.preventDefault();
+                autosaveThenNavigate(this.href, false);
+            });
+        }
     });
 
     // Pulse animation for download section
@@ -1065,5 +1115,8 @@
         }
     `;
     document.head.appendChild(style);
+
+
+    
     </script>
 @endsection
