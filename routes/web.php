@@ -292,6 +292,9 @@ Route::middleware(['auth:applicant'])->prefix('applicant')->name('applicant.')->
         Route::get('/form/step4/{id?}', [ApplicantDashboardController::class, 'showCocFormStep4'])->name('step4');
         Route::post('/form/step4/{id?}', [ApplicantDashboardController::class, 'saveCocStep4'])->name('step4.store');
 
+        Route::post('/form/step4/autosave', [ApplicantDashboardController::class, 'autosaveStep4'])->name('step4.autosave');
+
+
         // Genealogy Download Form
         Route::get('/genealogy/download/{id?}', [ApplicantDashboardController::class, 'downloadGenealogyPdf'])->name('genealogy-download');
         

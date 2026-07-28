@@ -1153,5 +1153,31 @@ public function downloadGenealogyPdf($id = null)
     return $pdf->download('genealogy-form-' . $application->id . '.pdf');
 }
 
+public function autosaveStep4(Request $request)
+{
+    $user = Auth::guard('applicant')->user();
+
+    // Lenient save - no strict validation, just capture whatever is currently filled
+    $data = $request->except(['_token']);
+
+    session(['coc_step4' => $data]);
+
+    $application = CocApplication::where('user_id', $user->id)
+        ->whereIn('status', ['Draft', 'Returned'])
+        ->latest()
+        ->first();
+
+    if (!$application) {
+        $application = new CocApplication();
+        $application->user_id = $user->id;
+        $application->status  = 'Draft';
+    }
+
+    $application->step4 = json_encode($data);
+    $application->save();
+
+    return response()->json(['success' => true]);
+}
+
 
 }
