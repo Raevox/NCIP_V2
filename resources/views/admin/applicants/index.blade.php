@@ -362,6 +362,27 @@ body, .applicants-content {
     gap: 11px;
 }
 
+.applicant-cell-clickable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+}
+
+.applicant-cell-clickable:hover {
+    background-color: rgba(46, 125, 70, 0.08);
+}
+
+.applicant-cell-clickable:hover .applicant-name {
+    color: var(--green-500);
+    text-decoration: underline;
+}
+
+.applicant-cell-clickable:hover .applicant-avatar {
+    transform: scale(1.06);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
 .applicant-avatar {
     width: 38px; height: 38px;
     border-radius: 50%;
@@ -373,6 +394,7 @@ body, .applicants-content {
     place-items: center;
     flex-shrink: 0;
     letter-spacing: 0.5px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .applicant-name {
@@ -380,6 +402,7 @@ body, .applicants-content {
     color: var(--text-dark);
     font-size: 13.5px;
     line-height: 1.3;
+    transition: color 0.2s ease;
 }
 
 .applicant-email {
@@ -721,16 +744,84 @@ body, .applicants-content {
                             $step1 = json_decode($coc->step1, true);
                             $fn = $coc->applicant->first_name ?? '';
                             $ln = $coc->applicant->last_name ?? '';
-                            $initials = strtoupper(substr($fn,0,1) . substr($ln,0,1));
+                            $fullName = trim($fn . ' ' . $ln);
+                            $initials = strtoupper(substr($fn,0,1) . substr($ln,0,1)) ?: '--';
+                            $email = $coc->applicant->email ?? '-';
+                            $contact = $coc->applicant->contact ?? 'N/A';
+                            $tribe = $coc->applicant->tribe ?? '-';
+                            $leader = $coc->applicant->leader ?? '-';
+                            $dateApplied = $coc->created_at?->format('M d, Y') ?? '-';
+                            $status = $coc->coc_status ?? 'Pending';
+                            $transactionUrl = route('admin.applicants.transaction', $coc->applicant->id ?? $coc->id);
+
+                            $addressStr = '';
+                            if(!empty($step1)) {
+                                $parts = array_filter([
+                                    ucwords(strtolower($step1['barangay_name'] ?? '')),
+                                    ucwords(strtolower($step1['municipality_name'] ?? '')),
+                                    ucwords(strtolower($step1['province_name'] ?? ''))
+                                ]);
+                                $addressStr = implode(', ', $parts);
+                            } else {
+                                $addressStr = $coc->applicant->address ?? '-';
+                            }
+
+                            $purposeStr = '';
+                            if(!empty($step1['purpose'])) {
+                                $purposeStr = is_array($step1['purpose']) ? implode(', ', $step1['purpose']) : $step1['purpose'];
+                                if(!empty($step1['purpose_others'])) {
+                                    $purposeStr .= ' (Other: ' . $step1['purpose_others'] . ')';
+                                }
+                            } else {
+                                $purposeStr = '-';
+                            }
+
+                            $documents = [];
+                            if (!empty($coc->applicant_picture)) {
+                                $documents[] = ['name' => 'Applicant Picture', 'url' => asset('storage/' . $coc->applicant_picture), 'icon' => 'fas fa-image'];
+                            }
+                            if (!empty($coc->tribal_certificate)) {
+                                $documents[] = ['name' => 'Tribal Certificate', 'url' => asset('storage/' . $coc->tribal_certificate), 'icon' => 'fas fa-certificate'];
+                            }
+                            if (!empty($coc->birth_certificate)) {
+                                $documents[] = ['name' => 'Birth Certificate', 'url' => asset('storage/' . $coc->birth_certificate), 'icon' => 'fas fa-file-medical'];
+                            }
+                            if (!empty($coc->genealogy_form)) {
+                                $documents[] = ['name' => 'Genealogy Form', 'url' => asset('storage/' . $coc->genealogy_form), 'icon' => 'fas fa-sitemap'];
+                            }
+                            if (!empty($coc->applicant->document_path)) {
+                                $documents[] = ['name' => 'Registration Document', 'url' => asset('storage/' . $coc->applicant->document_path), 'icon' => 'fas fa-file-alt'];
+                            }
+
+                            $cocViewUrl = $coc->coc_status === 'Approved' ? route('admin.applicants.coc.view', $coc->id) : null;
+
+                            $profileJson = json_encode([
+                                'name' => $fullName,
+                                'initials' => $initials,
+                                'email' => $email,
+                                'contact' => $contact,
+                                'tribe' => $tribe,
+                                'leader' => $leader,
+                                'address' => $addressStr,
+                                'purpose' => $purposeStr,
+                                'classification' => $coc->classification ?? [],
+                                'status' => $status,
+                                'date' => $dateApplied,
+                                'documents' => $documents,
+                                'cocViewUrl' => $cocViewUrl,
+                                'transactionUrl' => $transactionUrl
+                            ]);
                         @endphp
                         <tr class="applicant-row">
                             {{-- Name --}}
                             <td>
-                                <div class="applicant-cell">
+                                <div class="applicant-cell applicant-cell-clickable"
+                                     onclick='showApplicantProfileModal({!! htmlspecialchars($profileJson, ENT_QUOTES, "UTF-8") !!})'
+                                     title="Click to view applicant profile">
                                     <div class="applicant-avatar">{{ $initials }}</div>
                                     <div>
-                                        <div class="applicant-name">{{ $fn }} {{ $ln }}</div>
-                                        <div class="applicant-email">{{ $coc->applicant->email ?? '-' }}</div>
+                                        <div class="applicant-name">{{ $fullName }}</div>
+                                        <div class="applicant-email">{{ $email }}</div>
                                     </div>
                                 </div>
                             </td>
@@ -917,10 +1008,207 @@ body, .applicants-content {
     </div>
 </div>
 
+{{-- ── Applicant Profile Modal ─────────────────────── --}}
+<div class="modal fade" id="applicantProfileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border-radius: var(--radius-md); overflow: hidden; border: none; font-family: 'Poppins', sans-serif;">
+            <div class="modal-header text-white" style="background: linear-gradient(135deg, var(--green-500) 0%, #1e4d2b 100%); padding: 20px 24px;">
+                <div class="d-flex align-items-center gap-3">
+                    <div id="modalAvatarCircle" class="applicant-avatar" style="width: 52px; height: 52px; font-size: 18px; font-weight: 700; border: 2px solid rgba(255,255,255,0.4); box-shadow: 0 4px 10px rgba(0,0,0,0.15);">--</div>
+                    <div>
+                        <h5 class="modal-title fw-bold text-white mb-0" id="modalApplicantName" style="font-size: 18px;">Applicant Profile</h5>
+                        <div class="small text-white-50" id="modalApplicantEmail" style="opacity: 0.85;">-</div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4" style="background-color: #fcfdfc;">
+                <div class="row g-3 mb-3">
+                    <!-- Status & Basic Tags -->
+                    <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-2 p-3 bg-white border rounded-3 shadow-sm">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted small fw-semibold">Application Status:</span>
+                            <span id="modalStatusBadge" class="status-badge status-default">Pending</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted small fw-semibold">Date Applied:</span>
+                            <span id="modalDateApplied" class="date-val fw-bold">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Personal & Contact Information -->
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm" style="border-radius: 10px; background: #fff;">
+                            <div class="card-header bg-transparent border-bottom py-3">
+                                <h6 class="mb-0 fw-bold text-success" style="color: var(--green-500) !important;">
+                                    <i class="fas fa-id-card me-2"></i>Personal & Contact Info
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <span class="text-muted small d-block">Full Name</span>
+                                    <strong id="modalFullName" class="text-dark">-</strong>
+                                </div>
+                                <div class="mb-3">
+                                    <span class="text-muted small d-block">Email Address</span>
+                                    <span id="modalEmailText" class="text-dark fw-medium">-</span>
+                                </div>
+                                <div class="mb-3">
+                                    <span class="text-muted small d-block">Contact Number</span>
+                                    <span id="modalContact" class="text-dark fw-medium">-</span>
+                                </div>
+                                <div class="mb-0">
+                                    <span class="text-muted small d-block">IP Group / Tribe</span>
+                                    <span id="modalTribe" class="badge bg-success bg-opacity-10 text-success fw-bold px-3 py-2 mt-1" style="font-size: 12px; font-family: 'Poppins', sans-serif;">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Application Details & Address -->
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm" style="border-radius: 10px; background: #fff;">
+                            <div class="card-header bg-transparent border-bottom py-3">
+                                <h6 class="mb-0 fw-bold text-success" style="color: var(--green-500) !important;">
+                                    <i class="fas fa-file-lines me-2"></i>Application Info
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <span class="text-muted small d-block">Endorsement / Classification</span>
+                                    <div id="modalClassification" class="mt-1">-</div>
+                                </div>
+                                <div class="mb-3">
+                                    <span class="text-muted small d-block">Purpose</span>
+                                    <div id="modalPurpose" class="text-dark small fw-medium mt-1">-</div>
+                                </div>
+                                <div class="mb-0">
+                                    <span class="text-muted small d-block">Address</span>
+                                    <div id="modalAddress" class="text-dark small mt-1">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Uploaded Documents & Attachments -->
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm" style="border-radius: 10px; background: #fff;">
+                            <div class="card-header bg-transparent border-bottom py-3 d-flex align-items-center justify-content-between">
+                                <h6 class="mb-0 fw-bold text-success" style="color: var(--green-500) !important;">
+                                    <i class="fas fa-folder-open me-2"></i>Uploaded Documents & Attachments
+                                </h6>
+                                <span id="modalDocCountBadge" class="badge bg-secondary bg-opacity-10 text-dark fw-normal" style="font-size: 11px;">0 File(s)</span>
+                            </div>
+                            <div class="card-body">
+                                <div id="modalDocumentsList" class="d-flex flex-wrap gap-2">
+                                    <span class="text-muted small">No uploaded documents found.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light justify-content-between p-3 flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-secondary btn-sm rounded-2" data-bs-dismiss="modal">Close</button>
+                <div class="d-flex align-items-center gap-2">
+                    <a id="modalCocCertBtn" href="#" target="_blank" class="btn btn-outline-primary btn-sm rounded-2 px-3 fw-semibold" style="display:none;">
+                        <i class="fas fa-certificate me-1"></i> View COC Certificate
+                    </a>
+                    <a id="modalTransactionBtn" href="#" class="btn btn-success btn-sm rounded-2 px-3 fw-semibold" style="background: var(--green-500); border-color: var(--green-500);">
+                        <i class="fas fa-clock-rotate-left me-1"></i> View Transaction History
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 let currentApplicationId = null;
 let actionType = null;
 let searchTimeout = null;
+
+// ── Show Applicant Profile Modal ─────────────────────────
+function showApplicantProfileModal(data) {
+    if (!data) return;
+    document.getElementById('modalApplicantName').textContent = data.name || 'Applicant Profile';
+    document.getElementById('modalApplicantEmail').textContent = data.email || '-';
+    document.getElementById('modalAvatarCircle').textContent = data.initials || '--';
+    document.getElementById('modalFullName').textContent = data.name || '-';
+    document.getElementById('modalEmailText').textContent = data.email || '-';
+    document.getElementById('modalContact').textContent = data.contact || 'N/A';
+    document.getElementById('modalTribe').textContent = data.tribe || '-';
+    document.getElementById('modalDateApplied').textContent = data.date || '-';
+    document.getElementById('modalAddress').textContent = data.address || '-';
+    document.getElementById('modalPurpose').textContent = data.purpose || '-';
+
+    // Classification
+    const classContainer = document.getElementById('modalClassification');
+    if (data.classification && Array.isArray(data.classification) && data.classification.length > 0) {
+        classContainer.innerHTML = data.classification.map(c => `<span class="info-badge">${c}</span>`).join(' ');
+    } else {
+        classContainer.textContent = '-';
+    }
+
+    // Application Status
+    const statusEl = document.getElementById('modalStatusBadge');
+    statusEl.className = 'status-badge';
+    if (data.status === 'Approved') {
+        statusEl.classList.add('status-approved');
+        statusEl.textContent = 'Approved';
+    } else if (data.status === 'Returned') {
+        statusEl.classList.add('status-returned');
+        statusEl.textContent = 'Returned';
+    } else if (data.status === 'Admin Approval') {
+        statusEl.classList.add('status-admin');
+        statusEl.textContent = 'Admin Approval';
+    } else {
+        statusEl.classList.add('status-default');
+        statusEl.textContent = data.status || 'Pending';
+    }
+
+    // Render Uploaded Documents
+    const docsContainer = document.getElementById('modalDocumentsList');
+    const docCountBadge = document.getElementById('modalDocCountBadge');
+    if (data.documents && Array.isArray(data.documents) && data.documents.length > 0) {
+        docCountBadge.textContent = `${data.documents.length} File(s)`;
+        docCountBadge.className = 'badge bg-success bg-opacity-10 text-success fw-bold';
+        docsContainer.innerHTML = data.documents.map(doc => `
+            <a href="${doc.url}" target="_blank" class="btn btn-outline-success btn-sm d-inline-flex align-items-center gap-2 rounded-2 px-3 py-2 text-decoration-none" style="font-size: 12.5px; border-color: var(--sand-200); background: #fdfdfd; color: var(--text-dark);">
+                <i class="${doc.icon || 'fas fa-file-pdf'}" style="color: var(--green-500);"></i>
+                <span class="fw-semibold">${doc.name}</span>
+                <i class="fas fa-external-link-alt ms-1 text-muted" style="font-size: 10px;"></i>
+            </a>
+        `).join('');
+    } else {
+        docCountBadge.textContent = '0 File(s)';
+        docCountBadge.className = 'badge bg-secondary bg-opacity-10 text-dark fw-normal';
+        docsContainer.innerHTML = `<span class="text-muted small"><i class="fas fa-info-circle me-1"></i>No uploaded documents available for this applicant.</span>`;
+    }
+
+    // COC Certificate Button
+    const cocCertBtn = document.getElementById('modalCocCertBtn');
+    if (data.cocViewUrl) {
+        cocCertBtn.href = data.cocViewUrl;
+        cocCertBtn.style.display = 'inline-flex';
+    } else {
+        cocCertBtn.style.display = 'none';
+    }
+
+    // Transaction Button Link
+    const transBtn = document.getElementById('modalTransactionBtn');
+    if (data.transactionUrl) {
+        transBtn.href = data.transactionUrl;
+        transBtn.style.display = 'inline-flex';
+    } else {
+        transBtn.style.display = 'none';
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById('applicantProfileModal'));
+    modal.show();
+}
 
 // ── Search ────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
@@ -997,19 +1285,23 @@ function updateTable(applicants, pagination) {
     applicants.forEach(coc => {
         const fn       = coc.first_name  || coc.applicant?.first_name || '';
         const ln       = coc.last_name   || coc.applicant?.last_name  || '';
+        const fullName = `${fn} ${ln}`.trim();
         const email    = coc.email       || coc.applicant?.email      || '-';
+        const contact  = coc.contact     || coc.applicant?.contact    || 'N/A';
         const tribe    = coc.tribe       || coc.applicant?.tribe      || '-';
+        const leader   = coc.leader      || coc.applicant?.leader     || '-';
         const address  = coc.address     || coc.applicant?.address    || '-';
         const purpose  = coc.purpose     || '-';
         const initials = (fn.charAt(0) + ln.charAt(0)).toUpperCase() || '--';
         const appDate  = coc.created_at ? new Date(coc.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '-';
+        const st       = coc.coc_status || 'Pending';
+        const transUrl = `/admin/applicants/${coc.applicant_id || coc.applicant?.id || coc.id}/transaction`;
 
         let statusBadge = '';
-        const st = coc.coc_status;
         if (st === 'Approved')        statusBadge = `<span class="status-badge status-approved">Approved</span>`;
         else if (st === 'Returned')   statusBadge = `<span class="status-badge status-returned">Returned</span>`;
         else if (st === 'Admin Approval') statusBadge = `<span class="status-badge status-admin">Admin Approval</span>`;
-        else                          statusBadge = `<span class="status-badge status-default">${st || 'Pending'}</span>`;
+        else                          statusBadge = `<span class="status-badge status-default">${st}</span>`;
 
         let classHtml = '-';
         if (coc.classification && coc.classification.length > 0)
@@ -1021,13 +1313,31 @@ function updateTable(applicants, pagination) {
                 <i class="fas fa-check"></i> Approve
             </button>` : '';
 
+        const profileData = {
+            name: fullName,
+            initials: initials,
+            email: email,
+            contact: contact,
+            tribe: tribe,
+            leader: leader,
+            address: address,
+            purpose: purpose,
+            classification: coc.classification || [],
+            status: st,
+            date: appDate,
+            transactionUrl: transUrl
+        };
+        const profileJson = JSON.stringify(profileData).replace(/'/g, "&#39;");
+
         html += `
             <tr class="applicant-row">
                 <td>
-                    <div class="applicant-cell">
+                    <div class="applicant-cell applicant-cell-clickable"
+                         onclick='showApplicantProfileModal(${profileJson})'
+                         title="Click to view applicant profile">
                         <div class="applicant-avatar">${initials}</div>
                         <div>
-                            <div class="applicant-name">${fn} ${ln}</div>
+                            <div class="applicant-name">${fullName}</div>
                             <div class="applicant-email">${email}</div>
                         </div>
                     </div>
@@ -1040,7 +1350,7 @@ function updateTable(applicants, pagination) {
                 <td class="text-center">${statusBadge}</td>
                 <td class="text-center">
                     <div class="action-cell">
-                        <a href="/admin/applicants/${coc.applicant_id || coc.applicant?.id || coc.id}/transaction" class="btn-transaction">
+                        <a href="${transUrl}" class="btn-transaction">
                             <i class="fas fa-clock-rotate-left"></i> Transaction
                         </a>
                         ${approveBtn}

@@ -273,6 +273,32 @@ body, .pending-accounts-content {
 /* Avatar */
 .applicant-cell { display: flex; align-items: center; gap: 11px; }
 
+.applicant-cell-clickable {
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.applicant-cell-clickable:hover {
+    background-color: rgba(46, 125, 70, 0.08);
+}
+
+.applicant-cell-clickable:hover .applicant-name {
+    color: var(--green-500);
+    text-decoration: underline;
+}
+
+.applicant-cell-clickable:hover .applicant-avatar {
+    transform: scale(1.06);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
 .applicant-avatar {
     width: 38px; height: 38px;
     border-radius: 50%;
@@ -284,9 +310,10 @@ body, .pending-accounts-content {
     place-items: center;
     flex-shrink: 0;
     letter-spacing: 0.5px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.applicant-name { font-weight: 600; color: var(--text-dark); font-size: 13.5px; }
+.applicant-name { font-weight: 600; color: var(--text-dark); font-size: 13.5px; transition: color 0.2s ease; }
 .email-text { font-size: 13px; color: var(--text-soft); }
 
 .contact-text {
@@ -599,10 +626,12 @@ body, .pending-accounts-content {
                         <tr>
                             {{-- Name --}}
                             <td>
-                                <div class="applicant-cell">
+                                <a href="{{ route('admin.applicants.view', $account->id) }}" 
+                                   class="applicant-cell-clickable" 
+                                   title="Click to view applicant details">
                                     <div class="applicant-avatar">{{ $initials }}</div>
                                     <span class="applicant-name">{{ $account->first_name }} {{ $account->last_name }}</span>
-                                </div>
+                                </a>
                             </td>
 
                             {{-- Email --}}

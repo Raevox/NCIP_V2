@@ -454,7 +454,7 @@ class AccountApprovalController extends Controller
         $search = $request->input('search', '');
 
         $query = \App\Models\CocApplication::with(['applicant' => function($q) {
-            $q->select('id', 'first_name', 'last_name', 'email', 'tribe');
+            $q->select('id', 'first_name', 'last_name', 'email', 'tribe', 'contact', 'leader', 'address');
         }]);
 
         if ($status !== 'all') {
@@ -486,7 +486,7 @@ class AccountApprovalController extends Controller
 
         $applications = $query
             ->orderByRaw("CASE WHEN coc_status = 'Admin Approval' THEN 1
-                              WHEN coc_status = 'Returned' THEN 2 ELSE 3 END")
+                               WHEN coc_status = 'Returned' THEN 2 ELSE 3 END")
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -515,19 +515,61 @@ class AccountApprovalController extends Controller
                 $purpose .= ($purpose ? ', ' : '') . $step1['purpose_others'];
             }
 
+            // Documents list
+            $documents = [];
+            if (!empty($app->applicant_picture)) {
+                $documents[] = [
+                    'name' => 'Applicant Picture',
+                    'url'  => asset('storage/' . $app->applicant_picture),
+                    'icon' => 'fas fa-image'
+                ];
+            }
+            if (!empty($app->tribal_certificate)) {
+                $documents[] = [
+                    'name' => 'Tribal Certificate',
+                    'url'  => asset('storage/' . $app->tribal_certificate),
+                    'icon' => 'fas fa-certificate'
+                ];
+            }
+            if (!empty($app->birth_certificate)) {
+                $documents[] = [
+                    'name' => 'Birth Certificate',
+                    'url'  => asset('storage/' . $app->birth_certificate),
+                    'icon' => 'fas fa-file-medical'
+                ];
+            }
+            if (!empty($app->genealogy_form)) {
+                $documents[] = [
+                    'name' => 'Genealogy Form',
+                    'url'  => asset('storage/' . $app->genealogy_form),
+                    'icon' => 'fas fa-sitemap'
+                ];
+            }
+            if (!empty($app->applicant?->document_path)) {
+                $documents[] = [
+                    'name' => 'Registration Document',
+                    'url'  => asset('storage/' . $app->applicant->document_path),
+                    'icon' => 'fas fa-file-alt'
+                ];
+            }
+
             return [
                 'id'           => $app->id,
-                'applicant_id' => $app->applicant->id,
-                'first_name'   => $app->applicant->first_name,
-                'last_name'    => $app->applicant->last_name,
-                'full_name'    => $app->applicant->first_name . ' ' . $app->applicant->last_name,
-                'email'        => $app->applicant->email,
-                'tribe'        => $app->applicant->tribe,
+                'applicant_id' => $app->applicant->id ?? null,
+                'first_name'   => $app->applicant->first_name ?? '',
+                'last_name'    => $app->applicant->last_name ?? '',
+                'full_name'    => ($app->applicant->first_name ?? '') . ' ' . ($app->applicant->last_name ?? ''),
+                'email'        => $app->applicant->email ?? '',
+                'contact'      => $app->applicant->contact ?? 'N/A',
+                'tribe'        => $app->applicant->tribe ?? '-',
+                'leader'       => $app->applicant->leader ?? '-',
                 'coc_status'   => $app->coc_status,
                 'classification' => $app->classification ?? [],
                 'created_at'   => $app->created_at->format('Y-m-d H:i:s'),
-                'address'      => $address ?: '-',
+                'address'      => $address ?: ($app->applicant->address ?? '-'),
                 'purpose'      => $purpose ?: '-',
+                'documents'    => $documents,
+                'coc_view_url' => $app->coc_status === 'Approved' ? route('admin.applicants.coc.view', $app->id) : null,
                 'step1'        => $step1
             ];
         });

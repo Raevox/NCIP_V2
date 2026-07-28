@@ -248,6 +248,50 @@
         </div>
     </div>
 
+    {{-- Uploaded Documents Card --}}
+    @php
+        $uploadedDocs = [];
+        if (!empty($applicant->document_path)) {
+            $uploadedDocs[] = ['name' => 'Registration Document', 'url' => asset('storage/' . $applicant->document_path), 'icon' => 'fas fa-file-alt'];
+        }
+        foreach ($applications as $app) {
+            if (!empty($app->applicant_picture)) {
+                $uploadedDocs[] = ['name' => 'Applicant Picture', 'url' => asset('storage/' . $app->applicant_picture), 'icon' => 'fas fa-image'];
+            }
+            if (!empty($app->tribal_certificate)) {
+                $uploadedDocs[] = ['name' => 'Tribal Certificate', 'url' => asset('storage/' . $app->tribal_certificate), 'icon' => 'fas fa-certificate'];
+            }
+            if (!empty($app->birth_certificate)) {
+                $uploadedDocs[] = ['name' => 'Birth Certificate', 'url' => asset('storage/' . $app->birth_certificate), 'icon' => 'fas fa-file-medical'];
+            }
+            if (!empty($app->genealogy_form)) {
+                $uploadedDocs[] = ['name' => 'Genealogy Form', 'url' => asset('storage/' . $app->genealogy_form), 'icon' => 'fas fa-sitemap'];
+            }
+        }
+    @endphp
+
+    @if(count($uploadedDocs) > 0)
+        <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px; background: #fff;">
+            <div class="card-header bg-transparent border-bottom py-3 d-flex align-items-center justify-content-between">
+                <h5 class="mb-0 fw-bold" style="font-size: 15px; color: var(--primary-green);">
+                    <i class="fas fa-folder-open me-2"></i>Uploaded Documents
+                </h5>
+                <span class="badge bg-success bg-opacity-10 text-success fw-bold">{{ count($uploadedDocs) }} File(s)</span>
+            </div>
+            <div class="card-body p-3">
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach($uploadedDocs as $doc)
+                        <a href="{{ $doc['url'] }}" target="_blank" class="btn btn-outline-success btn-sm d-inline-flex align-items-center gap-2 rounded-2 px-3 py-2 text-decoration-none" style="font-size: 13px;">
+                            <i class="{{ $doc['icon'] }}" style="color: var(--primary-green);"></i>
+                            <span class="fw-semibold">{{ $doc['name'] }}</span>
+                            <i class="fas fa-external-link-alt ms-1 text-muted" style="font-size: 10px;"></i>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    @endif
+
     {{-- History Table --}}
     <div class="custom-table">
         <table class="table mb-0">
