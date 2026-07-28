@@ -284,6 +284,9 @@
             <li>Two (2) identical 2x2 ID photos</li>
             <li>Photocopy of Birth Certificate</li>
             <li>Certification from the Office of the Tribal Chieftain</li>
+            <li>Hard copies of all previously uploaded documents</li>
+            <li>Prepare payment for the documentary stamp</li>
+            <li>Ensure that all documents are notarized after review by NCIP NEPO staff</li>
         </ul>
     </div>
     @endif
