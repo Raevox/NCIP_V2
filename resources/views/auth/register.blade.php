@@ -599,11 +599,7 @@
             <label class="form-label" for="tribe">Indigenous Group / Tribe</label>
             <div class="input-group">
                 @php
-                    $tribes = [
-                        'Bag-o', 'Bontok', 'Kankanaey', 'Applai', 'Alta', 'Dumagat', 'Ibaloi',
-                        'Kalanguya', 'Gaddang', 'Aeta', 'Ilongot (Bugkalot)', 'Kalinga', 'Bajaw',
-                        'Ifugao', 'I-wak', 'Itawis', 'Tingian', 'Itneg', 'Ibanag', 'Sinai'
-                    ];
+                    $tribes = \App\Models\Tribe::active()->orderBy('name')->pluck('name')->toArray();
                 @endphp
                 <select id="tribe" name="tribe" required>
                     <option disabled {{ old('tribe') ? '' : 'selected' }}>Select your IP group</option>

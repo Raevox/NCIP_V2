@@ -42,5 +42,8 @@ class DatabaseSeeder extends Seeder
                 'role' => 'ip',
             ]
         );
+
+        // ✅ Tribes
+        $this->call(TribeSeeder::class);
     }
 }

@@ -1471,26 +1471,11 @@
 
   <div class="ip-content">
     <ul class="ip-list">
-      <li><strong>Aeta</strong></li>
-      <li><strong>Alta</strong></li>
-      <li><strong>Applai</strong></li>
-      <li><strong>Bajaw</strong></li>
-      <li><strong>Bag-o</strong></li>
-      <li><strong>Bontok</strong></li>
-      <li><strong>Dumagat</strong></li>
-      <li><strong>Gaddang</strong></li>
-      <li><strong>Ibaloi</strong></li>
-      <li><strong>Ibanag</strong></li>
-      <li><strong>Ifugao</strong></li>
-      <li><strong>Ilongot (Bugkalot)</strong></li>
-      <li><strong>Itawis</strong></li>
-      <li><strong>Itneg</strong></li>
-      <li><strong>I-wak</strong></li>
-      <li><strong>Kalanguya</strong></li>
-      <li><strong>Kalinga</strong></li>
-      <li><strong>Kankanaey</strong></li>
-      <li><strong>Sinai</strong></li>
-      <li><strong>Tingian</strong></li>
+      @forelse ($tribes as $tribe)
+        <li><strong>{{ $tribe->name }}</strong></li>
+      @empty
+        <li><em>No tribes listed at the moment.</em></li>
+      @endforelse
     </ul>
   </div>
 </div>

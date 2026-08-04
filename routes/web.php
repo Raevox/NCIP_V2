@@ -19,6 +19,7 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Admin\AuditController;
+use App\Http\Controllers\Admin\TribeController;
 use App\Http\Controllers\ContactController;
 use App\Http\Middleware\AdminOrStaffOnly;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
@@ -34,7 +35,8 @@ Route::get('/', [NewsController::class, 'latestNewsPreview'])->name('landingpage
 
 // Public Pages
 Route::get('/about-us', function () {
-    return view('admin.content.website.aboutUsMain');
+    $tribes = \App\Models\Tribe::where('is_active', true)->orderBy('name')->get();
+    return view('admin.content.website.aboutUsMain', compact('tribes'));
 })->name('about-us');
 
 Route::get('/iccs-ips-rights', function () {
@@ -183,6 +185,9 @@ Route::middleware(['auth:web', 'verified'])->prefix('admin')->name('admin.')->gr
         Route::post('/ip-records/{id}/restore', [IpRecordController::class, 'restore'])->name('ip_records.restore');
         Route::get('/ip-records/{id}/archive', [IpRecordController::class, 'archive'])->name('ip_records.archive');
     });
+
+    // Tribe Management
+    Route::resource('tribes', TribeController::class);
 
     // ── Notifications page (Livewire shell) ─────────────────────────────────
     Route::get('/notifications', [AdminNotificationController::class, 'index'])

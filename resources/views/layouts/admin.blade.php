@@ -593,6 +593,13 @@
                 </a>
             </li>
             <li>
+                <a href="{{ route('admin.tribes.index') }}"
+                   class="sb-nav-link {{ request()->routeIs('admin.tribes.*') ? 'active' : '' }}">
+                    <i class="sb-nav-icon fas fa-flag"></i>
+                    <span class="sb-nav-label">Tribes</span>
+                </a>
+            </li>
+            <li>
                 <a href="{{ route('admin.audit.trail') }}"
                    class="sb-nav-link {{ request()->routeIs('admin.audit.*') ? 'active' : '' }}">
                     <i class="sb-nav-icon fas fa-clipboard-list"></i>

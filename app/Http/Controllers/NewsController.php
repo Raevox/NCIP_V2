@@ -107,6 +107,11 @@ public function latestNewsPreview()
                     ->latest()
                     ->take(5)
                     ->get(); // fetch only published news
-    return view('admin.content.website.landingpage', compact('latestNews'));
+
+    $tribes = \App\Models\Tribe::where('is_active', true)
+                    ->orderBy('name')
+                    ->get();
+
+    return view('admin.content.website.landingpage', compact('latestNews', 'tribes'));
 }
 }

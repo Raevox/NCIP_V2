@@ -245,11 +245,7 @@
                                     <select name="ip_group" id="ip_group" class="form-control" autocomplete="off">
                                         <option value="">Select</option>
                                         @php
-                                            $ipGroups = [
-                                                'Bag-o', 'Bontok', 'Kankanaey', 'Applai', 'Alta', 'Dumagat', 'Ibaloi',
-                                                'Kalanguya', 'Gaddang', 'Aeta', 'Ilongot (Bugkalot)', 'Kalinga', 'Bajaw',
-                                                'Ifugao', 'I-wak', 'Itawis', 'Tingian', 'Itneg', 'Ibanag', 'Sinai'
-                                            ];
+                                            $ipGroups = \App\Models\Tribe::active()->orderBy('name')->pluck('name')->toArray();
                                             $selectedIpGroup = old('ip_group', session('coc_step1.ip_group', ''));
                                         @endphp
                                         @foreach($ipGroups as $group)

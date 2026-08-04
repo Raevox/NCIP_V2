@@ -20,11 +20,7 @@
                         <form id="step3Form" action="{{ route('applicant.coc.step3.store', ['id' => $step3['id'] ?? null]) }}" method="POST">
                             @csrf
                             @php
-                                $ipGroups = [
-                                    'Bag-o', 'Bontok', 'Kankanaey', 'Applai', 'Alta', 'Dumagat', 'Ibaloi',
-                                    'Kalanguya', 'Gaddang', 'Aeta', 'Ilongot (Bugkalot)', 'Kalinga', 'Bajaw',
-                                    'Ifugao', 'I-wak', 'Itawis', 'Tingian', 'Itneg', 'Ibanag', 'Sinai'
-                                ];
+                                $ipGroups = \App\Models\Tribe::active()->orderBy('name')->pluck('name')->toArray();
                             @endphp
 
                             {{-- Applicant Information --}}

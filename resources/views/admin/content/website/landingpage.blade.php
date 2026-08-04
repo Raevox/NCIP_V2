@@ -144,142 +144,29 @@
                 <p class="section-subtitle">Nueva Ecija is home to diverse indigenous groups with rich cultural heritage and traditional practices</p>
             </div>
             <div class="groups-grid" id="groupsList">
+
+                @forelse($tribes as $tribe)
                 <div class="group-card">
-                    <div class="group-image" style="background-image: url('{{ asset('content/aeta.jpg') }}');"></div>
+                    @if($tribe->photo)
+                        <div class="group-image" style="background-image: url('{{ asset('storage/' . $tribe->photo) }}');"></div>
+                    @else
+                        <div class="group-image" style="background: linear-gradient(135deg, #2E7D46 0%, #52a033 100%); display:flex; align-items:center; justify-content:center;">
+                            <span style="font-size:3rem; font-weight:800; color:rgba(255,255,255,0.35); letter-spacing:-2px; user-select:none;">
+                                {{ strtoupper(substr($tribe->name, 0, 2)) }}
+                            </span>
+                        </div>
+                    @endif
                     <div class="group-content">
-                        <h3 class="group-title">Aeta</h3>
-                        <p class="group-description">The Aetas are among the earliest inhabitants, known for their resilience and farming traditions.</p>
+                        <h3 class="group-title">{{ $tribe->name }}</h3>
+                        <p class="group-description">{{ $tribe->description ?: 'An indigenous people group recognized in the province of Nueva Ecija.' }}</p>
                     </div>
                 </div>
-                <div class="group-card">
-                    <div class="group-image" style="background-image: url('{{ asset('content/alta.jpg') }}');"></div>
-                    <div class="group-content">
-                        <h3 class="group-title">Alta</h3>
-                        <p class="group-description">The Altas are upland dwellers, closely related to the Dumagat, recognized for farming and forest resource use.</p>
-                    </div>
+                @empty
+                <div style="text-align:center; padding:40px; color:#666; grid-column:1/-1;">
+                    <i class="fas fa-flag" style="font-size:2rem; opacity:0.3; margin-bottom:10px; display:block;"></i>
+                    <p>No tribes have been added yet.</p>
                 </div>
-                <div class="group-card">
-                    <div class="group-image" style="background-image: url('{{ asset('content/bago.jpg') }}');"></div>
-                    <div class="group-content">
-                        <h3 class="group-title">Bag-o</h3>
-                        <p class="group-description">The Bag-o people are highland migrants, blending Ilocano and Cordilleran traditions in farming and crafts.</p>
-                    </div>
-                </div>
-
-                <div class="group-card">
-            <div class="group-image" style="background-image: url('{{ asset('content/badjao.jpg') }}');"></div>
-            <div class="group-content">
-                <h3 class="group-title">Badjao</h3>
-                <p class="group-description">The Badjao, or “sea gypsies,” are known for their seafaring, fishing, and boat-dwelling culture.</p>
-            </div>
-        </div>
-        <div class="group-card">
-            <div class="group-image" style="background-image: url('{{ asset('content/bontoc.jpg') }}');"></div>
-            <div class="group-content">
-                <h3 class="group-title">Bontoc</h3>
-                <p class="group-description">The Bontoc are famous for their rice terraces, woodcarving, and rich warrior traditions.</p>
-            </div>
-        </div>
-        <div class="group-card">
-            <div class="group-image" style="background-image: url('{{ asset('content/bungkalot.jpg') }}');"></div>
-            <div class="group-content">
-                <h3 class="group-title">Bungkalot (Ilongot)</h3>
-                <p class="group-description">The Bugkalot, also called Ilongot, are known for their strong sense of independence and forest-based livelihood.</p>
-            </div>
-        </div>
-        <div class="group-card">
-            <div class="group-image" style="background-image: url('{{ asset('content/cordillera-ip.jpg') }}');"></div>
-            <div class="group-content">
-                <h3 class="group-title">Cordillera IP</h3>
-                <p class="group-description">Indigenous peoples from the Cordillera, known for rice cultivation, weaving, and mountain traditions.</p>
-            </div>
-        </div>
-        <div class="group-card">
-            <div class="group-image" style="background-image: url('{{ asset('content/dumagat.jpg') }}');"></div>
-            <div class="group-content">
-                <h3 class="group-title">Dumagat</h3>
-                <p class="group-description">The Dumagats are riverine people, recognized for fishing, hunting, and their forest-based traditions.</p>
-            </div>
-        </div>
-        <div class="group-card">
-            <div class="group-image" style="background-image: url('{{ asset('content/gaddang.jpg') }}');"></div>
-            <div class="group-content">
-                <h3 class="group-title">Gaddang</h3>
-                <p class="group-description">Gaddang are skilled weavers and farmers, noted for their colorful textiles and craftsmanship.</p>
-            </div>
-        </div>
-        <div class="group-card">
-            <div class="group-image" style="background-image: url('{{ asset('content/ibaloi.jpg') }}');"></div>
-            <div class="group-content">
-                <h3 class="group-title">Ibaloi</h3>
-                <p class="group-description">The Ibaloi are highland farmers of Benguet, known for cattle raising, rice cultivation, and rituals.</p>
-            </div>
-        </div>
-
-            <div class="group-card">
-            <div class="group-image" style="background-image: url('{{ asset('content/ibanag.jpg') }}');"></div>
-            <div class="group-content">
-                <h3 class="group-title">Ibanag</h3>
-                <p class="group-description">The Ibanag are river valley settlers, famous for farming, fishing, and their rich oral traditions.</p>
-            </div>
-        </div>
-        <div class="group-card">
-            <div class="group-image" style="background-image: url('{{ asset('content/ifugao.jpg') }}');"></div>
-            <div class="group-content">
-                <h3 class="group-title">Ifugao</h3>
-                <p class="group-description">The Ifugao are stewards of the Banaue Rice Terraces, known for woodcarving, rice rituals, and weaving.</p>
-            </div>
-        </div>
-        <div class="group-card">
-            <div class="group-image" style="background-image: url('{{ asset('content/itawis.webp') }}');"></div>
-            <div class="group-content">
-                <h3 class="group-title">Itawis</h3>
-                <p class="group-description">The Itawis are valley dwellers of Northern Luzon, known for farming, fishing, and weaving.</p>
-            </div>
-        </div>
-        <div class="group-card">
-            <div class="group-image" style="background-image: url('{{ asset('content/itneg.jpg') }}');"></div>
-            <div class="group-content">
-                <h3 class="group-title">Itneg</h3>
-                <p class="group-description">The Itneg (Tinguian) are upland farmers and weavers, deeply rooted in animist rituals and traditions.</p>
-            </div>
-        </div>
-        <div class="group-card">
-            <div class="group-image" style="background-image: url('{{ asset('content/I-wak.jpg') }}');"></div>
-            <div class="group-content">
-                <h3 class="group-title">I-wak</h3>
-                <p class="group-description">The I-wak are Cordilleran highlanders, recognized for rice farming, weaving, and their close kinship ties.</p>
-            </div>
-        </div>
-        <div class="group-card">
-            <div class="group-image" style="background-image: url('{{ asset('content/kalanguya.jpg') }}');"></div>
-            <div class="group-content">
-                <h3 class="group-title">Kalanguya</h3>
-                <p class="group-description">The Kalanguya are terrace farmers and swidden cultivators, with traditions centered on rice and forest life.</p>
-            </div>
-        </div>
-        <div class="group-card">
-            <div class="group-image" style="background-image: url('{{ asset('content/kalinga.jpg') }}');"></div>
-            <div class="group-content">
-                <h3 class="group-title">Kalinga</h3>
-                <p class="group-description">The Kalinga are known for their warrior heritage, body tattoos, weaving, and vibrant rituals.</p>
-            </div>
-        </div>
-        <div class="group-card">
-            <div class="group-image" style="background-image: url('{{ asset('content/kankanaey.jpg') }}');"></div>
-            <div class="group-content">
-                <h3 class="group-title">Kankanaey</h3>
-                <p class="group-description">The Kankanaey are terrace builders, gardeners, and weavers, respected for their community rituals and dances.</p>
-            </div>
-        </div>
-
-                        <!-- <div class="group-card">
-                            <div class="group-image" style="background-image:url('../assets/images/sinai.png');"></div>
-                            <div class="group-content">
-                                <h3 class="group-title">Sinai</h3>
-                                <p class="group-description">The Sinai are lesser-known upland settlers, traditionally engaged in farming and forest resource use.</p>
-                            </div>
-                        </div> -->
+                @endforelse
 
             </div>
             <!-- Pagination Controls -->
