@@ -106,7 +106,7 @@ body, .tribes-content {
 }
 .search-wrapper input {
     width: 100%;
-    padding: 9px 14px 9px 38px;
+    padding: 9px 38px 9px 38px;
     border: 1.5px solid var(--sand-200);
     border-radius: var(--radius-sm);
     font-family: 'Poppins', sans-serif;
@@ -129,6 +129,12 @@ body, .tribes-content {
     color: var(--text-soft);
     font-size: 13px;
     pointer-events: none;
+}
+.search-spinner {
+    position: absolute;
+    right: 12px; top: 50%;
+    transform: translateY(-50%);
+    display: none;
 }
 .stats-pill {
     display: inline-flex;
@@ -361,161 +367,28 @@ body, .tribes-content {
 
     {{-- Controls --}}
     <div class="controls-bar">
-        <form method="GET" action="{{ route('admin.tribes.index') }}" class="search-wrapper" id="tribeSearchForm">
+        <div class="search-wrapper">
             <i class="fas fa-search search-icon"></i>
             <input
                 type="text"
-                name="search"
                 id="searchInput"
-                placeholder="Search by name..."
+                placeholder="Search by name or description..."
                 value="{{ $search }}"
                 autocomplete="off"
             />
-        </form>
+            <div class="spinner-border spinner-border-sm text-success search-spinner" id="searchSpinner" role="status"></div>
+        </div>
         <div class="stats-pill">
             <i class="fas fa-flag"></i>
-            <strong>{{ $tribes->total() }}</strong>
+            <strong id="tribeCount">{{ $tribes->total() }}</strong>
             <span>Tribe(s) found</span>
         </div>
     </div>
 
-    {{-- Table --}}
-    <div class="table-card">
-        <div class="table-responsive">
-            <table class="table tribe-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Tribe Name</th>
-                        <th class="text-center">Status</th>
-                        <th>Description</th>
-                        <th class="text-center">Date Added</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($tribes as $i => $tribe)
-                        <tr>
-                            <td style="color: var(--text-soft); font-size: 12px;">
-                                {{ ($tribes->currentPage() - 1) * $tribes->perPage() + $i + 1 }}
-                            </td>
-                            <td>
-                                <div class="tribe-name-cell">
-                                    <div class="tribe-avatar">
-                                        @if($tribe->photo)
-                                            <img src="{{ asset('storage/' . $tribe->photo) }}" alt="{{ $tribe->name }}">
-                                        @else
-                                            {{ strtoupper(substr($tribe->name, 0, 2)) }}
-                                        @endif
-                                    </div>
-                                    <div>
-                                        <div class="tribe-name-text">{{ $tribe->name }}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="text-center">
-                                @if($tribe->is_active)
-                                    <span class="status-badge status-active">
-                                        <i class="fas fa-circle" style="font-size:7px;"></i> Active
-                                    </span>
-                                @else
-                                    <span class="status-badge status-inactive">
-                                        <i class="fas fa-circle" style="font-size:7px;"></i> Inactive
-                                    </span>
-                                @endif
-                            </td>
-                            <td style="max-width: 260px;">
-                                <span style="font-size: 12.5px; color: var(--text-mid);">
-                                    {{ $tribe->description ? \Illuminate\Support\Str::limit($tribe->description, 80) : '—' }}
-                                </span>
-                            </td>
-                            <td class="text-center" style="font-size: 12.5px; color: var(--text-soft);">
-                                {{ $tribe->created_at->format('M d, Y') }}
-                            </td>
-                            <td class="text-center">
-                                <div class="action-cell" style="justify-content: center;">
-                                    <a href="{{ route('admin.tribes.edit', $tribe) }}" class="btn-edit">
-                                        <i class="fas fa-pen"></i> Edit
-                                    </a>
-                                    <button type="button"
-                                            class="btn-delete"
-                                            onclick="confirmDelete({{ $tribe->id }}, '{{ addslashes($tribe->name) }}')"
-                                            id="deleteBtn{{ $tribe->id }}">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6">
-                                <div class="empty-state">
-                                    <i class="fas fa-flag"></i>
-                                    <p>No tribes found{{ $search ? ' for "' . $search . '"' : '' }}.</p>
-                                    @if($search)
-                                        <a href="{{ route('admin.tribes.index') }}" style="color: var(--green-500); font-size: 13px;">
-                                            Clear search
-                                        </a>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    {{-- Dynamic Table Container --}}
+    <div id="tableContainer">
+        @include('admin.tribes.partials.table')
     </div>
-
-    {{-- Pagination --}}
-    @if($tribes->hasPages())
-        <div class="pagination-row">
-            <div class="pagination-info">
-                Showing {{ $tribes->firstItem() }}–{{ $tribes->lastItem() }} of {{ $tribes->total() }} tribes
-            </div>
-            <ul class="custom-pagination">
-
-                {{-- Prev --}}
-                @if($tribes->onFirstPage())
-                    <li class="page-item disabled">
-                        <span class="page-link"><i class="fas fa-chevron-left" style="font-size:11px;"></i></span>
-                    </li>
-                @else
-                    <li class="page-item">
-                        <a class="page-link" href="{{ $tribes->previousPageUrl() }}&search={{ $search }}">
-                            <i class="fas fa-chevron-left" style="font-size:11px;"></i>
-                        </a>
-                    </li>
-                @endif
-
-                {{-- Page numbers --}}
-                @foreach($tribes->getUrlRange(1, $tribes->lastPage()) as $page => $url)
-                    @if($page == $tribes->currentPage())
-                        <li class="page-item active">
-                            <span class="page-link">{{ $page }}</span>
-                        </li>
-                    @else
-                        <li class="page-item">
-                            <a class="page-link" href="{{ $url }}&search={{ $search }}">{{ $page }}</a>
-                        </li>
-                    @endif
-                @endforeach
-
-                {{-- Next --}}
-                @if($tribes->hasMorePages())
-                    <li class="page-item">
-                        <a class="page-link" href="{{ $tribes->nextPageUrl() }}&search={{ $search }}">
-                            <i class="fas fa-chevron-right" style="font-size:11px;"></i>
-                        </a>
-                    </li>
-                @else
-                    <li class="page-item disabled">
-                        <span class="page-link"><i class="fas fa-chevron-right" style="font-size:11px;"></i></span>
-                    </li>
-                @endif
-
-            </ul>
-        </div>
-    @endif
 
 </div>
 
@@ -558,13 +431,50 @@ function confirmDelete(id, name) {
     new bootstrap.Modal(document.getElementById('deleteModal')).show();
 }
 
-// Auto-submit search on typing (with debounce)
+// ── Live AJAX Search + Pagination ──────────────────────────────────
 let searchTimer;
-document.getElementById('searchInput').addEventListener('input', function () {
+const searchInput   = document.getElementById('searchInput');
+const searchSpinner = document.getElementById('searchSpinner');
+
+function fetchTribesData(url = '{{ route("admin.tribes.index") }}') {
+    searchSpinner.style.display = 'block';
+    const queryUrl = new URL(url, window.location.origin);
+    queryUrl.searchParams.set('search', searchInput.value.trim());
+
+    fetch(queryUrl.toString(), {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        searchSpinner.style.display = 'none';
+        document.getElementById('tableContainer').innerHTML = data.html;
+        document.getElementById('tribeCount').textContent = data.total;
+    })
+    .catch(() => {
+        searchSpinner.style.display = 'none';
+    });
+}
+
+function clearSearch() {
+    searchInput.value = '';
+    fetchTribesData();
+}
+
+searchInput.addEventListener('input', function () {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => {
-        document.getElementById('tribeSearchForm').submit();
-    }, 450);
+    searchTimer = setTimeout(() => fetchTribesData(), 350);
+});
+
+// Intercept pagination clicks for smooth AJAX page switching
+document.getElementById('tableContainer').addEventListener('click', function (e) {
+    const link = e.target.closest('.custom-pagination a.page-link');
+    if (link && link.href) {
+        e.preventDefault();
+        fetchTribesData(link.href);
+    }
 });
 </script>
 

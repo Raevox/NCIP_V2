@@ -28,6 +28,13 @@ class AccomplishmentController extends Controller
 
         $accomplishments = $query->paginate(15)->withQueryString();
 
+        if ($request->ajax()) {
+            return response()->json([
+                'html'  => view('admin.accomplishments.partials.table', compact('accomplishments', 'search'))->render(),
+                'total' => $accomplishments->total(),
+            ]);
+        }
+
         return view('admin.accomplishments.index', compact('accomplishments', 'search'));
     }
 

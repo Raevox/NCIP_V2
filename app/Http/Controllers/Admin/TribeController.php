@@ -27,6 +27,13 @@ class TribeController extends Controller
 
         $tribes = $query->paginate(15)->withQueryString();
 
+        if ($request->ajax()) {
+            return response()->json([
+                'html'  => view('admin.tribes.partials.table', compact('tribes', 'search'))->render(),
+                'total' => $tribes->total(),
+            ]);
+        }
+
         return view('admin.tribes.index', compact('tribes', 'search'));
     }
 

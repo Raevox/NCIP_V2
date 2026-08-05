@@ -41,6 +41,13 @@ public function publicShow($id)
             ->paginate(10)
             ->withQueryString();
 
+        if ($request->ajax()) {
+            return response()->json([
+                'html'  => view('admin.news.partials.table', compact('news', 'search'))->render(),
+                'total' => $news->total(),
+            ]);
+        }
+
         return view('admin.news.index', compact('news', 'search')); // ✅ admin view
     }
 
