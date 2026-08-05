@@ -29,10 +29,19 @@ public function publicShow($id)
 }
 
     // 🛠 Admin news listing
-    public function index()
+    public function index(Request $request)
     {
-        $news = News::latest()->paginate(10);
-        return view('admin.news.index', compact('news')); // ✅ admin view
+        $search = $request->input('search', '');
+
+        $news = News::when($search, function ($query) use ($search) {
+                $query->where('title', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('admin.news.index', compact('news', 'search')); // ✅ admin view
     }
 
     public function create()
