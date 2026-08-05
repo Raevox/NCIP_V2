@@ -45,5 +45,8 @@ class DatabaseSeeder extends Seeder
 
         // ✅ Tribes
         $this->call(TribeSeeder::class);
+
+        // ✅ Accomplishments
+        $this->call(AccomplishmentSeeder::class);
     }
 }

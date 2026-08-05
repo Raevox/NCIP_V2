@@ -1127,190 +1127,110 @@ background-size: cover;
 
         <!-- Main Content -->
         <div class="container">
-            <!-- 2025 Accomplishments -->
-            <section class="year-section">
-                <div class="year-header">
-                    <div class="year-content">
-                        <!-- <h4 class="year-title">2025</h4> -->
-                        <p class="year-subtitle">𝐍𝐂𝐈𝐏 𝐅𝐨𝐫𝐠𝐞 𝐏𝐚𝐫𝐭𝐧𝐞𝐫𝐬𝐡𝐢𝐩 𝐭𝐨 𝐄𝐦𝐩𝐨𝐰𝐞𝐫 𝐈𝐧𝐝𝐢𝐠𝐞𝐧𝐨𝐮𝐬 𝐏𝐞𝐨𝐩𝐥𝐞𝐬 𝐢𝐧 𝐍𝐮𝐞𝐯𝐚 𝐄𝐜𝐢𝐣𝐚</p>
-                    </div>
+            <!-- Dynamic Accomplishments -->
+            @forelse($accomplishments as $item)
+                <section class="accomplishment-section">
+
+                    @php
+                        $imgSrc = $item->image
+                            ? (str_starts_with($item->image, 'content/')
+                                ? asset($item->image)
+                                : asset('storage/' . $item->image))
+                            : '';
+                    @endphp
+
+                    @if($item->layout_type == 1)
+                        {{-- Layout 1: Left image, right content --}}
+                        <div class="accomplishment-1">
+                            <div class="image-container">
+                                <img src="{{ $imgSrc }}" alt="{{ $item->title }}">
+                            </div>
+                            <div class="content">
+                                <h2 class="section-title">{{ $item->title }}</h2>
+                                @if($item->date_label)
+                                    <div class="date">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        {{ $item->date_label }}
+                                    </div>
+                                @endif
+                                <p>{{ $item->description }}</p>
+                            </div>
+                        </div>
+
+                    @elseif($item->layout_type == 2)
+                        {{-- Layout 2: Right image, left content --}}
+                        <div class="accomplishment-2">
+                            <div class="content">
+                                <h2 class="section-title">{{ $item->title }}</h2>
+                                @if($item->date_label)
+                                    <div class="date">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        {{ $item->date_label }}
+                                    </div>
+                                @endif
+                                <p>{{ $item->description }}</p>
+                            </div>
+                            <div class="image-container">
+                                <img src="{{ $imgSrc }}" alt="{{ $item->title }}">
+                            </div>
+                        </div>
+
+                    @elseif($item->layout_type == 4)
+                        {{-- Layout 4: Card with date overlay --}}
+                        <div class="accomplishment-4">
+                            <div class="image-container">
+                                <img src="{{ $imgSrc }}" alt="{{ $item->title }}">
+                                @if($item->date_label)
+                                    <div class="image-overlay">
+                                        <div class="overlay-date">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            {{ $item->date_label }}
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="content">
+                                <h2 class="section-title">{{ $item->title }}</h2>
+                                <p>{{ $item->description }}</p>
+                            </div>
+                        </div>
+
+                    @elseif($item->layout_type == 5)
+                        {{-- Layout 5: Image grid + content --}}
+                        @php
+                            $gridImages = $item->extra_images ?? [$item->image];
+                        @endphp
+                        <div class="accomplishment-5">
+                            <div class="image-grid">
+                                @foreach($gridImages as $gi)
+                                    @php
+                                        $giSrc = str_starts_with($gi, 'content/')
+                                            ? asset($gi)
+                                            : asset('storage/' . $gi);
+                                    @endphp
+                                    <img src="{{ $giSrc }}" alt="{{ $item->title }}">
+                                @endforeach
+                            </div>
+                            <div class="content">
+                                <h2 class="section-title">{{ $item->title }}</h2>
+                                @if($item->date_label)
+                                    <div class="date">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        {{ $item->date_label }}
+                                    </div>
+                                @endif
+                                <p>{{ $item->description }}</p>
+                            </div>
+                        </div>
+                    @endif
+
+                </section>
+            @empty
+                <div style="text-align:center; padding: 4rem 2rem; color: #666;">
+                    <i class="fas fa-trophy" style="font-size: 3rem; opacity: 0.2; display: block; margin-bottom: 1rem;"></i>
+                    <p>No accomplishments available at this time.</p>
                 </div>
-
-                <!-- Accomplishment 1: Indigenous Community Empowerment Program -->
-                <section class="accomplishment-section">
-                    <div class="accomplishment-1">
-                        <div class="image-container">
-                            <img src="{{ asset('content/nepo-clsu.jpg') }}" alt="Indigenous Community Empowerment Program">
-                        </div>
-                        <div class="content">
-                        <h2 class="section-title">CLSU Partnership for<span class="highlight-green">  IP</span></h2>
-                            <div class="date">
-                                <i class="fas fa-calendar-alt"></i>
-                                May 7, 2025
-                            </div>
-                            <p><strong>Science City of Munoz, Nueva Ecija</strong> - Central Luzon State University (CLSU) and the National Commission on Indigenous Peoples–Nueva Ecija Provincial Office (NCIP-NEPO) have officially launched a partnership to implement the Indigenous Peoples' Livelihood Empowerment Advancement Project (IP-LEAP) in Nueva Ecija. The agreement was sealed through a Memorandum of Agreement (MOA) signing held on May 7, 2025 at the CLSU Administration Conference Hall.</p>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-             <!-- Accomplishment 7: Education Support -->
-                <section class="accomplishment-section">
-                    <div class="accomplishment-4">
-                        <div class="image-container">
-                            <img src="{{ asset('content/NeustIpDay.jpg') }}" alt="Indigenous Education Support Program">
-                            <div class="image-overlay">
-                                <div class="overlay-date">
-                                    <i class="fas fa-calendar-alt"></i>
-                                    September 5, 2023
-                                </div>
-                            </div>
-                        </div>
-                        <div class="content">
-                            <h2 class="section-title">NEUST-ReCIPE celebrates the National<span class="highlight-green">Indigenous Peoples' Day</span></h2>
-                            <p>The Nueva Ecija University of Science and Technology Regional Center for Indigenous Peoples Education (NEUST-ReCIPE) conducts the first-ever hybrid International Forum Toward Responding to Indigenous Peoples in Voluntary Isolation in Region III, Philippines in celebration of IDWIP with the theme 'Indigenous Peoples in Voluntary Isolation & Initial Contact' at NEUST Sumacab Campus. The celebration started with a cultural dance performance by ADIBAI IP Youth Organization followed by a Press Briefing attended by the NEUST President Dr. Rhodora R. Jugo, the Vice President for Research, Extension, and Training (RET), Dr. Rachael R. Moralde, and the Head of NEUST-ReCIPE, Dr. Vilma R. Ramos, together with the Provincial Officer of the National Commission on Indigenous Peoples (NCIP) Nueva Ecija Provincial Office (NEPO), Dr. Donato B. Bumacas, who catered to the questions raised by the representatives from different IPs, SUCs, and public agencies and sectors within the region.</p>
-                        </div>
-                    </div>
-                </section>
-
-
-            <!-- Accomplishment 2: Ancestral Domain Title Distribution -->
-            <section class="accomplishment-section">
-                <div class="accomplishment-2">
-                    <div class="content">
-                     <h2 class="section-title">Formulation <span class="highlight-green">Domaget ADSDPP in Salmag</span></h2>
-                        <div class="date">
-                            <i class="fas fa-calendar-alt"></i>
-                            September 11, 2020
-                        </div>
-                        <p>The BUDI MI Domaget Kabolowen Ancestral Domain Sustainable Development and Protection Plan (ADSDPP) in Salmag is our legacy this FY2020. This is one of the major GAA Funded Program being implemented and managed by NCIP NEPO. Due to the CSR free technical assistance of the International Consultancy for Indigenous Peoples Environment and Development Co. (ICON IPED CO.) during the actual formulation process and writing, the said ADSDPP is finished. It is in the layouting stage ready to be printed for distribution.</p>
-                    </div>
-                    <div class="image-container">
-                        <img src="{{ asset('content/IpBudi.png') }}" alt="Ancestral Domain Title Distribution Ceremony">
-                    </div>
-                </div>
-            </section>
-
-            <div class="accomplishment-container">
-                <section class="accomplishment-section">
-                    <div class="accomplishment-1">
-                        <div class="image-container">
-                            <img src="{{ asset('content/accomplishment-educ.png') }}" alt="Indigenous Community Empowerment Program">
-                        </div>
-                        <div class="content">
-                            <h2 class="section-title">Educational Assistance for <span class="highlight-green">IP</span></h2>
-                            <div class="date">
-                                <i class="fas fa-calendar-alt"></i>
-                                May 7, 2020
-                            </div>
-                            <p>The Educational Assistance Program (EAP) is a GAA Funded Program of NCIP NEPO that covers Districts I, II, III & IV in the Province of Nueva Ecija. It is a program that provides financial assistance to IP students who are interested in pursuing their education and who are willing to study harder to be able to attain good grades, graduate in college and have a good life in the future. For Districts I and II, the Educational Assistance Program direct beneficiaries are distributed as follows: 7 Elementary (4 males & 3 females); 6 High School (3 males & 3 females); and 13 College (5 males & 8 females) with a total of twenty six (26) students. All of them are successfully attending their schooling through modules.</p>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-  <!-- 2023 Accomplishments -->
-            <section class="year-section">
-                <!-- Accomplishment 4: Health Program -->
-                <section class="accomplishment-section">
-                    <div class="accomplishment-4">
-                        <div class="image-container">
-                            <img src="{{ asset('content/accomplishment-certificate.png') }}" alt="Indigenous Health and Wellness Initiative">
-
-                            <div class="image-overlay">
-                                <div class="overlay-date">
-                                    <i class="fas fa-calendar-alt"></i>
-                                    December 12, 2020
-                                </div>
-                            </div>
-                        </div>
-                        <div class="content">
-                             <h2 class="section-title"><i class="fas fa-certificate icon"></i>Issued a total of seven <span class="highlight-green">Certificate of Affirmation to barangay IPMRs</span></h2>
-                            <p>In 2020, in spite of the COVID-19 Pandemic the NCIP NEPO successfully issued a total of Seven (7) Certificate of Affirmation (COA) to Barangay IPMRs in the different Barangays of Nueva Ecija. The Provincial Officer Dr. Donato B. Bumacas with the staff happily awarded the Certificate of Affirmation (COA) to Barangay IPMR Johnny Ponciano of Barangay San Isidro, Laur, Nueva Ecija.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Accomplishment 5: Skills Development -->
-                <div class="accomplishment-container">
-                    <div class="accomplishment-5">
-                        <div class="image-grid">
-                           <img src="{{ asset('content/Ipday1.png') }}" alt="IP Day">
-                           <img src="{{ asset('content/Ipday2.png') }}" alt="IP Day">
-                           <img src="{{ asset('content/Ipday3.png') }}" alt="IP Day">
-                           <img src="{{ asset('content/Ipday4.png') }}" alt="IP Day">
-                               
-                        </div>
-                        <div class="content">
-                            <h2 class="section-title">Provincial <span class="highlight-green">IP day Celebrations</span></h2>
-                            <div class="date">
-                                <i class="fas fa-calendar-alt"></i>
-                                October 20, 2017
-                            </div>
-                            <p>The innovative Indigenous Multi-Stakeholders Partnership (I'M PART) led to the successful mobilization and implementation of the 20TH YEAR INDIGENOUS PEOPLES MONTH AND DAY CELEBRATION without any single centavo or fund from NCIP. Dr. Bumacas planned in advance the activity with the IPMRs where they agreed to conduct series of activities within the municipalities during the month of October 2017 then it will be highlighted on October 29, 2017 which is the exact date of the passage of IPRA on October 29, 1997. Dr. Bumacas launched the PADIT-SUBKAL, The Provincial Festival of Indigenous Peoples in the Province of Nueva Ecija. This is the first time and very historical among indigenous peoples in Nueva Ecija. It was agreed that the PADIT-SUBKAL will become an Annual Celebration.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Accomplishment 6: Youth Leadership -->
-                <section class="accomplishment-section">
-                    <div class="accomplishment-1">
-                        <div class="image-container">
-                            <img src="{{ asset('content/Ipsummitd.png') }}" alt="1st NUEVA ECIJA INDIGENOUS PEOPLES SUMMIT">
-                        </div>
-                        <div class="content">
-                            <h2 class="section-title">1st Nueva Ecija <span class="highlight-green">IP Summit</span></h2>
-                            <div class="date">
-                                <i class="fas fa-calendar-alt"></i>
-                                October 10, 2019
-                            </div>
-                            <p>Engr. Feliciana A. Jacoba – NEUST President; Atty. Ana Maria Paz B. Rafael-Banaag – Assistant Secretary of President Duterte; Atty. Basilio A. Wandag – Commissioner of NCIP; Atty. Gina Naimes – Representative of Regional Director Atty. Ronald M. Daquioag; and Dr. Donato B. Bumacas – DMO V / Provincial Officer of NCIP Nueva Ecija</p>
-                        </div>
-                    </div>
-                </section>
-
-               
-            </section>
-
-            <!-- Accomplishment 8: NEUST Partnership -->
-            <section class="accomplishment-section">
-                <div class="accomplishment-2">
-                    <div class="content">
-                         <h2 class="section-title">Assistance <span class="highlight-green">IP students scholarship</span></h2>
-                        <div class="date">
-                            <i class="fas fa-calendar-alt"></i>
-                            March - April 2020
-                        </div>
-                        <p>57 Tunong Dunong IP Beneficiaries <br> 13 Tertiary Education Subsidy recipients<br>45 Provincial Government Scholars <br> 6 NEUST-USG Scholars</p>
-                    </div>
-                    <div class="image-container">
-                        <img src="{{ asset('content/IpStudents.png') }}" alt="NEUST-CIPE Partnership Signing">
-                    </div>
-                </div>
-            </section>
-
-            <!-- Accomplishment 9: Governance Programs -->
-            <div class="accomplishment-container">
-                <section class="accomplishment-section">
-                    <div class="accomplishment-5">
-                        <div class="image-grid">
-                       <img src="{{ asset('content/IpAssistance1.png') }}" alt="IP Assistance">
-                       <img src="{{ asset('content/IpAssistance2.png') }}" alt="IP Assistance">
-                       <img src="{{ asset('content/IpAssistance3.png') }}" alt="IP Assistance">
-                       <img src="{{ asset('content/IpAssistance4.png') }}" alt="IP Assistance">
-                           
-                        </div>
-                        <div class="content">
-                             <h2 class="section-title">Assistance relief<span class="highlight-green">during pandemic</span></h2>
-                            <div class="date">
-                                <i class="fas fa-calendar-alt"></i>
-                                Calendar Year 2020
-                            </div>
-                            <p>Being a member of NE IATF, Dr. Donato B. Bumacas often meet with Municipal and City Mayors and advocated the prioritizing of ICCs/IPs in their distribution of Cash and Food Relief Goods distributions. Below were some of the results of Dr. Bumacas advocacies to LGU's in the service of ICCs/IPs during the COVID-19 Pandemic per LGU's:</p>
-                        </div>
-                    </div>
-                </section>
-            </div>
+            @endforelse
 
             <!-- Section Quote: Malasakit sa Katutubo -->
             <section class="quote-title">

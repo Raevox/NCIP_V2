@@ -20,6 +20,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Admin\TribeController;
+use App\Http\Controllers\Admin\AccomplishmentController;
 use App\Http\Controllers\ContactController;
 use App\Http\Middleware\AdminOrStaffOnly;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
@@ -48,7 +49,11 @@ Route::get('/programs-pps', function () {
 })->name('programs.pps');
 
 Route::get('/accomplishments', function () {
-    return view('admin.content.website.accomplishments');
+    $accomplishments = \App\Models\Accomplishment::active()
+        ->orderBy('sort_order')
+        ->orderBy('id')
+        ->get();
+    return view('admin.content.website.accomplishments', compact('accomplishments'));
 })->name('accomplishments');
 
 Route::get('/partnership', function () {
@@ -188,6 +193,9 @@ Route::middleware(['auth:web', 'verified'])->prefix('admin')->name('admin.')->gr
 
     // Tribe Management
     Route::resource('tribes', TribeController::class);
+
+    // Accomplishment Management
+    Route::resource('accomplishments', AccomplishmentController::class);
 
     // ── Notifications page (Livewire shell) ─────────────────────────────────
     Route::get('/notifications', [AdminNotificationController::class, 'index'])

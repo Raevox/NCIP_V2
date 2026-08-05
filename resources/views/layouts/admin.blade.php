@@ -600,6 +600,13 @@
                 </a>
             </li>
             <li>
+                <a href="{{ route('admin.accomplishments.index') }}"
+                   class="sb-nav-link {{ request()->routeIs('admin.accomplishments.*') ? 'active' : '' }}">
+                    <i class="sb-nav-icon fas fa-trophy"></i>
+                    <span class="sb-nav-label">Accomplishments</span>
+                </a>
+            </li>
+            <li>
                 <a href="{{ route('admin.audit.trail') }}"
                    class="sb-nav-link {{ request()->routeIs('admin.audit.*') ? 'active' : '' }}">
                     <i class="sb-nav-icon fas fa-clipboard-list"></i>
