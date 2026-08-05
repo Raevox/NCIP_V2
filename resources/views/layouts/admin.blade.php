@@ -541,7 +541,9 @@
 
     {{-- Nav --}}
     <nav class="sb-nav">
-        <div class="sb-section">Main Menu</div>
+
+        {{-- ── Overview ── --}}
+        <div class="sb-section">Overview</div>
         <ul class="sb-nav-list">
             <li>
                 <a href="{{ route('admin.dashboard') }}"
@@ -550,53 +552,46 @@
                     <span class="sb-nav-label">Dashboard</span>
                 </a>
             </li>
+        </ul>
+
+        <div class="sb-divider"></div>
+
+        {{-- ── Records ── --}}
+        <div class="sb-section">Records</div>
+        <ul class="sb-nav-list">
             <li>
                 <a href="{{ route('ip_records.index') }}"
                    class="sb-nav-link {{ request()->routeIs('ip_records.*') ? 'active' : '' }}">
-                    <i class="sb-nav-icon fas fa-folder-open"></i>
+                    <i class="sb-nav-icon fas fa-id-card"></i>
                     <span class="sb-nav-label">IP Records</span>
                 </a>
             </li>
             <li>
                 <a href="{{ route('admin.applicants.index') }}"
                    class="sb-nav-link {{ request()->routeIs('admin.applicants.*') ? 'active' : '' }}">
-                    <i class="sb-nav-icon fas fa-users"></i>
+                    <i class="sb-nav-icon fas fa-user-check"></i>
                     <span class="sb-nav-label">Applicants</span>
                 </a>
             </li>
-            {{-- <li>
-                <a href="{{ route('admin.notifications.index') }}"
-                   class="sb-nav-link {{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}">
-                    <i class="sb-nav-icon fas fa-bell"></i>
-                    <span class="sb-nav-label">Notifications</span>
-                    <span class="sb-badge" id="sbNotifBadge"></span>
+            <li>
+                <a href="{{ route('admin.archive.ip_records') }}"
+                   class="sb-nav-link {{ request()->routeIs('admin.archive.*') ? 'active' : '' }}">
+                    <i class="sb-nav-icon fas fa-box-archive"></i>
+                    <span class="sb-nav-label">Archives</span>
                 </a>
-            </li> --}}
+            </li>
         </ul>
 
         <div class="sb-divider"></div>
 
-        <div class="sb-section">Management</div>
+        {{-- ── Content ── --}}
+        <div class="sb-section">Content</div>
         <ul class="sb-nav-list">
             <li>
                 <a href="{{ route('admin.news.index') }}"
                    class="sb-nav-link {{ request()->routeIs('admin.news.*') ? 'active' : '' }}">
                     <i class="sb-nav-icon fas fa-newspaper"></i>
-                    <span class="sb-nav-label">Content</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.accounts.index') }}"
-                   class="sb-nav-link {{ request()->routeIs('admin.accounts.*') ? 'active' : '' }}">
-                    <i class="sb-nav-icon fas fa-user-shield"></i>
-                    <span class="sb-nav-label">Accounts</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.tribes.index') }}"
-                   class="sb-nav-link {{ request()->routeIs('admin.tribes.*') ? 'active' : '' }}">
-                    <i class="sb-nav-icon fas fa-flag"></i>
-                    <span class="sb-nav-label">Tribes</span>
+                    <span class="sb-nav-label">News & Updates</span>
                 </a>
             </li>
             <li>
@@ -607,20 +602,35 @@
                 </a>
             </li>
             <li>
+                <a href="{{ route('admin.tribes.index') }}"
+                   class="sb-nav-link {{ request()->routeIs('admin.tribes.*') ? 'active' : '' }}">
+                    <i class="sb-nav-icon fas fa-people-group"></i>
+                    <span class="sb-nav-label">Tribes</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sb-divider"></div>
+
+        {{-- ── Administration ── --}}
+        <div class="sb-section">Administration</div>
+        <ul class="sb-nav-list">
+            <li>
+                <a href="{{ route('admin.accounts.index') }}"
+                   class="sb-nav-link {{ request()->routeIs('admin.accounts.*') ? 'active' : '' }}">
+                    <i class="sb-nav-icon fas fa-user-shield"></i>
+                    <span class="sb-nav-label">User Accounts</span>
+                </a>
+            </li>
+            <li>
                 <a href="{{ route('admin.audit.trail') }}"
                    class="sb-nav-link {{ request()->routeIs('admin.audit.*') ? 'active' : '' }}">
                     <i class="sb-nav-icon fas fa-clipboard-list"></i>
                     <span class="sb-nav-label">Audit Trail</span>
                 </a>
             </li>
-            <li>
-                <a href="{{ route('admin.archive.ip_records') }}"
-                   class="sb-nav-link {{ request()->routeIs('admin.archive.*') ? 'active' : '' }}">
-                    <i class="sb-nav-icon fas fa-archive"></i>
-                    <span class="sb-nav-label">Archive</span>
-                </a>
-            </li>
         </ul>
+
     </nav>
 
     {{-- Footer: logout only --}}
