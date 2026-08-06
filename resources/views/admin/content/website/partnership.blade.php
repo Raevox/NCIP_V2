@@ -1011,58 +1011,44 @@
             </section>
         </div>
 
-            <!-- Partners Section -->
+            {{-- Partners Section --}}
             <section class="partners-section">
                 <h2 class="section-title">Our <span class="highlight-green"> Government Sector Partners</span></h2>
                 <div class="partners-grid">
-                    <div class="partner-card">
-                        <img src="{{ asset('content/ps-clsu.webp') }}" alt="CLSU Partner">
-                    </div>
-                    <div class="partner-card">
-                        <img src="{{ asset('content/ps-neust.png') }}" alt="NEUST Partner">
-                    </div>
-                    <div class="partner-card">
-                        <img src="{{ asset('content/ps-pia.png') }}" alt="PIA Partner">
-                    </div>
-                    <div class="partner-card">
-                        <img src="{{ asset('content/ps-philhealth.png') }}" alt="PhilHealth Partner">
-                    </div>
-                    <div class="partner-card">
-                        <img src="{{ asset('content/ps-doh.png') }}" alt="DOH Partner">
-                    </div>
-                    <div class="partner-card">
-                        <img src="{{ asset('content/ps-dilg.png') }}" alt="DILG Partner">
-                    </div>
-                    <div class="partner-card">
-                        <img src="{{ asset('content/ps-gov.ne.jpg') }}" alt="Government NE Partner">
-                    </div>
-                    <div class="partner-card">
-                        <img src="{{ asset('content/ps-muni-aliaga.png') }}" alt="Aliaga Partner">
-                    </div>
-                    <div class="partner-card">
-                        <img src="{{ asset('content/ps-muni-bongabon.jpg') }}" alt="Bongabon Partner">
-                    </div>
-                    <div class="partner-card">
-                        <img src="{{ asset('content/ps-muni-cabanatuan.png') }}" alt="Cabanatuan Partner">
-                    </div>
-
+                    @forelse($governmentPartners as $partner)
+                        <div class="partner-card" title="{{ $partner->name }}">
+                            @if($partner->logo)
+                                @if(str_starts_with($partner->logo, 'content/'))
+                                    <img src="{{ asset($partner->logo) }}" alt="{{ $partner->name }}">
+                                @else
+                                    <img src="{{ asset('storage/' . $partner->logo) }}" alt="{{ $partner->name }}">
+                                @endif
+                            @else
+                                <span style="font-size:12px;font-weight:600;color:#555;text-align:center;">{{ $partner->name }}</span>
+                            @endif
+                        </div>
+                    @empty
+                        <p style="color:#777;font-size:14px;">No government partners yet.</p>
+                    @endforelse
                 </div>
-              
+
                 <h2 class="section-title">Our <span class="highlight-green"> Private/Business and Civil Society Organization Sector </span></h2>
                 <div class="partners-grid">
-                    <div class="partner-card">
-                            <img src="{{ asset('content/ps-iped.png') }}" alt="IPED">
+                    @forelse($privatePartners as $partner)
+                        <div class="partner-card" title="{{ $partner->name }}">
+                            @if($partner->logo)
+                                @if(str_starts_with($partner->logo, 'content/'))
+                                    <img src="{{ asset($partner->logo) }}" alt="{{ $partner->name }}">
+                                @else
+                                    <img src="{{ asset('storage/' . $partner->logo) }}" alt="{{ $partner->name }}">
+                                @endif
+                            @else
+                                <span style="font-size:12px;font-weight:600;color:#555;text-align:center;">{{ $partner->name }}</span>
+                            @endif
                         </div>
-                        <div class="partner-card">
-                            <img src="{{ asset('content/ps-KAMICYDI.png') }}" alt="KAMICYDI Partner">
-                        </div>
-                        <div class="partner-card">
-                            <img src="{{ asset('content/ps-haribon.svg') }}" alt="Haribon Partner">
-                        </div>
-                        <div class="partner-card">
-                            <img src="{{ asset('content/ps-katutubobg-novo.png') }}" alt="Katutubo NE Partner">
-                        </div>
-                            
+                    @empty
+                        <p style="color:#777;font-size:14px;">No private / CSO partners yet.</p>
+                    @endforelse
                 </div>
             </section>
 

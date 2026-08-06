@@ -48,5 +48,8 @@ class DatabaseSeeder extends Seeder
 
         // ✅ Accomplishments
         $this->call(AccomplishmentSeeder::class);
+
+        // ✅ Partners
+        $this->call(PartnerSeeder::class);
     }
 }

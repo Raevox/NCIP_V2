@@ -608,6 +608,13 @@
                     <span class="sb-nav-label">Tribes</span>
                 </a>
             </li>
+            <li>
+                <a href="{{ route('admin.partners.index') }}"
+                   class="sb-nav-link {{ request()->routeIs('admin.partners.*') ? 'active' : '' }}">
+                    <i class="sb-nav-icon fas fa-handshake"></i>
+                    <span class="sb-nav-label">Partners</span>
+                </a>
+            </li>
         </ul>
 
         <div class="sb-divider"></div>

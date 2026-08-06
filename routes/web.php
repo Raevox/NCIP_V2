@@ -21,6 +21,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Admin\TribeController;
 use App\Http\Controllers\Admin\AccomplishmentController;
+use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\ContactController;
 use App\Http\Middleware\AdminOrStaffOnly;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
@@ -57,7 +58,9 @@ Route::get('/accomplishments', function () {
 })->name('accomplishments');
 
 Route::get('/partnership', function () {
-    return view('admin.content.website.partnership');
+    $governmentPartners = \App\Models\Partner::active()->government()->orderBy('sort_order')->orderBy('name')->get();
+    $privatePartners    = \App\Models\Partner::active()->private()->orderBy('sort_order')->orderBy('name')->get();
+    return view('admin.content.website.partnership', compact('governmentPartners', 'privatePartners'));
 })->name('partnership');
 
 Route::get('/contacts', function () {
@@ -196,6 +199,9 @@ Route::middleware(['auth:web', 'verified'])->prefix('admin')->name('admin.')->gr
 
     // Accomplishment Management
     Route::resource('accomplishments', AccomplishmentController::class);
+
+    // Partner Management
+    Route::resource('partners', PartnerController::class);
 
     // ── Notifications page (Livewire shell) ─────────────────────────────────
     Route::get('/notifications', [AdminNotificationController::class, 'index'])
