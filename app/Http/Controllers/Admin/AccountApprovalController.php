@@ -60,171 +60,171 @@ class AccountApprovalController extends Controller
     /**
      * Approve pending applicant -> move to IpAccounts
      */
-    public function approve(Request $request, $id)
-    {
-        try {
-            $applicant = ApplicantRegistration::findOrFail($id);
+    // public function approve(Request $request, $id)
+    // {
+    //     try {
+    //         $applicant = ApplicantRegistration::findOrFail($id);
 
-            $ipAccount = IpAccount::updateOrCreate(
-                ['email' => $applicant->email],
-                [
-                    'first_name'        => $applicant->first_name,
-                    'last_name'         => $applicant->last_name,
-                    'name'              => $applicant->first_name . ' ' . $applicant->last_name,
-                    'contact'           => $applicant->contact,
-                    'address'           => $applicant->address,
-                    'province_code'     => $applicant->province_code,
-                    'province_name'     => $applicant->province_name,
-                    'municipality_code' => $applicant->municipality_code,
-                    'municipality_name' => $applicant->municipality_name,
-                    'barangay_code'     => $applicant->barangay_code,
-                    'barangay_name'     => $applicant->barangay_name,
-                    'tribe'             => $applicant->tribe,
-                    'leader'            => $applicant->leader,
-                    'password'          => $applicant->password,
-                    'status'            => 'active',
-                    'document_path'     => $applicant->document_path ?? null,
-                    'document_text'     => $applicant->document_text ?? null,
-                ]
-            );
+    //         $ipAccount = IpAccount::updateOrCreate(
+    //             ['email' => $applicant->email],
+    //             [
+    //                 'first_name'        => $applicant->first_name,
+    //                 'last_name'         => $applicant->last_name,
+    //                 'name'              => $applicant->first_name . ' ' . $applicant->last_name,
+    //                 'contact'           => $applicant->contact,
+    //                 'address'           => $applicant->address,
+    //                 'province_code'     => $applicant->province_code,
+    //                 'province_name'     => $applicant->province_name,
+    //                 'municipality_code' => $applicant->municipality_code,
+    //                 'municipality_name' => $applicant->municipality_name,
+    //                 'barangay_code'     => $applicant->barangay_code,
+    //                 'barangay_name'     => $applicant->barangay_name,
+    //                 'tribe'             => $applicant->tribe,
+    //                 'leader'            => $applicant->leader,
+    //                 'password'          => $applicant->password,
+    //                 'status'            => 'active',
+    //                 'document_path'     => $applicant->document_path ?? null,
+    //                 'document_text'     => $applicant->document_text ?? null,
+    //             ]
+    //         );
 
-            $applicant->status = 'approved';
-            $applicant->save();
+    //         $applicant->status = 'approved';
+    //         $applicant->save();
 
-            // ─── NOTIFICATION FIX ─────────────────────────────────────────────
-            // Step 1: Delete all pending_account notifications for this applicant.
-            //         This removes it from "Pending Account" tab for ALL admins.
-            AdminNotification::where('related_type', 'ApplicantRegistration')
-                ->where('related_id', $applicant->id)
-                ->where('type', 'pending_account')
-                ->delete();
+    //         // ─── NOTIFICATION FIX ─────────────────────────────────────────────
+    //         // Step 1: Delete all pending_account notifications for this applicant.
+    //         //         This removes it from "Pending Account" tab for ALL admins.
+    //         AdminNotification::where('related_type', 'ApplicantRegistration')
+    //             ->where('related_id', $applicant->id)
+    //             ->where('type', 'pending_account')
+    //             ->delete();
 
-            // Step 2: Create ONE account_approved notification per admin.
-            //         Guard with exists() check to prevent duplicates if approve
-            //         is somehow called twice.
-            $admins = User::where('role', 'admin')->where('status', 'active')->get();
+    //         // Step 2: Create ONE account_approved notification per admin.
+    //         //         Guard with exists() check to prevent duplicates if approve
+    //         //         is somehow called twice.
+    //         $admins = User::where('role', 'admin')->where('status', 'active')->get();
 
-            foreach ($admins as $admin) {
-                $alreadyExists = AdminNotification::where('user_id', $admin->id)
-                    ->where('type', 'account_approved')
-                    ->where('related_type', 'IpAccount')
-                    ->where('related_id', $ipAccount->id)
-                    ->exists();
+    //         foreach ($admins as $admin) {
+    //             $alreadyExists = AdminNotification::where('user_id', $admin->id)
+    //                 ->where('type', 'account_approved')
+    //                 ->where('related_type', 'IpAccount')
+    //                 ->where('related_id', $ipAccount->id)
+    //                 ->exists();
 
-                if (!$alreadyExists) {
-                    AdminNotification::create([
-                        'user_id'      => $admin->id,
-                        'type'         => 'account_approved',
-                        'title'        => 'Account Approved',
-                        'message'      => $applicant->first_name . ' ' . $applicant->last_name . ' has been approved and is now active.',
-                        'related_id'   => $ipAccount->id,
-                        'related_type' => 'IpAccount',
-                        'action_url'   => route('admin.applicants.transaction', $ipAccount->id),
-                        'priority'     => 'normal',
-                        'is_read'      => false,
-                    ]);
-                }
-            }
-            // ──────────────────────────────────────────────────────────────────
+    //             if (!$alreadyExists) {
+    //                 AdminNotification::create([
+    //                     'user_id'      => $admin->id,
+    //                     'type'         => 'account_approved',
+    //                     'title'        => 'Account Approved',
+    //                     'message'      => $applicant->first_name . ' ' . $applicant->last_name . ' has been approved and is now active.',
+    //                     'related_id'   => $ipAccount->id,
+    //                     'related_type' => 'IpAccount',
+    //                     'action_url'   => route('admin.applicants.transaction', $ipAccount->id),
+    //                     'priority'     => 'normal',
+    //                     'is_read'      => false,
+    //                 ]);
+    //             }
+    //         }
+    //         // ──────────────────────────────────────────────────────────────────
 
-            if (!empty($ipAccount->email)) {
-                try {
-                    Mail::to($ipAccount->email)->send(new AccountApprovedMail($applicant));
-                } catch (\Exception $e) {
-                    \Log::error('Email sending failed: ' . $e->getMessage());
-                }
-            }
+    //         if (!empty($ipAccount->email)) {
+    //             try {
+    //                 Mail::to($ipAccount->email)->send(new AccountApprovedMail($applicant));
+    //             } catch (\Exception $e) {
+    //                 \Log::error('Email sending failed: ' . $e->getMessage());
+    //             }
+    //         }
 
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Account has been approved successfully! Welcome email sent to the applicant.'
-                ]);
-            }
+    //         if ($request->ajax()) {
+    //             return response()->json([
+    //                 'success' => true,
+    //                 'message' => 'Account has been approved successfully! Welcome email sent to the applicant.'
+    //             ]);
+    //         }
 
-            return redirect()->route('admin.applicants.pending')
-                           ->with('success', 'Account approved, moved to IP Accounts, and email sent to applicant.');
+    //         return redirect()->route('admin.applicants.pending')
+    //                        ->with('success', 'Account approved, moved to IP Accounts, and email sent to applicant.');
 
-        } catch (\Exception $e) {
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Error approving account: ' . $e->getMessage()
-                ]);
-            }
+    //     } catch (\Exception $e) {
+    //         if ($request->ajax()) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Error approving account: ' . $e->getMessage()
+    //             ]);
+    //         }
 
-            return redirect()->back()->with('error', 'An error occurred while approving the account.');
-        }
-    }
+    //         return redirect()->back()->with('error', 'An error occurred while approving the account.');
+    //     }
+    // }
 
     /**
      * Decline applicant with email notification and database removal
      */
-    public function decline(Request $request, $id)
-    {
-        try {
-            $applicant = ApplicantRegistration::findOrFail($id);
-            $reason = $request->input('reason', 'No reason provided');
+    // public function decline(Request $request, $id)
+    // {
+    //     try {
+    //         $applicant = ApplicantRegistration::findOrFail($id);
+    //         $reason = $request->input('reason', 'No reason provided');
 
-            if (!empty($applicant->email)) {
-                try {
-                    $emailMessage = "Hi {$applicant->first_name},\n\n" .
-                                  "Thank you for your interest in registering with NCIP Nueva Ecija.\n\n" .
-                                  "Unfortunately, your account registration has been declined for the following reason:\n\n" .
-                                  "REASON: {$reason}\n\n" .
-                                  "What to do next:\n" .
-                                  "• Please review and correct the issues mentioned above\n" .
-                                  "• You may register again once the requirements are met\n" .
-                                  "• For questions, contact our office during business hours\n\n" .
-                                  "Office Contact Information:\n" .
-                                  "Address: Burgos Avenue at Old Capitol, Cabanatuan City, Nueva Ecija\n" .
-                                  "Phone: [Your phone number]\n" .
-                                  "Email: [Your email address]\n\n" .
-                                  "Thank you for your understanding.\n\n" .
-                                  "NCIP Nueva Ecija Office";
+    //         if (!empty($applicant->email)) {
+    //             try {
+    //                 $emailMessage = "Hi {$applicant->first_name},\n\n" .
+    //                               "Thank you for your interest in registering with NCIP Nueva Ecija.\n\n" .
+    //                               "Unfortunately, your account registration has been declined for the following reason:\n\n" .
+    //                               "REASON: {$reason}\n\n" .
+    //                               "What to do next:\n" .
+    //                               "• Please review and correct the issues mentioned above\n" .
+    //                               "• You may register again once the requirements are met\n" .
+    //                               "• For questions, contact our office during business hours\n\n" .
+    //                               "Office Contact Information:\n" .
+    //                               "Address: Burgos Avenue at Old Capitol, Cabanatuan City, Nueva Ecija\n" .
+    //                               "Phone: [Your phone number]\n" .
+    //                               "Email: [Your email address]\n\n" .
+    //                               "Thank you for your understanding.\n\n" .
+    //                               "NCIP Nueva Ecija Office";
 
-                    Mail::raw($emailMessage, function ($message) use ($applicant) {
-                        $message->to($applicant->email)
-                                ->subject('Account Registration Declined - NCIP Nueva Ecija');
-                    });
-                } catch (\Exception $e) {
-                    \Log::error('Decline email sending failed: ' . $e->getMessage());
-                }
-            }
+    //                 Mail::raw($emailMessage, function ($message) use ($applicant) {
+    //                     $message->to($applicant->email)
+    //                             ->subject('Account Registration Declined - NCIP Nueva Ecija');
+    //                 });
+    //             } catch (\Exception $e) {
+    //                 \Log::error('Decline email sending failed: ' . $e->getMessage());
+    //             }
+    //         }
 
-            // ─── CLEAN UP NOTIFICATIONS ON DECLINE ────────────────────────────
-            // Remove pending_account notifications so it also disappears
-            // from "Pending Account" tab when declined, not just when approved.
-            AdminNotification::where('related_type', 'ApplicantRegistration')
-                ->where('related_id', $applicant->id)
-                ->where('type', 'pending_account')
-                ->delete();
-            // ──────────────────────────────────────────────────────────────────
+    //         // ─── CLEAN UP NOTIFICATIONS ON DECLINE ────────────────────────────
+    //         // Remove pending_account notifications so it also disappears
+    //         // from "Pending Account" tab when declined, not just when approved.
+    //         AdminNotification::where('related_type', 'ApplicantRegistration')
+    //             ->where('related_id', $applicant->id)
+    //             ->where('type', 'pending_account')
+    //             ->delete();
+    //         // ──────────────────────────────────────────────────────────────────
 
-            $applicantName = $applicant->first_name . ' ' . $applicant->last_name;
-            $applicant->delete();
+    //         $applicantName = $applicant->first_name . ' ' . $applicant->last_name;
+    //         $applicant->delete();
 
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => "Account for {$applicantName} has been declined and removed. Decline reason sent via email."
-                ]);
-            }
+    //         if ($request->ajax()) {
+    //             return response()->json([
+    //                 'success' => true,
+    //                 'message' => "Account for {$applicantName} has been declined and removed. Decline reason sent via email."
+    //             ]);
+    //         }
 
-            return redirect()->route('admin.applicants.pending')
-                           ->with('success', 'Account declined, removed from database, and notification email sent.');
+    //         return redirect()->route('admin.applicants.pending')
+    //                        ->with('success', 'Account declined, removed from database, and notification email sent.');
 
-        } catch (\Exception $e) {
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Error declining account: ' . $e->getMessage()
-                ]);
-            }
+    //     } catch (\Exception $e) {
+    //         if ($request->ajax()) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Error declining account: ' . $e->getMessage()
+    //             ]);
+    //         }
 
-            return redirect()->back()->with('error', 'An error occurred while declining the account.');
-        }
-    }
+    //         return redirect()->back()->with('error', 'An error occurred while declining the account.');
+    //     }
+    // }
 
     /**
      * List approved IpAccounts
@@ -338,31 +338,31 @@ class AccountApprovalController extends Controller
     /**
      * List pending applicants
      */
-    public function pending(Request $request)
-    {
-        $query = ApplicantRegistration::where('status', 'pending');
+    // public function pending(Request $request)
+    // {
+    //     $query = ApplicantRegistration::where('status', 'pending');
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'LIKE', "%{$search}%")
-                  ->orWhere('last_name', 'LIKE', "%{$search}%")
-                  ->orWhere('email', 'LIKE', "%{$search}%")
-                  ->orWhere('contact', 'LIKE', "%{$search}%");
-            });
-        }
+    //     if ($request->filled('search')) {
+    //         $search = $request->search;
+    //         $query->where(function ($q) use ($search) {
+    //             $q->where('first_name', 'LIKE', "%{$search}%")
+    //               ->orWhere('last_name', 'LIKE', "%{$search}%")
+    //               ->orWhere('email', 'LIKE', "%{$search}%")
+    //               ->orWhere('contact', 'LIKE', "%{$search}%");
+    //         });
+    //     }
 
-        $pendingAccounts = $query->get();
+    //     $pendingAccounts = $query->get();
 
-        $pendingAccounts->transform(function ($account) {
-            $expectedName  = strtolower($account->first_name . ' ' . $account->last_name);
-            $extractedName = strtolower($account->name ?? '');
-            $account->ocr_match = stripos($extractedName, $expectedName) !== false ? 'Match' : 'Mismatch';
-            return $account;
-        });
+    //     $pendingAccounts->transform(function ($account) {
+    //         $expectedName  = strtolower($account->first_name . ' ' . $account->last_name);
+    //         $extractedName = strtolower($account->name ?? '');
+    //         $account->ocr_match = stripos($extractedName, $expectedName) !== false ? 'Match' : 'Mismatch';
+    //         return $account;
+    //     });
 
-        return view('admin.applicants.pending_accounts', compact('pendingAccounts'));
-    }
+    //     return view('admin.applicants.pending_accounts', compact('pendingAccounts'));
+    // }
 
     /**
      * Admin approval of CocApplication

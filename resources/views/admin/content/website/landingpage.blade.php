@@ -23,7 +23,7 @@
     <!-- Rest of your existing code -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="/css/landing.css?v=1.1">
+    <link rel="stylesheet" href="{{ asset('css/landing.css') }}?v=1.1">
 </head>
 <body>
     <div class="main-container">

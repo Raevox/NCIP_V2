@@ -158,15 +158,15 @@ Route::middleware(['auth:web', 'verified'])->prefix('admin')->name('admin.')->gr
     // Applicants Management
     Route::prefix('applicants')->name('applicants.')->group(function () {
         Route::get('/', [AccountApprovalController::class, 'index'])->name('index');
-        Route::get('/pending', [AccountApprovalController::class, 'pending'])->name('pending');
+        // Route::get('/pending', [AccountApprovalController::class, 'pending'])->name('pending');
         Route::get('/accounts', [AccountApprovalController::class, 'approvedAccounts'])->name('accounts');
         Route::post('/accounts/{id}/archive', [AccountApprovalController::class, 'archive'])->name('accounts.archive');
         Route::get('/coc/{id}/view', [AccountApprovalController::class, 'viewCoc'])->whereNumber('id')->name('coc.view');
         Route::post('/search', [AccountApprovalController::class, 'search'])->name('search');
         Route::post('/{application}/coc-approve', [AdminController::class, 'approveApplication'])->name('coc-approve');
         Route::get('/{id}/transaction', [AccountApprovalController::class, 'transaction'])->whereNumber('id')->name('transaction');
-        Route::post('/{id}/approve', [AccountApprovalController::class, 'approve'])->whereNumber('id')->name('approve');
-        Route::post('/{id}/decline', [AccountApprovalController::class, 'decline'])->whereNumber('id')->name('decline');
+        // Route::post('/{id}/approve', [AccountApprovalController::class, 'approve'])->whereNumber('id')->name('approve');
+        // Route::post('/{id}/decline', [AccountApprovalController::class, 'decline'])->whereNumber('id')->name('decline');
         Route::get('/{id}/view', [AccountApprovalController::class, 'view'])->whereNumber('id')->name('view');
         Route::get('/{id}/document', [AccountApprovalController::class, 'viewDocument'])->whereNumber('id')->name('document');
     });

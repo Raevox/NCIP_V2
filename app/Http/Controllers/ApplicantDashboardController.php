@@ -121,20 +121,24 @@ private function getBlockedMessage($application)
 public function showCocFormStep1()
 {
     $user = Auth::guard('applicant')->user();
-    
-    // Kunin ang current application
+
     $application = CocApplication::where('user_id', $user->id)
         ->whereIn('status', ['Draft', 'Returned'])
         ->latest()
         ->first();
-    
-    // Kunin ang session data
+
     $step1 = session('coc_step1', []);
-    
-    // Kung walang session data pero may application, gamitin ang application data
-    if (empty($step1) && $application && $application->step1) {
-        $step1 = json_decode($application->step1, true);
-        session(['coc_step1' => $step1]);
+
+    // Reload from DB if session is empty OR missing the origin fields specifically
+    // (handles stale sessions cached before origin fields were added to validation)
+    $missingOriginData = empty($step1['origin_province_name'] ?? null);
+
+    if (($empty = empty($step1)) || $missingOriginData) {
+        if ($application && $application->step1) {
+            $dbStep1 = json_decode($application->step1, true);
+            $step1 = $empty ? $dbStep1 : array_merge($dbStep1, $step1);
+            session(['coc_step1' => $step1]);
+        }
     }
 
     $remarks = $application ? json_decode($application->remarks, true) : [];
@@ -144,8 +148,7 @@ public function showCocFormStep1()
         return redirect()->route('applicant.dashboard')
             ->with('error', 'You cannot edit this application. Status: ' . ($application->status ?? 'N/A') . ' | Stage: ' . ($application->coc_status ?? 'N/A'));
     }
-    
-    // ✅ check access
+
     if (!$this->canAccessStep($application, 1)) {
         return redirect()->route('applicant.dashboard')
             ->with('error', 'You can only access the returned step(s).');
@@ -167,12 +170,19 @@ public function saveCocStep1(Request $request)
     'purpose.*' => 'string',
     'purpose_others' => 'nullable|string',
 
-    // ✅ Updated name fields - bawal ang numbers
     'first_name' => 'required|string|max:255|regex:/^[a-zA-Z\s\-\.]+$/',
     'last_name'  => 'required|string|max:255|regex:/^[a-zA-Z\s\-\.]+$/',
     'sex' => 'required|string|max:10',
     'civil_status' => 'required|string|max:50',
     'place_origin' => 'required|string|max:255',
+
+    'origin_province' => 'nullable|string',
+    'origin_province_name' => 'nullable|string',
+    'origin_municipality' => 'nullable|string',
+    'origin_municipality_name' => 'nullable|string',
+    'origin_barangay' => 'nullable|string',
+    'origin_barangay_name' => 'nullable|string',
+
     'ip_group'     => 'required|string|max:255',
     'date_of_birth' => 'required|date',
 

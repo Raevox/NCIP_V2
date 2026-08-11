@@ -59,21 +59,24 @@ class ApplicantRegistrationController extends Controller
         'contact'    => $data['contact'] ?? null,
         'address'    => $data['address'] ?? null,
         'password'   => $hashedPassword,
-        'status'     => 'pending',
+        'status'     => 'active',
         'document_path' => $data['document_path'] ?? null,
     ]);
     
     \Log::info('✅ IpAccount created with ID: ' . $ipAccount->id);
 
     // 2️⃣ Create Applicant Registration linked to ip_account
+    // $data['ip_account_id'] = $ipAccount->id;
+    // $registration = ApplicantRegistration::create($data);
     $data['ip_account_id'] = $ipAccount->id;
+    $data['status'] = 'approved';
     $registration = ApplicantRegistration::create($data);
     
     \Log::info('✅ ApplicantRegistration created with ID: ' . $registration->id);
     \Log::info('═══════════════════════════════════════════');
 
     return redirect()->route('login')
-        ->with('success', 'Registration submitted. Please wait for approval.');
+        ->with('success', 'Registration successful! You can now log in.');
 }
 
     public function decline($id)

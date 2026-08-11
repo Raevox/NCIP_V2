@@ -19,14 +19,13 @@ class ApplicantAuthController extends Controller
             'password' => 'required',
         ]);
 
-        // Check kung status ay approved bago i-attempt ang login
-        if (Auth::guard('applicant')->attempt(array_merge($credentials, ['status' => 'approved']))) {
+        if (Auth::guard('applicant')->attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->route('applicant.dashboard');
         }
 
         return back()->withErrors([
-            'email' => 'Invalid credentials or account not approved yet.',
+            'email' => 'Invalid credentials.',
         ]);
     }
 

@@ -457,7 +457,7 @@ body, .applicants-content {
     <div class="page-header">
         <h2>
             <span class="header-icon"><i class="fas fa-users"></i></span>
-            Approved Accounts
+            Applicant Accounts
         </h2>
     </div>
 
@@ -482,25 +482,15 @@ body, .applicants-content {
                 <i class="fas fa-file-alt"></i> Application
             </a>
             <a href="{{ route('admin.applicants.accounts') }}"
-               class="view-btn {{ request()->routeIs('admin.applicants.accounts') || request()->routeIs('admin.applicants.pending') ? 'active' : '' }}">
+                class="view-btn {{ request()->routeIs('admin.applicants.accounts') ? 'active' : '' }}">
                 <i class="fas fa-users"></i> Account
             </a>
         </div>
     </div>
 
-    {{-- Approved / Pending sub-tabs + count pill --}}
+    {{-- Account count --}}
     <div class="tab-stats-row">
-        <div class="tab-navigation">
-            <a href="{{ route('admin.applicants.accounts') }}"
-               class="tab-btn {{ request()->routeIs('admin.applicants.accounts') ? 'active' : '' }}">
-                <i class="fas fa-check-circle" style="font-size:11px;"></i> Approved
-            </a>
-            <a href="{{ route('admin.applicants.pending') }}"
-               class="tab-btn {{ request()->routeIs('admin.applicants.pending') ? 'active' : '' }}">
-                <i class="fas fa-clock" style="font-size:11px;"></i> Pending
-            </a>
-        </div>
-
+        <div></div>
         <div class="stats-pill">
             <i class="fas fa-user-check"></i>
             <strong>{{ $approvedUsers->total() }}</strong>

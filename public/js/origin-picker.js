@@ -5,10 +5,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     let provinces, municipalities, barangays;
 
     try {
+        const baseUrl = window.APP_BASE_URL || '/';
         const [pRes, mRes, bRes] = await Promise.all([
-            fetch('/data/provinces.json'),
-            fetch('/data/mun.json'),
-            fetch('/data/brgy.json')
+            fetch(baseUrl + 'data/provinces.json'),
+            fetch(baseUrl + 'data/mun.json'),
+            fetch(baseUrl + 'data/brgy.json')
         ]);
         provinces = (await pRes.json()).RECORDS;
         municipalities = (await mRes.json()).RECORDS;

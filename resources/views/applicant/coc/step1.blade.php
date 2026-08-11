@@ -186,8 +186,8 @@
                                                 required
                                                 value="{{ old('origin_province_name', session('coc_step1.origin_province_name') ?? '') }}">
                                             <i class="fas fa-chevron-down dropdown-icon"></i>
-                                            <input type="hidden" id="origin_province" required value="{{ old('origin_province', session('coc_step1.origin_province') ?? '') }}">
-                                            <input type="hidden" id="origin_province_name" required value="{{ old('origin_province_name', session('coc_step1.origin_province_name') ?? '') }}">
+                                            <input type="hidden" name="origin_province" id="origin_province" required value="{{ old('origin_province', session('coc_step1.origin_province') ?? '') }}">
+                                            <input type="hidden" name="origin_province_name" id="origin_province_name" required value="{{ old('origin_province_name', session('coc_step1.origin_province_name') ?? '') }}">
                                             <ul id="originProvinceList" class="dropdown-list" role="listbox" aria-label="Origin province options"></ul>
                                         </div>
                                     </div>
@@ -201,8 +201,8 @@
                                                 required
                                                 value="{{ old('origin_municipality_name', session('coc_step1.origin_municipality_name') ?? '') }}">
                                             <i class="fas fa-chevron-down dropdown-icon"></i>
-                                            <input type="hidden" id="origin_municipality" required value="{{ old('origin_municipality', session('coc_step1.origin_municipality') ?? '') }}">
-                                            <input type="hidden" id="origin_municipality_name" required value="{{ old('origin_municipality_name', session('coc_step1.origin_municipality_name') ?? '') }}">
+                                            <input type="hidden" name="origin_municipality" id="origin_municipality" required value="{{ old('origin_municipality', session('coc_step1.origin_municipality') ?? '') }}">
+                                            <input type="hidden" name="origin_municipality_name" id="origin_municipality_name" required value="{{ old('origin_municipality_name', session('coc_step1.origin_municipality_name') ?? '') }}">
                                             <ul id="originMunicipalityList" class="dropdown-list" role="listbox" aria-label="Origin municipality options"></ul>
                                         </div>
                                     </div>
@@ -216,8 +216,8 @@
                                                 required
                                                 value="{{ old('origin_barangay_name', session('coc_step1.origin_barangay_name') ?? '') }}">
                                             <i class="fas fa-chevron-down dropdown-icon"></i>
-                                            <input type="hidden" id="origin_barangay" required value="{{ old('origin_barangay', session('coc_step1.origin_barangay') ?? '') }}">
-                                            <input type="hidden" id="origin_barangay_name" required value="{{ old('origin_barangay_name', session('coc_step1.origin_barangay_name') ?? '') }}">
+                                            <input type="hidden" name="origin_barangay" id="origin_barangay" required value="{{ old('origin_barangay', session('coc_step1.origin_barangay') ?? '') }}">
+                                            <input type="hidden" name="origin_barangay_name" id="origin_barangay_name" required value="{{ old('origin_barangay_name', session('coc_step1.origin_barangay_name') ?? '') }}">
                                             <ul id="originBarangayList" class="dropdown-list" role="listbox" aria-label="Origin barangay options"></ul>
                                         </div>
                                     </div>
@@ -648,9 +648,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Load location data
     try {
         const [provincesRes, municipalitiesRes, barangaysRes] = await Promise.all([
-            fetch('/data/provinces.json'),
-            fetch('/data/mun.json'),
-            fetch('/data/brgy.json')
+            fetch('{{ asset("data/provinces.json") }}'),
+            fetch('{{ asset("data/mun.json") }}'),
+            fetch('{{ asset("data/brgy.json") }}')
         ]);
         
         if (!provincesRes.ok || !municipalitiesRes.ok || !barangaysRes.ok) {

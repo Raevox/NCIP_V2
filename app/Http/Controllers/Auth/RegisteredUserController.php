@@ -9,9 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
-use App\Models\AdminNotification;
-use App\Models\User;
-use App\Services\NotificationService;
+// use App\Models\AdminNotification;
+// use App\Models\User;
+// use App\Services\NotificationService;
 // OCR
 use thiagoalessio\TesseractOCR\TesseractOCR;
 
@@ -28,7 +28,7 @@ class RegisteredUserController extends Controller
         /**
          * Handle an incoming registration request.
          */
-        public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $messages = [
             'email.regex' => 'Please use Gmail address only (@gmail.com)',
@@ -51,7 +51,7 @@ class RegisteredUserController extends Controller
                 'required', 
                 'string', 
                 'size:11',
-                'regex:/^09[0-9]{9}$/' // Must start with 09 followed by 9 digits
+                'regex:/^09[0-9]{9}$/'
             ],
             'province_code'    => ['required', 'string'],
             'municipality_code'=> ['required', 'string'],
@@ -64,32 +64,28 @@ class RegisteredUserController extends Controller
             'password'         => ['required', 'confirmed', Rules\Password::defaults()],
             'birth_certificate'=> ['required', 'file', 'mimes:jpg,jpeg,png,gif,bmp,tiff,pdf', 'max:10240'],
         ]);
-    
+
         $address = $request->province_name . ', ' . $request->municipality_name . ', ' . $request->barangay_name;
-    
+
         $documentPath = null;
         $documentText = null;
         $ocrName = null;
         $ocrBirthDate = null;
-    
+
         if ($request->hasFile('birth_certificate')) {
             $file = $request->file('birth_certificate');
             $extension = strtolower($file->getClientOriginalExtension());
-        
-            // Save file to storage
+
             $documentPath = $file->storeAs('documents', time() . '.' . $extension, 'public');
-        
-            // OCR only for images
+
             if (in_array($extension, ['jpg','jpeg','png','gif','bmp','tiff'])) {
                 try {
                     $documentText = (new TesseractOCR(storage_path('app/public/' . $documentPath)))->run();
-                
-                    // Extract Name
+
                     if (preg_match('/Name:\s*(.+)/i', $documentText, $matches)) {
                         $ocrName = trim($matches[1]);
                     }
-                
-                    // Extract Birth Date (MM/DD/YYYY)
+
                     if (preg_match('/Birth\s*Date:\s*([0-9]{2}\/[0-9]{2}\/[0-9]{4})/i', $documentText, $matches)) {
                         $ocrBirthDate = trim($matches[1]);
                     }
@@ -100,8 +96,8 @@ class RegisteredUserController extends Controller
                 }
             }
         }
-    
-        ApplicantRegistration::create([
+
+        $registration = ApplicantRegistration::create([
             'first_name'        => $request->first_name,
             'last_name'         => $request->last_name,
             'name'              => $ocrName ?? $request->first_name . ' ' . $request->last_name,
@@ -117,31 +113,47 @@ class RegisteredUserController extends Controller
             'tribe'             => $request->tribe,
             'leader'            => $request->leader,
             'password'          => Hash::make($request->password),
-            'status'            => 'pending',
+            'status'            => 'approved',
             'document_path'     => $documentPath,
             'document_text'     => $documentText,
-            'birth_date'        => $ocrBirthDate, // extracted birth date
+            'birth_date'        => $ocrBirthDate,
         ]);
-    $applicant = ApplicantRegistration::latest()->first();
 
-// Kunin lahat ng admin
-$admins = User::where('role', 'admin')->where('status', 'active')->get();
+        // Immediately create the IpAccount too, so the applicant can log in right away
+        // (this used to only happen when an admin approved via AccountApprovalController::approve())
+        \App\Models\IpAccount::create([
+            'first_name'        => $registration->first_name,
+            'last_name'         => $registration->last_name,
+            'name'              => $registration->first_name . ' ' . $registration->last_name,
+            'email'             => $registration->email,
+            'contact'           => $registration->contact,
+            'address'           => $registration->address,
+            'province_code'     => $registration->province_code,
+            'province_name'     => $registration->province_name,
+            'municipality_code' => $registration->municipality_code,
+            'municipality_name' => $registration->municipality_name,
+            'barangay_code'     => $registration->barangay_code,
+            'barangay_name'     => $registration->barangay_name,
+            'tribe'             => $registration->tribe,
+            'leader'            => $registration->leader,
+            'password'          => $registration->password,
+            'status'            => 'active',
+            'document_path'     => $registration->document_path,
+            'document_text'     => $registration->document_text,
+        ]);
 
-foreach ($admins as $admin) {
-    AdminNotification::create([
-        'user_id'      => $admin->id,
-        'type'         => 'pending_account',
-        'title'        => 'New Registration',
-        'message'      => "{$applicant->first_name} {$applicant->last_name} has registered.",
-        'related_id'   => $applicant->id,
-        'related_type' => 'ApplicantRegistration',
-        'action_url'   => route('admin.applicants.view', $applicant->id),
-        'priority'     => 'high',
-        'is_read'      => false,
-    ]);
-}
+        // Send welcome email
+        if (!empty($registration->email)) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($registration->email)
+                    ->send(new \App\Mail\AccountApprovedMail($registration));
+            } catch (\Exception $e) {
+                \Log::error('Welcome email sending failed: ' . $e->getMessage());
+            }
+        }
+
         return redirect()->route('login')
-                         ->with('success', 'Your registration has been submitted and is pending admin approval.');
+                        ->with('success', 'Registration successful! You can now log in.');
     }
-    
+        
 }

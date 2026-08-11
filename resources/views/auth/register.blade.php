@@ -473,11 +473,10 @@
 
   <div class="modal-backdrop" id="approvalModal">
     <div class="modal-box">
-      <div class="modal-icon"><i class="fas fa-clock"></i></div>
-      <h3>Account Pending Approval</h3>
-      <p>Your registration has been submitted. Your account is now awaiting approval from the administrator.</p>
-      <p>You will be notified once it has been reviewed.</p>
-      <button class="btn-ok" id="modalOkBtn">Got it, thanks!</button>
+      <div class="modal-icon"><i class="fas fa-check-circle"></i></div>
+      <h3>Ready to Create Your Account</h3>
+      <p>Please review your information before submitting. Once created, you'll be able to log in right away.</p>
+      <button class="btn-ok" id="modalOkBtn">Confirm &amp; Create Account</button>
     </div>
   </div>
 
@@ -699,9 +698,9 @@
 
     try {
       const [pRes, mRes, bRes] = await Promise.all([
-        fetch('/data/provinces.json'),
-        fetch('/data/mun.json'),
-        fetch('/data/brgy.json'),
+        fetch('{{ asset("data/provinces.json") }}'),
+        fetch('{{ asset("data/mun.json") }}'),
+        fetch('{{ asset("data/brgy.json") }}'),
       ]);
       const provinces      = (await pRes.json()).RECORDS;
       const municipalities = (await mRes.json()).RECORDS;
