@@ -247,10 +247,12 @@ public function saveCocStep2(Request $request)
     'degree_obtained'        => 'nullable|string|max:255',
 
     // Parents - ✅ Updated
-    'father_name'     => 'required|string|max:255|regex:/^[a-zA-Z\s\-\.]+$/',
+    'father_first_name' => 'required|string|max:255|regex:/^[a-zA-Z\s\-\.]+$/',
+    'father_last_name'  => 'required|string|max:255|regex:/^[a-zA-Z\s\-\.]+$/',
     'father_ipgroup'  => 'required|string|max:255',
     'father_origin'   => 'required|string|max:255',
-    'mother_name'     => 'required|string|max:255|regex:/^[a-zA-Z\s\-\.]+$/',
+    'mother_first_name' => 'required|string|max:255|regex:/^[a-zA-Z\s\-\.]+$/',
+    'mother_last_name'  => 'required|string|max:255|regex:/^[a-zA-Z\s\-\.]+$/',
     'mother_ipgroup'  => 'required|string|max:255',
     'mother_origin'   => 'required|string|max:255',
 
@@ -344,7 +346,8 @@ public function saveCocStep2(Request $request)
     $step3 = session('coc_step3', []);
 
     // Split fallback old values
-    [$fatherFirst, $fatherLast] = $this->splitName($step2['father_name'] ?? '');
+    $fatherFirst = $step2['father_first_name'] ?? '';
+    $fatherLast  = $step2['father_last_name'] ?? '';
     [$gfFirst, $gfLast] = $this->splitName($step2['father_grandfather_name'] ?? '');
     [$gmFirst, $gmLast] = $this->splitName($step2['father_grandmother_name'] ?? '');
 
@@ -449,7 +452,8 @@ public function saveCocStep3(Request $request)
     'great_grandmother_grandmother_ipgroup'    => 'required|string|max:255',
 ]);
     // Merge prefill from Step 2 (if any)
-    [$fatherFirst, $fatherLast] = $this->splitName($step2['father_name'] ?? '');
+    $fatherFirst = $step2['father_first_name'] ?? '';
+    $fatherLast  = $step2['father_last_name'] ?? '';
     [$gfFirst, $gfLast] = $this->splitName($step2['father_grandfather_name'] ?? '');
     [$gmFirst, $gmLast] = $this->splitName($step2['father_grandmother_name'] ?? '');
 
@@ -494,7 +498,8 @@ public function showCocFormStep4()
     $step4 = session('coc_step4', []);
 
     // Split mother name
-    [$motherFirst, $motherLast] = $this->splitName($step2['mother_name'] ?? '');
+    $motherFirst = $step2['mother_first_name'] ?? '';
+    $motherLast  = $step2['mother_last_name'] ?? '';
     [$mgfFirst, $mgfLast] = $this->splitName($step2['mother_grandfather_name'] ?? '');
     [$mgmFirst, $mgmLast] = $this->splitName($step2['mother_grandmother_name'] ?? '');
 
@@ -581,7 +586,8 @@ public function saveCocStep4(Request $request)
     'great_grandmother_grandmother_mother_origin'     => 'required|string|max:255',
     'great_grandmother_grandmother_mother_ipgroup'    => 'required|string|max:255',
 ]);
-    [$motherFirst, $motherLast] = $this->splitName($step2['mother_name'] ?? '');
+    $motherFirst = $step2['mother_first_name'] ?? '';
+    $motherLast  = $step2['mother_last_name'] ?? '';
     $mgfFirst = $step2['maternal_grandfather_first_name'] ?? '';
     $mgfLast  = $step2['maternal_grandfather_last_name'] ?? '';
     $mgmFirst = $step2['maternal_grandmother_first_name'] ?? '';

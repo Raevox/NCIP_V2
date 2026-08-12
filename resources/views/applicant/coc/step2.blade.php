@@ -61,14 +61,25 @@
                                         <h5 class="parent-title">{{ __('Father') }}</h5>
                                         
                                         <div class="form-group">
-                                            <label class="form-label" for="father_name">{{ __("Father's Name:") }}</label>
+                                            <label class="form-label" for="father_first_name">{{ __("Father's First Name:") }}</label>
                                             <input type="text" 
-                                                   name="father_name" 
-                                                   id="father_name"
-                                                   class="form-control"
-                                                   placeholder="{{ __("Enter father's full name") }}"
-                                                   autocomplete="off"
-                                                   value="{{ old('father_name', $step2['father_name'] ?? '') }}" required>
+                                                name="father_first_name" 
+                                                id="father_first_name"
+                                                class="form-control"
+                                                placeholder="{{ __('Enter first name') }}"
+                                                autocomplete="off"
+                                                value="{{ old('father_first_name', $step2['father_first_name'] ?? '') }}" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label" for="father_last_name">{{ __("Father's Last Name:") }}</label>
+                                            <input type="text" 
+                                                name="father_last_name" 
+                                                id="father_last_name"
+                                                class="form-control"
+                                                placeholder="{{ __('Enter last name') }}"
+                                                autocomplete="off"
+                                                value="{{ old('father_last_name', $step2['father_last_name'] ?? '') }}" required>
                                         </div>
                                         
 
@@ -93,14 +104,25 @@
                                         <h5 class="parent-title">{{ __('Mother (Maiden Name)') }}</h5>
                                         
                                         <div class="form-group">
-                                            <label class="form-label" for="mother_name">{{ __("Mother's Name:") }}</label>
+                                            <label class="form-label" for="mother_first_name">{{ __("Mother's First Name:") }}</label>
                                             <input type="text" 
-                                                   name="mother_name" 
-                                                   id="mother_name"
-                                                   class="form-control"
-                                                   placeholder="{{ __("Enter mother's maiden name") }}"
-                                                   autocomplete="off"
-                                                   value="{{ old('mother_name', $step2['mother_name'] ?? '') }}"required>
+                                                name="mother_first_name" 
+                                                id="mother_first_name"
+                                                class="form-control"
+                                                placeholder="{{ __('Enter first name (maiden)') }}"
+                                                autocomplete="off"
+                                                value="{{ old('mother_first_name', $step2['mother_first_name'] ?? '') }}" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label" for="mother_last_name">{{ __("Mother's Last Name:") }}</label>
+                                            <input type="text" 
+                                                name="mother_last_name" 
+                                                id="mother_last_name"
+                                                class="form-control"
+                                                placeholder="{{ __('Enter last name (maiden)') }}"
+                                                autocomplete="off"
+                                                value="{{ old('mother_last_name', $step2['mother_last_name'] ?? '') }}" required>
                                         </div>
 
                                         <div class="form-group">
