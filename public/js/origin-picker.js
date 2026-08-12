@@ -104,7 +104,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     items.forEach(item => {
                         const li = document.createElement('li');
                         li.textContent = item[labelKey];
-                        li.addEventListener('click', () => {
+                        li.addEventListener('mousedown', (e) => {
+                            e.preventDefault();
+
                             input.value = item[labelKey];
                             codeInput.value = item[filterKey];
                             nameInput.value = item[labelKey];

@@ -756,7 +756,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                         li.setAttribute('data-value', item[filterKey]);
                         li.setAttribute('role', 'option');
                         
-                        li.addEventListener('click', () => {
+                        li.addEventListener('mousedown', (e) => {
+                            e.preventDefault();
+
                             input.value = item[labelKey];
                             hidden.value = item[filterKey];
                             hiddenName.value = item[labelKey];
