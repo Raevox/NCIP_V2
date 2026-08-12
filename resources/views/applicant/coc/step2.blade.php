@@ -1,7 +1,7 @@
 @extends('layouts.applicant')
 
-@section('title', 'COC Form')
-@section('page-title', 'NCIP COC Form 2')
+@section('title', __('COC Form'))
+@section('page-title', __('NCIP COC Form 2'))
 
 @section('content')
     @include('applicant.coc.progress-circle', ['currentStep' => 2])
@@ -10,10 +10,10 @@
             <div class="col-12 col-lg-11">
                 <div class="form-container">
                     <div class="form-header">
-                        <h2 class="form-title">NATIONAL COMMISSION ON INDIGENOUS PEOPLES</h2>
+                        <h2 class="form-title">{{ __('NATIONAL COMMISSION ON INDIGENOUS PEOPLES') }}</h2>
                         <p class="form-subtitle">
-                            <strong>Direction:</strong> The information below will be used to fill out Certificate of Confirmation.<br>
-                            Please fill out this form as completely and accurately as possible.
+                            <strong>{{ __('Direction:') }}</strong> {{ __('The information below will be used to fill out Certificate of Confirmation.') }}<br>
+                            {{ __('Please fill out this form as completely and accurately as possible.') }}
                         </p>
                     </div>
 
@@ -26,26 +26,26 @@
 
                             {{-- Educational Background --}}
                             <div class="form-section">
-                                <h4 class="section-title">II. Educational Background</h4>
+                                <h4 class="section-title">{{ __('II. Educational Background') }}</h4>
                                 
                                 <div class="form-group">
-                                    <label class="form-label" for="educational_attainment">Highest Educational Attainment:</label>
+                                    <label class="form-label" for="educational_attainment">{{ __('Highest Educational Attainment:') }}</label>
                                     <select name="educational_attainment" id="educational_attainment" class="form-control" required>
-                                        <option value="">-- Select Educational Attainment --</option>
-                                        <option value="Elementary" {{ old('educational_attainment', $step2['educational_attainment'] ?? '') == 'Elementary' ? 'selected' : '' }}>Elementary</option>
-                                        <option value="High School" {{ old('educational_attainment', $step2['educational_attainment'] ?? '') == 'High School' ? 'selected' : '' }}>High School</option>
-                                        <option value="College" {{ old('educational_attainment', $step2['educational_attainment'] ?? '') == 'College' ? 'selected' : '' }}>College</option>
-                                        <option value="Post Graduate" {{ old('educational_attainment', $step2['educational_attainment'] ?? '') == 'Post Graduate' ? 'selected' : '' }}>Post Graduate</option>
+                                        <option value="">{{ __('-- Select Educational Attainment --') }}</option>
+                                        <option value="Elementary" {{ old('educational_attainment', $step2['educational_attainment'] ?? '') == 'Elementary' ? 'selected' : '' }}>{{ __('Elementary') }}</option>
+                                        <option value="High School" {{ old('educational_attainment', $step2['educational_attainment'] ?? '') == 'High School' ? 'selected' : '' }}>{{ __('High School') }}</option>
+                                        <option value="College" {{ old('educational_attainment', $step2['educational_attainment'] ?? '') == 'College' ? 'selected' : '' }}>{{ __('College') }}</option>
+                                        <option value="Post Graduate" {{ old('educational_attainment', $step2['educational_attainment'] ?? '') == 'Post Graduate' ? 'selected' : '' }}>{{ __('Post Graduate') }}</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="form-label" for="degree_obtained">Degree Obtained:</label>
+                                    <label class="form-label" for="degree_obtained">{{ __('Degree Obtained:') }}</label>
                                     <input type="text" 
                                            name="degree_obtained" 
                                            id="degree_obtained"
                                            class="form-control"
-                                           placeholder="Enter your degree (if any)"
+                                           placeholder="{{ __('Enter your degree (if any)') }}"
                                            autocomplete="off"
                                            value="{{ old('degree_obtained', $step2['degree_obtained'] ?? '') }}">
                                 </div>
@@ -53,29 +53,29 @@
 
                             {{-- Parental Background --}}
                             <div class="form-section">
-                                <h4 class="section-title">III. Parental Background</h4>
+                                <h4 class="section-title">{{ __('III. Parental Background') }}</h4>
                                 
                                 <div class="parental-grid">
                                     {{-- Parents Section --}}
                                     <div class="parent-section">
-                                        <h5 class="parent-title">Father</h5>
+                                        <h5 class="parent-title">{{ __('Father') }}</h5>
                                         
                                         <div class="form-group">
-                                            <label class="form-label" for="father_name">Father's Name:</label>
+                                            <label class="form-label" for="father_name">{{ __("Father's Name:") }}</label>
                                             <input type="text" 
                                                    name="father_name" 
                                                    id="father_name"
                                                    class="form-control"
-                                                   placeholder="Enter father's full name"
+                                                   placeholder="{{ __("Enter father's full name") }}"
                                                    autocomplete="off"
                                                    value="{{ old('father_name', $step2['father_name'] ?? '') }}" required>
                                         </div>
                                         
 
                                         <div class="form-group">
-                                            <label class="form-label" for="father_ipgroup">IP Group:</label>
+                                            <label class="form-label" for="father_ipgroup">{{ __('IP Group:') }}</label>
                                             <select name="father_ipgroup" id="father_ipgroup" class="form-control" required>
-                                                <option value="">Select IP Group</option>
+                                                <option value="">{{ __('Select IP Group') }}</option>
                                                 @foreach($ipGroups as $group)
                                                     <option value="{{ $group }}" {{ old('father_ipgroup', $step2['father_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
                                                 @endforeach
@@ -84,29 +84,29 @@
 
                                        <x-origin-picker
                                         name="father"
-                                        label="Place of Origin:"
+                                        :label="__('Place of Origin:')"
                                         :old-value="old('father_origin', $step2['father_origin'] ?? '')"
                                         :required="true" />
                                     </div>
 
                                     <div class="parent-section">
-                                        <h5 class="parent-title">Mother (Maiden Name)</h5>
+                                        <h5 class="parent-title">{{ __('Mother (Maiden Name)') }}</h5>
                                         
                                         <div class="form-group">
-                                            <label class="form-label" for="mother_name">Mother's Name:</label>
+                                            <label class="form-label" for="mother_name">{{ __("Mother's Name:") }}</label>
                                             <input type="text" 
                                                    name="mother_name" 
                                                    id="mother_name"
                                                    class="form-control"
-                                                   placeholder="Enter mother's maiden name"
+                                                   placeholder="{{ __("Enter mother's maiden name") }}"
                                                    autocomplete="off"
                                                    value="{{ old('mother_name', $step2['mother_name'] ?? '') }}"required>
                                         </div>
 
                                         <div class="form-group">
-                                            <label class="form-label" for="mother_ipgroup">IP Group:</label>
+                                            <label class="form-label" for="mother_ipgroup">{{ __('IP Group:') }}</label>
                                             <select name="mother_ipgroup" id="mother_ipgroup" class="form-control" required>
-                                                <option value="">Select IP Group</option>
+                                                <option value="">{{ __('Select IP Group') }}</option>
                                                 @foreach($ipGroups as $group)
                                                     <option value="{{ $group }}" {{ old('mother_ipgroup', $step2['mother_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
                                                 @endforeach
@@ -115,46 +115,46 @@
 
                                         <x-origin-picker
                                         name="mother"
-                                        label="Place of Origin:"
+                                        :label="__('Place of Origin:')"
                                         :old-value="old('mother_origin', $step2['mother_origin'] ?? '')"
                                         :required="true" />
                                     </div>
 
                                     {{-- Grandparents Header --}}
                                     <div class="grandparent-header">
-                                        <h5 class="section-subtitle">Grandparents</h5>
+                                        <h5 class="section-subtitle">{{ __('Grandparents') }}</h5>
                                     </div>
 
                                     {{-- Paternal Grandfather --}}
                                     <div class="parent-section">
-                                        <h5 class="parent-title">Paternal Grandfather</h5>
+                                        <h5 class="parent-title">{{ __('Paternal Grandfather') }}</h5>
                                         
                                         <div class="form-group">
-                                            <label class="form-label" for="paternal_grandfather_first_name">First Name:</label>
+                                            <label class="form-label" for="paternal_grandfather_first_name">{{ __('First Name:') }}</label>
                                             <input type="text" 
                                                    name="paternal_grandfather_first_name" 
                                                    id="paternal_grandfather_first_name"
                                                    class="form-control"
-                                                   placeholder="Enter first name"
+                                                   placeholder="{{ __('Enter first name') }}"
                                                    autocomplete="off"
                                                    value="{{ old('paternal_grandfather_first_name', $step2['paternal_grandfather_first_name'] ?? '') }}"required>
                                         </div>
 
                                         <div class="form-group">
-                                            <label class="form-label" for="paternal_grandfather_last_name">Last Name:</label>
+                                            <label class="form-label" for="paternal_grandfather_last_name">{{ __('Last Name:') }}</label>
                                             <input type="text" 
                                                    name="paternal_grandfather_last_name" 
                                                    id="paternal_grandfather_last_name"
                                                    class="form-control"
-                                                   placeholder="Enter last name"
+                                                   placeholder="{{ __('Enter last name') }}"
                                                    autocomplete="off"
                                                    value="{{ old('paternal_grandfather_last_name', $step2['paternal_grandfather_last_name'] ?? '') }}"required>
                                         </div>
 
                                         <div class="form-group">
-                                            <label class="form-label" for="paternal_grandfather_ipgroup">IP Group:</label>
+                                            <label class="form-label" for="paternal_grandfather_ipgroup">{{ __('IP Group:') }}</label>
                                             <select name="paternal_grandfather_ipgroup" id="paternal_grandfather_ipgroup" class="form-control" required>
-                                                <option value="">Select IP Group</option>
+                                                <option value="">{{ __('Select IP Group') }}</option>
                                                 @foreach($ipGroups as $group)
                                                     <option value="{{ $group }}" {{ old('paternal_grandfather_ipgroup', $step2['paternal_grandfather_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
                                                 @endforeach
@@ -163,41 +163,41 @@
 
                                         <x-origin-picker
                                         name="paternal_grandfather"
-                                        label="Place of Origin:"
+                                        :label="__('Place of Origin:')"
                                         :old-value="old('paternal_grandfather_origin', $step2['paternal_grandfather_origin'] ?? '')"
                                         :required="true" />
                                     </div>
 
                                     {{-- Maternal Grandfather --}}
                                     <div class="parent-section">
-                                        <h5 class="parent-title">Maternal Grandfather</h5>
+                                        <h5 class="parent-title">{{ __('Maternal Grandfather') }}</h5>
                                         
                                         <div class="form-group">
-                                            <label class="form-label" for="maternal_grandfather_first_name">First Name:</label>
+                                            <label class="form-label" for="maternal_grandfather_first_name">{{ __('First Name:') }}</label>
                                             <input type="text" 
                                                    name="maternal_grandfather_first_name" 
                                                    id="maternal_grandfather_first_name"
                                                    class="form-control"
-                                                   placeholder="Enter first name"
+                                                   placeholder="{{ __('Enter first name') }}"
                                                    autocomplete="off"
                                                    value="{{ old('maternal_grandfather_first_name', $step2['maternal_grandfather_first_name'] ?? '') }}"required>
                                         </div>
 
                                         <div class="form-group">
-                                            <label class="form-label" for="maternal_grandfather_last_name">Last Name:</label>
+                                            <label class="form-label" for="maternal_grandfather_last_name">{{ __('Last Name:') }}</label>
                                             <input type="text" 
                                                    name="maternal_grandfather_last_name" 
                                                    id="maternal_grandfather_last_name"
                                                    class="form-control"
-                                                   placeholder="Enter last name"
+                                                   placeholder="{{ __('Enter last name') }}"
                                                    autocomplete="off"
                                                    value="{{ old('maternal_grandfather_last_name', $step2['maternal_grandfather_last_name'] ?? '') }}"required>
                                         </div>
 
                                         <div class="form-group">
-                                            <label class="form-label" for="maternal_grandfather_ipgroup">IP Group:</label>
+                                            <label class="form-label" for="maternal_grandfather_ipgroup">{{ __('IP Group:') }}</label>
                                             <select name="maternal_grandfather_ipgroup" id="maternal_grandfather_ipgroup" class="form-control" required>
-                                                <option value="">Select IP Group</option>
+                                                <option value="">{{ __('Select IP Group') }}</option>
                                                 @foreach($ipGroups as $group)
                                                     <option value="{{ $group }}" {{ old('maternal_grandfather_ipgroup', $step2['maternal_grandfather_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
                                                 @endforeach
@@ -206,41 +206,41 @@
 
                                         <x-origin-picker
                                         name="maternal_grandfather"
-                                        label="Place of Origin:"
+                                        :label="__('Place of Origin:')"
                                         :old-value="old('maternal_grandfather_origin', $step2['maternal_grandfather_origin'] ?? '')"
                                         :required="true" />
                                     </div>
 
                                     {{-- Paternal Grandmother --}}
                                     <div class="parent-section">
-                                        <h5 class="parent-title">Paternal Grandmother</h5>
+                                        <h5 class="parent-title">{{ __('Paternal Grandmother') }}</h5>
                                         
                                         <div class="form-group">
-                                            <label class="form-label" for="paternal_grandmother_first_name">First Name:</label>
+                                            <label class="form-label" for="paternal_grandmother_first_name">{{ __('First Name:') }}</label>
                                             <input type="text" 
                                                    name="paternal_grandmother_first_name" 
                                                    id="paternal_grandmother_first_name"
                                                    class="form-control"
-                                                   placeholder="Enter first name"
+                                                   placeholder="{{ __('Enter first name') }}"
                                                    autocomplete="off"
                                                    value="{{ old('paternal_grandmother_first_name', $step2['paternal_grandmother_first_name'] ?? '') }}"required>
                                         </div>
 
                                         <div class="form-group">
-                                            <label class="form-label" for="paternal_grandmother_last_name">Last Name:</label>
+                                            <label class="form-label" for="paternal_grandmother_last_name">{{ __('Last Name:') }}</label>
                                             <input type="text" 
                                                    name="paternal_grandmother_last_name" 
                                                    id="paternal_grandmother_last_name"
                                                    class="form-control"
-                                                   placeholder="Enter last name"
+                                                   placeholder="{{ __('Enter last name') }}"
                                                    autocomplete="off"
                                                    value="{{ old('paternal_grandmother_last_name', $step2['paternal_grandmother_last_name'] ?? '') }}"required>
                                         </div>
 
                                         <div class="form-group">
-                                            <label class="form-label" for="paternal_grandmother_ipgroup">IP Group:</label>
+                                            <label class="form-label" for="paternal_grandmother_ipgroup">{{ __('IP Group:') }}</label>
                                             <select name="paternal_grandmother_ipgroup" id="paternal_grandmother_ipgroup" class="form-control" required>
-                                                <option value="">Select IP Group</option>
+                                                <option value="">{{ __('Select IP Group') }}</option>
                                                 @foreach($ipGroups as $group)
                                                     <option value="{{ $group }}" {{ old('paternal_grandmother_ipgroup', $step2['paternal_grandmother_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
                                                 @endforeach
@@ -249,41 +249,41 @@
 
                                         <x-origin-picker
                                         name="paternal_grandmother"
-                                        label="Place of Origin:"
+                                        :label="__('Place of Origin:')"
                                         :old-value="old('paternal_grandmother_origin', $step2['paternal_grandmother_origin'] ?? '')"
                                         :required="true" />
                                     </div>
 
                                     {{-- Maternal Grandmother --}}
                                     <div class="parent-section">
-                                        <h5 class="parent-title">Maternal Grandmother</h5>
+                                        <h5 class="parent-title">{{ __('Maternal Grandmother') }}</h5>
                                         
                                         <div class="form-group">
-                                            <label class="form-label" for="maternal_grandmother_first_name">First Name:</label>
+                                            <label class="form-label" for="maternal_grandmother_first_name">{{ __('First Name:') }}</label>
                                             <input type="text" 
                                                    name="maternal_grandmother_first_name" 
                                                    id="maternal_grandmother_first_name"
                                                    class="form-control"
-                                                   placeholder="Enter first name"
+                                                   placeholder="{{ __('Enter first name') }}"
                                                    autocomplete="off"
                                                    value="{{ old('maternal_grandmother_first_name', $step2['maternal_grandmother_first_name'] ?? '') }}"required>
                                         </div>
 
                                         <div class="form-group">
-                                            <label class="form-label" for="maternal_grandmother_last_name">Last Name:</label>
+                                            <label class="form-label" for="maternal_grandmother_last_name">{{ __('Last Name:') }}</label>
                                             <input type="text" 
                                                    name="maternal_grandmother_last_name" 
                                                    id="maternal_grandmother_last_name"
                                                    class="form-control"
-                                                   placeholder="Enter last name"
+                                                   placeholder="{{ __('Enter last name') }}"
                                                    autocomplete="off"
                                                    value="{{ old('maternal_grandmother_last_name', $step2['maternal_grandmother_last_name'] ?? '') }}"required>
                                         </div>
 
                                         <div class="form-group">
-                                            <label class="form-label" for="maternal_grandmother_ipgroup">IP Group:</label>
+                                            <label class="form-label" for="maternal_grandmother_ipgroup">{{ __('IP Group:') }}</label>
                                             <select name="maternal_grandmother_ipgroup" id="maternal_grandmother_ipgroup" class="form-control" required>
-                                                <option value="">Select IP Group</option>
+                                                <option value="">{{ __('Select IP Group') }}</option>
                                                 @foreach($ipGroups as $group)
                                                     <option value="{{ $group }}" {{ old('maternal_grandmother_ipgroup', $step2['maternal_grandmother_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
                                                 @endforeach
@@ -292,7 +292,7 @@
 
                                         <x-origin-picker
                                         name="maternal_grandmother"
-                                        label="Place of Origin:"
+                                        :label="__('Place of Origin:')"
                                         :old-value="old('maternal_grandmother_origin', $step2['maternal_grandmother_origin'] ?? '')"
                                         :required="true" />
                                     </div>
@@ -308,7 +308,7 @@
                                            id="landMatterCheck"
                                            {{ old('land_matter', $step2['land_matter'] ?? '') ? 'checked' : '' }}>
                                     <label for="landMatterCheck" class="checkbox-option-label">
-                                        If purpose of certification is land matter, fill up the following:
+                                        {{ __('If purpose of certification is land matter, fill up the following:') }}
                                     </label>
                                 </div>
 
@@ -316,12 +316,12 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="form-label" for="homestead_no">Homestead/Free Patent No.:</label>
+                                                <label class="form-label" for="homestead_no">{{ __('Homestead/Free Patent No.:') }}</label>
                                                 <input type="text" 
                                                        name="homestead_no" 
                                                        id="homestead_no"
                                                        class="form-control land-matter-input"
-                                                       placeholder="Enter Homestead or Free Patent No."
+                                                       placeholder="{{ __('Enter Homestead or Free Patent No.') }}"
                                                        autocomplete="off"
                                                        value="{{ old('homestead_no', $step2['homestead_no'] ?? '') }}"
                                                        {{ old('land_matter', $step2['land_matter'] ?? '') ? '' : 'disabled' }}>
@@ -329,12 +329,12 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="form-label" for="lot_no">Lot No.:</label>
+                                                <label class="form-label" for="lot_no">{{ __('Lot No.:') }}</label>
                                                 <input type="text" 
                                                        name="lot_no" 
                                                        id="lot_no"
                                                        class="form-control land-matter-input"
-                                                       placeholder="Enter Lot No."
+                                                       placeholder="{{ __('Enter Lot No.') }}"
                                                        autocomplete="off"
                                                        value="{{ old('lot_no', $step2['lot_no'] ?? '') }}"
                                                        {{ old('land_matter', $step2['land_matter'] ?? '') ? '' : 'disabled' }}>
@@ -342,12 +342,12 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="form-label" for="issuance_date">Date of Issuance:</label>
+                                                <label class="form-label" for="issuance_date">{{ __('Date of Issuance:') }}</label>
                                                 <input type="text" 
                                                        name="issuance_date" 
                                                        id="issuance_date"
                                                        class="form-control land-matter-input"
-                                                       placeholder="Enter date of issuance"
+                                                       placeholder="{{ __('Enter date of issuance') }}"
                                                        autocomplete="off"
                                                        value="{{ old('issuance_date', $step2['issuance_date'] ?? '') }}"
                                                        {{ old('land_matter', $step2['land_matter'] ?? '') ? '' : 'disabled' }}>
@@ -355,12 +355,12 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="form-label" for="area">Area:</label>
+                                                <label class="form-label" for="area">{{ __('Area:') }}</label>
                                                 <input type="text" 
                                                        name="area" 
                                                        id="area"
                                                        class="form-control land-matter-input"
-                                                       placeholder="Enter land area"
+                                                       placeholder="{{ __('Enter land area') }}"
                                                        autocomplete="off"
                                                        value="{{ old('area', $step2['area'] ?? '') }}"
                                                        {{ old('land_matter', $step2['land_matter'] ?? '') ? '' : 'disabled' }}>
@@ -368,12 +368,12 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <label class="form-label" for="location">Location:</label>
+                                                <label class="form-label" for="location">{{ __('Location:') }}</label>
                                                 <input type="text" 
                                                        name="location" 
                                                        id="location"
                                                        class="form-control land-matter-input"
-                                                       placeholder="Enter land location"
+                                                       placeholder="{{ __('Enter land location') }}"
                                                        autocomplete="off"
                                                        value="{{ old('location', $step2['location'] ?? '') }}"
                                                        {{ old('land_matter', $step2['land_matter'] ?? '') ? '' : 'disabled' }}>
@@ -384,22 +384,22 @@
                             </div>
 {{-- Applicant Pledge --}}
 <div class="form-section">
-    <h4 class="section-title">IV. Applicant Pledge</h4>
+    <h4 class="section-title">{{ __('IV. Applicant Pledge') }}</h4>
     <p class="pledge-text">
-        I 
+        {{ __('I') }} 
         <input type="text" 
                name="applicant_name" 
                id="applicant_name"
                class="pledge-input"
-               placeholder="Enter your name"
+               placeholder="{{ __('Enter your name') }}"
                autocomplete="name"
                value="{{ old('applicant_name', $step2['applicant_name'] ?? ($user->first_name . ' ' . $user->last_name)) }}"
                required> 
-        do solemnly swear that all data given in the above information are true and correct to the best of my knowledge and based on authentic records. 
-        I understand that any false information is enough to cause the denial of my application and could subject me to CRIMINAL and/or ADMINISTRATIVE prosecution.
+        {{ __('do solemnly swear that all data given in the above information are true and correct to the best of my knowledge and based on authentic records.') }} 
+        {{ __('I understand that any false information is enough to cause the denial of my application and could subject me to CRIMINAL and/or ADMINISTRATIVE prosecution.') }}
     </p>
     <div class="form-group">
-        <label class="form-label" for="date_accomplishment">Date of Accomplishment:</label>
+        <label class="form-label" for="date_accomplishment">{{ __('Date of Accomplishment:') }}</label>
         <input type="date" 
                name="date_accomplishment" 
                id="date_accomplishment"
@@ -410,7 +410,7 @@
 </div>
                             {{-- Form Actions --}}
                             <div class="form-actions">
-                                <a href="{{ route('applicant.coc.step1') }}" class="btn btn-back">← Back</a>
+                                <a href="{{ route('applicant.coc.step1') }}" class="btn btn-back">← {{ __('Back') }}</a>
                                 
                                 @if(
                                     $application->status === 'Returned' && 
@@ -419,16 +419,16 @@
                                     empty($application->documents_status)
                                 )
                                     <button type="submit" class="btn btn-next">
-                                        <span class="btn-text"><i class="fas fa-paper-plane"></i> Resubmit Application</span>
+                                        <span class="btn-text"><i class="fas fa-paper-plane"></i> {{ __('Resubmit Application') }}</span>
                                         <div class="btn-loading d-none">
-                                            <i class="fas fa-spinner fa-spin"></i> Processing...
+                                            <i class="fas fa-spinner fa-spin"></i> {{ __('Processing...') }}
                                         </div>
                                     </button>
                                 @else
                                     <button type="submit" class="btn btn-next">
-                                        <span class="btn-text">Next Step →</span>
+                                        <span class="btn-text">{{ __('Next Step') }} →</span>
                                         <div class="btn-loading d-none">
-                                            <i class="fas fa-spinner fa-spin"></i> Processing...
+                                            <i class="fas fa-spinner fa-spin"></i> {{ __('Processing...') }}
                                         </div>
                                     </button>
                                 @endif
@@ -853,7 +853,7 @@
                 e.preventDefault();
                 educationalAttainment.focus();
                 educationalAttainment.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                alert('Please select your highest educational attainment.');
+                alert('{{ __("Please select your highest educational attainment.") }}');
                 return false;
             }
 
@@ -903,7 +903,7 @@
 
     dateInput.addEventListener("change", function () {
         if (this.value < today) {
-            alert("You cannot select a past date.");
+            alert("{{ __('You cannot select a past date.') }}");
             this.value = "";
         }
     });

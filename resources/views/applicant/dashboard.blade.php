@@ -1,6 +1,6 @@
 @extends('layouts.applicant')
-@section('title', 'Dashboard')
-@section('page-title', 'Dashboard')
+@section('title', __('Dashboard'))
+@section('page-title', __('Dashboard'))
 
 @section('content')
 <style>
@@ -205,20 +205,20 @@
                 <i class="fas fa-user"></i>
             </div>
             <h5 class="fw-bold">{{ $user->first_name }} {{ $user->last_name }}</h5>
-            <p class="text-muted">Applicant</p>
+            <p class="text-muted">{{ __('Applicant') }}</p>
 
             <div class="table-responsive">
                 <table class="table table-sm table-borderless text-start mx-auto mb-0">
                     <tr>
-                        <th class="text-muted">IP Group:</th>
+                        <th class="text-muted">{{ __('IP Group') }}:</th>
                         <td>{{ $user->tribe ?? ($record->tribe ?? '—') }}</td>
                     </tr>
                     <tr>
-                        <th class="text-muted">Application Date:</th>
-                        <td>{{ $application ? $application->created_at->format('F d, Y') : 'No Application Submitted' }}</td>
+                        <th class="text-muted">{{ __('Application Date') }}:</th>
+                        <td>{{ $application ? $application->created_at->format('F d, Y') : __('No Application Submitted') }}</td>
                     </tr>
                     <tr>
-                        <th class="text-muted">COC Status:</th>
+                        <th class="text-muted">{{ __('COC Status') }}:</th>
                         <td>
                             <span class="badge
                                 @if(!$application) bg-secondary
@@ -226,7 +226,7 @@
                                 @elseif($application->coc_status === 'Returned') bg-danger
                                 @elseif($application->coc_status === 'Approved') bg-success
                                 @else bg-secondary @endif">
-                                {{ $application ? $application->coc_status : 'No Application Submitted' }}
+                                {{ $application ? __($application->coc_status) : __('No Application Submitted') }}
                             </span>
                         </td>
                     </tr>
@@ -237,35 +237,35 @@
         {{-- Right Card --}}
         <div class="container-card">
             <h5 class="fw-bold text-success">
-                <i class="fas fa-clipboard-check me-2"></i> Application Status
+                <i class="fas fa-clipboard-check me-2"></i> {{ __('Application Status') }}
             </h5>
-            <p class="text-muted">Track your Certificate of Confirmation application</p>
+            <p class="text-muted">{{ __('Track your Certificate of Confirmation application') }}</p>
 
             <div class="mt-3">
-                <span class="fw-semibold">Current Status:</span>
+                <span class="fw-semibold">{{ __('Current Status') }}:</span>
                 <span class="badge
                     @if(!$application) bg-secondary
                     @elseif($application->status === 'Approved') bg-success
                     @elseif($application->status === 'Rejected') bg-danger
                     @else bg-warning @endif">
-                    {{ $application ? $application->status : 'No Application Submitted' }}
+                    {{ $application ? __($application->status) : __('No Application Submitted') }}
                 </span>
             </div>
 
             <div class="mt-4">
                 @if($application)
                     <a href="{{ route('applicant.track-status') }}" class="btn btn-success">
-                        <i class="fas fa-eye"></i> View Detailed Status
+                        <i class="fas fa-eye"></i> {{ __('View Detailed Status') }}
                     </a>
                 @else
                     <button class="btn btn-secondary" disabled>
-                        <i class="fas fa-eye"></i> No Application Yet
+                        <i class="fas fa-eye"></i> {{ __('No Application Yet') }}
                     </button>
                 @endif
             </div>
 
             <div class="mt-3 text-muted small">
-                Last updated: {{ now()->format('h:i A, F d, Y') }}
+                {{ __('Last updated') }}: {{ now()->format('h:i A, F d, Y') }}
             </div>
         </div>
     </div>
@@ -273,20 +273,20 @@
     {{-- Pickup Card (only if approved) --}}
     @if($application && $application->coc_status === 'Approved')
     <div class="container-card mt-4" style="border-left: 4px solid #198754;">
-        <h5 class="fw-bold mb-1">Pickup Location</h5>
-        <p class="mb-3 text-muted">Burgos Avenue at Old Capitol, Cabanatuan City, Nueva Ecija</p>
-        <h6 class="fw-bold mb-2">Instructions</h6>
+        <h5 class="fw-bold mb-1">{{ __('Pickup Location') }}</h5>
+        <p class="mb-3 text-muted">{{ __('Burgos Avenue at Old Capitol, Cabanatuan City, Nueva Ecija') }}</p>
+        <h6 class="fw-bold mb-2">{{ __('Instructions') }}</h6>
         <p class="text-muted mb-2">
-            Please bring the hard copy of the following:
+            {{ __('Please bring the hard copy of the following:') }}
         </p>
         <ul class="mb-0 ps-3">
-            <li>Certificate of IP Membership</li>
-            <li>Two (2) identical 2x2 ID photos</li>
-            <li>Photocopy of Birth Certificate</li>
-            <li>Certification from the Office of the Tribal Chieftain</li>
-            <li>Hard copies of all previously uploaded documents</li>
-            <li>Prepare payment for the documentary stamp</li>
-            <li>Ensure that all documents are notarized after review by NCIP NEPO staff</li>
+            <li>{{ __('Certificate of IP Membership') }}</li>
+            <li>{{ __('Two (2) identical 2x2 ID photos') }}</li>
+            <li>{{ __('Photocopy of Birth Certificate') }}</li>
+            <li>{{ __('Certification from the Office of the Tribal Chieftain') }}</li>
+            <li>{{ __('Hard copies of all previously uploaded documents') }}</li>
+            <li>{{ __('Prepare payment for the documentary stamp') }}</li>
+            <li>{{ __('Ensure that all documents are notarized after review by NCIP NEPO staff') }}</li>
         </ul>
     </div>
     @endif

@@ -1,7 +1,7 @@
 @extends('layouts.applicant')
 
-@section('title', 'COC Preview')
-@section('page-title', 'Step 6: Preview & Confirm')
+@section('title', __('COC Preview'))
+@section('page-title', __('Step 6: Preview & Confirm'))
 
 @section('content')
 @include('applicant.coc.progress-circle', ['currentStep' => 6])
@@ -920,13 +920,13 @@ div[style*="display: flex"] {
     <div class="form-header">
         <div class="header-left">
             <img src="{{ asset('images/ncip_logo.jpg') }}" alt="NCIP Logo" />
-            <p>REGION 3</p>
-            <p>CENTRAL LUZON</p>
+            <p>{{ __('REGION 3') }}</p>
+            <p>{{ __('CENTRAL LUZON') }}</p>
         </div>
         <div class="header-center">
-            <p>Republic of the Philippines</p>
-            <p>OFFICE OF THE PRESIDENT</p>
-            <p><b>NATIONAL COMMISSION ON INDIGENOUS PEOPLES</b></p>
+            <p>{{ __('Republic of the Philippines') }}</p>
+            <p>{{ __('OFFICE OF THE PRESIDENT') }}</p>
+            <p><b>{{ __('NATIONAL COMMISSION ON INDIGENOUS PEOPLES') }}</b></p>
             <div class="location-line">
                 Province of <span>{{ $step1['province_name'] ?? '' }}</span><br>
                 AD/Municipality <span>{{ $step1['municipality_name'] ?? '' }}</span><br>
@@ -935,10 +935,10 @@ div[style*="display: flex"] {
         </div>
     </div>
     
-    <div class="title-form"><h2>INFORMATION INDEX</h2></div>
+    <div class="title-form"><h2>{{ __('INFORMATION INDEX') }}</h2></div>
     
     <div class="purpose-box">
-        <h3>Purpose: (Check only 1 box)</h3>
+        <h3>{{ __('Purpose: (Check only 1 box)') }}</h3>
         <div class="purpose-grid">
             @php
                 $purposes = [
@@ -963,121 +963,121 @@ div[style*="display: flex"] {
         </div>
     </div>
     
-    <h2>I. Personal Information</h2>
+    <h2>{{ __('I. Personal Information') }}</h2>
     <div class="grid-2">
-        <div><label>First Name</label><input type="text" value="{{ $step1['first_name'] ?? '' }}" readonly></div>
-        <div><label>Last Name</label><input type="text" value="{{ $step1['last_name'] ?? '' }}" readonly></div>
+        <div><label>{{ __('First Name') }}</label><input type="text" value="{{ $step1['first_name'] ?? '' }}" readonly></div>
+        <div><label>{{ __('Last Name') }}</label><input type="text" value="{{ $step1['last_name'] ?? '' }}" readonly></div>
     </div>
     <div class="grid-3">
-        <div><label>Sex</label><input type="text" value="{{ $step1['sex'] ?? '' }}" readonly></div>
-        <div><label>Civil Status</label><input type="text" value="{{ $step1['civil_status'] ?? '' }}" readonly></div>
-        <div><label>Place of Origin</label><input type="text" value="{{ $step1['place_origin'] ?? '' }}" readonly></div>
+        <div><label>{{ __('Sex') }}</label><input type="text" value="{{ $step1['sex'] ?? '' }}" readonly></div>
+        <div><label>{{ __('Civil Status') }}</label><input type="text" value="{{ $step1['civil_status'] ?? '' }}" readonly></div>
+        <div><label>{{ __('Place of Origin') }}</label><input type="text" value="{{ $step1['place_origin'] ?? '' }}" readonly></div>
     </div>
     
     <div class="spouse-section">
-        <p>If married, provide the name of your spouse. If not married, indicate N/A.</p>
+        <p>{{ __('If married, provide the name of your spouse. If not married, indicate N/A.') }}</p>
         <div class="grid-2">
-            <div><label>First Name</label><input type="text" value="{{ $step1['spouse_first_name'] ?? 'N/A' }}" readonly></div>
-            <div><label>Last Name</label><input type="text" value="{{ $step1['spouse_last_name'] ?? 'N/A' }}" readonly></div>
+            <div><label>{{ __('First Name') }}</label><input type="text" value="{{ $step1['spouse_first_name'] ?? 'N/A' }}" readonly></div>
+            <div><label>{{ __('Last Name') }}</label><input type="text" value="{{ $step1['spouse_last_name'] ?? 'N/A' }}" readonly></div>
         </div>
     </div>
     
-    <h3>II. Educational Background</h3>
+    <h3>{{ __('II. Educational Background') }}</h3>
     <div class="grid-2">
-        <div><label>Highest Educational Attainment</label><input type="text" value="{{ $step2['educational_attainment'] ?? '' }}" readonly></div>
-        <div><label>Degree Obtained</label><input type="text" value="{{ $step2['degree_obtained'] ?? '' }}" readonly></div>
+        <div><label>{{ __('Highest Educational Attainment') }}</label><input type="text" value="{{ $step2['educational_attainment'] ?? '' }}" readonly></div>
+        <div><label>{{ __('Degree Obtained') }}</label><input type="text" value="{{ $step2['degree_obtained'] ?? '' }}" readonly></div>
     </div>
     
-    <h3>III. Parental Background</h3>
+    <h3>{{ __('III. Parental Background') }}</h3>
     <table>
         <thead>
-            <tr><th>Details</th><th>Father</th><th>Mother(Maiden name)</th></tr>
+            <tr><th>{{ __('Details') }}</th><th>{{ __('Father') }}</th><th>{{ __('Mother(Maiden name)') }}</th></tr>
         </thead>
         <tbody>
-            <tr><td>Name</td><td>{{ $step2['father_name'] ?? '' }}</td><td>{{ $step2['mother_name'] ?? '' }}</td></tr>
-            <tr><td>IP Group</td><td>{{ $step2['father_ipgroup'] ?? '' }}</td><td>{{ $step2['mother_ipgroup'] ?? '' }}</td></tr>
-            <tr><td>Place Origin</td><td>{{ $step2['father_origin'] ?? '' }}</td><td>{{ $step2['mother_origin'] ?? '' }}</td></tr>
-            <tr><td>Grandfather</td><td>{{ ($step2['paternal_grandfather_first_name'] ?? '') . ' ' . ($step2['paternal_grandfather_last_name'] ?? '') }}</td><td>{{ ($step2['maternal_grandfather_first_name'] ?? '') . ' ' . ($step2['maternal_grandfather_last_name'] ?? '') }}</td></tr>
-            <tr><td>IP Group</td><td>{{ $step2['paternal_grandfather_ipgroup'] ?? '' }}</td><td>{{ $step2['maternal_grandfather_ipgroup'] ?? '' }}</td></tr>
-            <tr><td>Place Origin</td><td>{{ $step2['paternal_grandfather_origin'] ?? '' }}</td><td>{{ $step2['maternal_grandfather_origin'] ?? '' }}</td></tr>
-            <tr><td>Grandmother</td><td>{{ ($step2['paternal_grandmother_first_name'] ?? '') . ' ' . ($step2['paternal_grandmother_last_name'] ?? '') }}</td><td>{{ ($step2['maternal_grandmother_first_name'] ?? '') . ' ' . ($step2['maternal_grandmother_last_name'] ?? '') }}</td></tr>
-            <tr><td>IP Group</td><td>{{ $step2['paternal_grandmother_ipgroup'] ?? '' }}</td><td>{{ $step2['maternal_grandmother_ipgroup'] ?? '' }}</td></tr>
-            <tr><td>Place Origin</td><td>{{ $step2['paternal_grandmother_origin'] ?? '' }}</td><td>{{ $step2['maternal_grandmother_origin'] ?? '' }}</td></tr>
+            <tr><td>{{ __('Name') }}</td><td>{{ $step2['father_name'] ?? '' }}</td><td>{{ $step2['mother_name'] ?? '' }}</td></tr>
+            <tr><td>{{ __('IP Group') }}</td><td>{{ $step2['father_ipgroup'] ?? '' }}</td><td>{{ $step2['mother_ipgroup'] ?? '' }}</td></tr>
+            <tr><td>{{ __('Place Origin') }}</td><td>{{ $step2['father_origin'] ?? '' }}</td><td>{{ $step2['mother_origin'] ?? '' }}</td></tr>
+            <tr><td>{{ __('Grandfather') }}</td><td>{{ ($step2['paternal_grandfather_first_name'] ?? '') . ' ' . ($step2['paternal_grandfather_last_name'] ?? '') }}</td><td>{{ ($step2['maternal_grandfather_first_name'] ?? '') . ' ' . ($step2['maternal_grandfather_last_name'] ?? '') }}</td></tr>
+            <tr><td>{{ __('IP Group') }}</td><td>{{ $step2['paternal_grandfather_ipgroup'] ?? '' }}</td><td>{{ $step2['maternal_grandfather_ipgroup'] ?? '' }}</td></tr>
+            <tr><td>{{ __('Place Origin') }}</td><td>{{ $step2['paternal_grandfather_origin'] ?? '' }}</td><td>{{ $step2['maternal_grandfather_origin'] ?? '' }}</td></tr>
+            <tr><td>{{ __('Grandmother') }}</td><td>{{ ($step2['paternal_grandmother_first_name'] ?? '') . ' ' . ($step2['paternal_grandmother_last_name'] ?? '') }}</td><td>{{ ($step2['maternal_grandmother_first_name'] ?? '') . ' ' . ($step2['maternal_grandmother_last_name'] ?? '') }}</td></tr>
+            <tr><td>{{ __('IP Group') }}</td><td>{{ $step2['paternal_grandmother_ipgroup'] ?? '' }}</td><td>{{ $step2['maternal_grandmother_ipgroup'] ?? '' }}</td></tr>
+            <tr><td>{{ __('Place Origin') }}</td><td>{{ $step2['paternal_grandmother_origin'] ?? '' }}</td><td>{{ $step2['maternal_grandmother_origin'] ?? '' }}</td></tr>
         </tbody>
     </table>
     
     <div class="land-section">
-        <label><input type="checkbox" disabled> If Purpose is Land Matter fill up the following:</label>
-        <p>Homestead/Free Patent No. <span class="underline">{{ $step2['homestead_no'] ?? '' }}</span> Lot No. <span class="underline">{{ $step2['lot_no'] ?? '' }}</span></p>
-        <p>Date of Issuance <span class="underline">{{ $step2['issuance_date'] ?? '' }}</span> Area <span class="underline">{{ $step2['area'] ?? '' }}</span></p>
-        <p>Location <span class="underline" style="min-width:300px">{{ $step2['location'] ?? '' }}</span></p>
+        <label><input type="checkbox" disabled> {{ __('If Purpose is Land Matter fill up the following:') }}</label>
+        <p>{{ __('Homestead/Free Patent No.') }} <span class="underline">{{ $step2['homestead_no'] ?? '' }}</span> {{ __('Lot No.') }} <span class="underline">{{ $step2['lot_no'] ?? '' }}</span></p>
+        <p>{{ __('Date of Issuance') }} <span class="underline">{{ $step2['issuance_date'] ?? '' }}</span> {{ __('Area') }} <span class="underline">{{ $step2['area'] ?? '' }}</span></p>
+        <p>{{ __('Location') }} <span class="underline" style="min-width:300px">{{ $step2['location'] ?? '' }}</span></p>
     </div>
     
-    <h3>IV. Applicant Pledge</h3>
+    <h3>{{ __('IV. Applicant Pledge') }}</h3>
     <div class="pledge">
-        <p>I, {{ $step2['applicant_name'] ?? $application->user->first_name ?? '' }}, do solemnly swear that all data given in the above information are true and correct to the best of my knowledge and based on authentic records.</p>
-        <p>I understand that any false information is enough to cause the denial of my application and could subject me to CRIMINAL and/or ADMINISTRATIVE prosecution.</p>
+        <p>{{ __('I,') }} {{ $step2['applicant_name'] ?? $application->user->first_name ?? '' }}, {{ __('do solemnly swear that all data given in the above information are true and correct to the best of my knowledge and based on authentic records.') }}</p>
+        <p>{{ __('I understand that any false information is enough to cause the denial of my application and could subject me to CRIMINAL and/or ADMINISTRATIVE prosecution.') }}</p>
     </div>
 </div>
 
 <div class="form-box">
-    <div class="title-form"><h2>GENEALOGY FORM</h2></div>
-    <h3>IV. Genealogy - Father's Side</h3>
+    <div class="title-form"><h2>{{ __('GENEALOGY FORM') }}</h2></div>
+    <h3>{{ __('IV. Genealogy - Father\'s Side') }}</h3>
 
     <table>
         <thead>
             <tr>
-                <th>Relation</th>
-                <th>Full Name</th>
-                <th>Place of Origin</th>
-                <th>IP Group</th>
+                <th>{{ __('Relation') }}</th>
+                <th>{{ __('Full Name') }}</th>
+                <th>{{ __('Place of Origin') }}</th>
+                <th>{{ __('IP Group') }}</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>Applicant</td>
+                <td>{{ __('Applicant') }}</td>
                 <td>{{ ($step3['applicant_first_name'] ?? '') . ' ' . ($step3['applicant_last_name'] ?? '') }}</td>
                 <td>{{ $step3['applicant_origin'] ?? '' }}</td>
                 <td>{{ $step3['applicant_ipgroup'] ?? '' }}</td>
             </tr>
             <tr>
-                <td>Father</td>
+                <td>{{ __('Father') }}</td>
                 <td>{{ ($step3['father_first_name'] ?? '') . ' ' . ($step3['father_last_name'] ?? '') }}</td>
                 <td>{{ $step3['father_origin'] ?? '' }}</td>
                 <td>{{ $step3['father_ipgroup'] ?? '' }}</td>
             </tr>
             <tr>
-                <td>Grandfather (Father's Side)</td>
+                <td>{{ __('Grandfather (Father\'s Side)') }}</td>
                 <td>{{ ($step3['paternal_grandfather_first_name'] ?? '') . ' ' . ($step3['paternal_grandfather_last_name'] ?? '') }}</td>
                 <td>{{ $step3['paternal_grandfather_origin'] ?? '' }}</td>
                 <td>{{ $step3['paternal_grandfather_ipgroup'] ?? '' }}</td>
             </tr>
             <tr>
-                <td>Grandmother (Father's Side)</td>
+                <td>{{ __('Grandmother (Father\'s Side)') }}</td>
                 <td>{{ ($step3['paternal_grandmother_first_name'] ?? '') . ' ' . ($step3['paternal_grandmother_last_name'] ?? '') }}</td>
                 <td>{{ $step3['paternal_grandmother_origin'] ?? '' }}</td>
                 <td>{{ $step3['paternal_grandmother_ipgroup'] ?? '' }}</td>
             </tr>
             <tr>
-                <td>Great Grandfather (Grandfather's Father)</td>
+                <td>{{ __('Great Grandfather (Grandfather\'s Father)') }}</td>
                 <td>{{ ($step3['great_grandfather_grandfather_first_name'] ?? '') . ' ' . ($step3['great_grandfather_grandfather_last_name'] ?? '') }}</td>
                 <td>{{ $step3['great_grandfather_grandfather_origin'] ?? '' }}</td>
                 <td>{{ $step3['great_grandfather_grandfather_ipgroup'] ?? '' }}</td>
             </tr>
             <tr>
-                <td>Great Grandmother (Grandfather's Mother)</td>
+                <td>{{ __('Great Grandmother (Grandfather\'s Mother)') }}</td>
                 <td>{{ ($step3['great_grandmother_grandfather_first_name'] ?? '') . ' ' . ($step3['great_grandmother_grandfather_last_name'] ?? '') }}</td>
                 <td>{{ $step3['great_grandmother_grandfather_origin'] ?? '' }}</td>
                 <td>{{ $step3['great_grandmother_grandfather_ipgroup'] ?? '' }}</td>
             </tr>
             <tr>
-                <td>Great Grandfather (Grandmother's Father)</td>
+                <td>{{ __('Great Grandfather (Grandmother\'s Father)') }}</td>
                 <td>{{ ($step3['great_grandfather_grandmother_first_name'] ?? '') . ' ' . ($step3['great_grandfather_grandmother_last_name'] ?? '') }}</td>
                 <td>{{ $step3['great_grandfather_grandmother_origin'] ?? '' }}</td>
                 <td>{{ $step3['great_grandfather_grandmother_ipgroup'] ?? '' }}</td>
             </tr>
             <tr>
-                <td>Great Grandmother (Grandmother's Mother)</td>
+                <td>{{ __('Great Grandmother (Grandmother\'s Mother)') }}</td>
                 <td>{{ ($step3['great_grandmother_grandmother_first_name'] ?? '') . ' ' . ($step3['great_grandmother_grandmother_last_name'] ?? '') }}</td>
                 <td>{{ $step3['great_grandmother_grandmother_origin'] ?? '' }}</td>
                 <td>{{ $step3['great_grandmother_grandmother_ipgroup'] ?? '' }}</td>
@@ -1085,55 +1085,55 @@ div[style*="display: flex"] {
         </tbody>
     </table>
     
-    <h3>V. Genealogy - Mother's Side</h3>
+    <h3>{{ __('V. Genealogy - Mother\'s Side') }}</h3>
     <table>
         <thead>
             <tr>
-                <th>Relation</th>
-                <th>Full Name</th>
-                <th>Place of Origin</th>
-                <th>IP Group</th>
+                <th>{{ __('Relation') }}</th>
+                <th>{{ __('Full Name') }}</th>
+                <th>{{ __('Place of Origin') }}</th>
+                <th>{{ __('IP Group') }}</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>Mother</td>
+                <td>{{ __('Mother') }}</td>
                 <td>{{ ($step4['mother_first_name'] ?? '') . ' ' . ($step4['mother_last_name'] ?? '') }}</td>
                 <td>{{ $step4['mother_origin'] ?? '' }}</td>
                 <td>{{ $step4['mother_ipgroup'] ?? '' }}</td>
             </tr>
             <tr>
-                <td>Grandfather (Mother's Side)</td>
+                <td>{{ __('Grandfather (Mother\'s Side)') }}</td>
                 <td>{{ ($step4['maternal_grandfather_first_name'] ?? '') . ' ' . ($step4['maternal_grandfather_last_name'] ?? '') }}</td>
                 <td>{{ $step4['maternal_grandfather_origin'] ?? '' }}</td>
                 <td>{{ $step4['maternal_grandfather_ipgroup'] ?? '' }}</td>
             </tr>
             <tr>
-                <td>Grandmother (Mother's Side)</td>
+                <td>{{ __('Grandmother (Mother\'s Side)') }}</td>
                 <td>{{ ($step4['maternal_grandmother_first_name'] ?? '') . ' ' . ($step4['maternal_grandmother_last_name'] ?? '') }}</td>
                 <td>{{ $step4['maternal_grandmother_origin'] ?? '' }}</td>
                 <td>{{ $step4['maternal_grandmother_ipgroup'] ?? '' }}</td>
             </tr>
             <tr>
-                <td>Great Grandfather (Grandfather's Father)</td>
+                <td>{{ __('Great Grandfather (Grandfather\'s Father)') }}</td>
                 <td>{{ ($step4['great_grandfather_grandfather_mother_first_name'] ?? '') . ' ' . ($step4['great_grandfather_grandfather_mother_last_name'] ?? '') }}</td>
                 <td>{{ $step4['great_grandfather_grandfather_mother_origin'] ?? '' }}</td>
                 <td>{{ $step4['great_grandfather_grandfather_mother_ipgroup'] ?? '' }}</td>
             </tr>
             <tr>
-                <td>Great Grandmother (Grandfather's Mother)</td>
+                <td>{{ __('Great Grandmother (Grandfather\'s Mother)') }}</td>
                 <td>{{ ($step4['great_grandmother_grandfather_mother_first_name'] ?? '') . ' ' . ($step4['great_grandmother_grandfather_mother_last_name'] ?? '') }}</td>
                 <td>{{ $step4['great_grandmother_grandfather_mother_origin'] ?? '' }}</td>
                 <td>{{ $step4['great_grandmother_grandfather_mother_ipgroup'] ?? '' }}</td>
             </tr>
             <tr>
-                <td>Great Grandfather (Grandmother's Father)</td>
+                <td>{{ __('Great Grandfather (Grandmother\'s Father)') }}</td>
                 <td>{{ ($step4['great_grandfather_grandmother_mother_first_name'] ?? '') . ' ' . ($step4['great_grandfather_grandmother_mother_last_name'] ?? '') }}</td>
                 <td>{{ $step4['great_grandfather_grandmother_mother_origin'] ?? '' }}</td>
                 <td>{{ $step4['great_grandfather_grandmother_mother_ipgroup'] ?? '' }}</td>
             </tr>
             <tr>
-                <td>Great Grandmother (Grandmother's Mother)</td>
+                <td>{{ __('Great Grandmother (Grandmother\'s Mother)') }}</td>
                 <td>{{ ($step4['great_grandmother_grandmother_mother_first_name'] ?? '') . ' ' . ($step4['great_grandmother_grandmother_mother_last_name'] ?? '') }}</td>
                 <td>{{ $step4['great_grandmother_grandmother_mother_origin'] ?? '' }}</td>
                 <td>{{ $step4['great_grandmother_grandmother_mother_ipgroup'] ?? '' }}</td>
@@ -1145,7 +1145,7 @@ div[style*="display: flex"] {
 {{-- STYLED DOCUMENTS SECTION --}}
 <div class="documents-container">
     <div class="documents-header">
-        <h3><i class="fas fa-file-upload"></i> Uploaded Documents</h3>
+        <h3><i class="fas fa-file-upload"></i> {{ __('Uploaded Documents') }}</h3>
     </div>
 
     <div class="documents-list">
@@ -1156,12 +1156,12 @@ div[style*="display: flex"] {
                     <i class="fas fa-camera"></i>
                 </div>
                 <div class="doc-info">
-                    <span class="doc-label">Applicant Photo</span>
+                    <span class="doc-label">{{ __('Applicant Photo') }}</span>
                     <span class="doc-status">
                         @if(!empty($application->applicant_picture))
-                            Uploaded
+                            {{ __('Uploaded') }}
                         @else
-                            Not uploaded
+                            {{ __('Not uploaded') }}
                         @endif
                     </span>
                 </div>
@@ -1169,23 +1169,23 @@ div[style*="display: flex"] {
             <div class="doc-actions">
                 @if(!empty($application->applicant_picture))
                     <a href="{{ asset('storage/'.$application->applicant_picture) }}" target="_blank" class="view-btn">
-                        <i class="fas fa-eye"></i> View Photo
+                        <i class="fas fa-eye"></i> {{ __('View Photo') }}
                     </a>
                 @else
-                    <span class="no-document">No photo uploaded</span>
+                    <span class="no-document">{{ __('No photo uploaded') }}</span>
                 @endif
             </div>
         </div>
 
            {{-- Birth Certificate --}}
                 <div class="doc-item mb-3">
-                    <span class="doc-label fw-bold">Birth Certificate:</span>
+                    <span class="doc-label fw-bold">{{ __('Birth Certificate:') }}</span>
                    @if($ipAccount && $ipAccount->document_path)
                             <a href="{{ asset('storage/' . $ipAccount->document_path) }}" target="_blank"class="view-btn btn btn-outline-primary btn-sm ms-2">
-                                View
+                                {{ __('View') }}
                             </a>
                         @else
-                            <p>No birth certificate uploaded yet.</p>
+                            <p>{{ __('No birth certificate uploaded yet.') }}</p>
                         @endif                                   
                 </div>
                             
@@ -1194,30 +1194,30 @@ div[style*="display: flex"] {
 
                 {{-- Tribal Certificate --}}
                 <div class="doc-item mb-3">
-                    <span class="doc-label fw-bold">Certificate of Tribal Chieftain:</span>
+                    <span class="doc-label fw-bold">{{ __('Certificate of Tribal Chieftain:') }}</span>
                     @if(!empty($application->tribal_certificate))
-                        <a href="{{ asset('storage/'.$application->tribal_certificate) }}" target="_blank" class="view-btn btn btn-outline-primary btn-sm ms-2">View</a>
+                        <a href="{{ asset('storage/'.$application->tribal_certificate) }}" target="_blank" class="view-btn btn btn-outline-primary btn-sm ms-2">{{ __('View') }}</a>
                     @else
-                        <span class="text-muted ms-2">No certificate uploaded</span>
+                        <span class="text-muted ms-2">{{ __('No certificate uploaded') }}</span>
                     @endif
                 </div>
                 {{-- Genealogy Form --}}
                 <div class="doc-item mb-3">
-                    <span class="doc-label fw-bold">Genealogy Form:</span>
+                    <span class="doc-label fw-bold">{{ __('Genealogy Form:') }}</span>
                     @if(!empty($application->genealogy_form))
-                        <a href="{{ asset('storage/'.$application->genealogy_form) }}" target="_blank" class="view-btn btn btn-outline-primary btn-sm ms-2">View</a>
+                        <a href="{{ asset('storage/'.$application->genealogy_form) }}" target="_blank" class="view-btn btn btn-outline-primary btn-sm ms-2">{{ __('View') }}</a>
                     @else
-                        <span class="text-muted ms-2">No genealogy form uploaded</span>
+                        <span class="text-muted ms-2">{{ __('No genealogy form uploaded') }}</span>
                     @endif
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                 <a href="{{ url()->previous() }}" class="btn btn-secondary">
-                    ← Back
+                    ← {{ __('Back') }}
                 </a>
                 <form action="{{ route('applicant.coc.submit', $application->id) }}" method="POST">
                     @csrf
                     <button type="submit" class="btn btn-primary">
-                        Submit
+                        {{ __('Submit') }}
                     </button>
                 </form>
             </div>

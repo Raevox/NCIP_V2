@@ -1,7 +1,7 @@
 @extends('layouts.applicant')
 
-@section('title', 'COC Application')
-@section('page-title', 'Application for COC')
+@section('title', __('COC Application'))
+@section('page-title', __('Application for COC'))
 
 @section('content')
 
@@ -217,57 +217,51 @@
 
 <div class="coc-wrapper">
     <div class="coc-card">
-        <h2 class="coc-title">Apply for Certificate of Confirmation (COC)</h2>
+        <h2 class="coc-title">{{ __('Apply for Certificate of Confirmation (COC)') }}</h2>
         
         {{-- Show reapplication option if user has approved application --}}
         @if(isset($application) && $application->status == 'Approved' && $application->coc_status === 'Approved')
         <div class="coc-info">
             <h5>
-                <i class="fas fa-redo-alt"></i> Apply Again Using Previous Data
-                <span class="status-badge status-approved">Previously Approved</span>
+                <i class="fas fa-redo-alt"></i> {{ __('Apply Again Using Previous Data') }}
+                <span class="status-badge status-approved">{{ __('Previously Approved') }}</span>
             </h5>
             <p>
-                You have a previously approved application. You can start a new application using your previous information. 
-                All your personal details will be prefilled automatically - you only need to update the purpose of application.
+                {{ __('You have a previously approved application. You can start a new application using your previous information. All your personal details will be prefilled automatically - you only need to update the purpose of application.') }}
             </p>
             <div class="btn-group">
                 <a href="{{ route('applicant.coc.start-new-with-old-data') }}" class="btn btn-primary">
-                    <i class="fas fa-copy"></i> Apply Again Using Previous Data
+                    <i class="fas fa-copy"></i> {{ __('Apply Again Using Previous Data') }}
                 </a>
                 <a href="{{ route('applicant.coc.step1') }}" class="btn btn-outline">
-                    <i class="fas fa-plus"></i> Start Fresh Application
+                    <i class="fas fa-plus"></i> {{ __('Start Fresh Application') }}
                 </a>
             </div>
             <small class="text-muted mt-2 d-block">
                 <i class="fas fa-info-circle"></i> 
-                Using previous data will prefill all your information except the purpose. 
-                You can review and update any information before submitting.
+                {{ __('Using previous data will prefill all your information except the purpose. You can review and update any information before submitting.') }}
             </small>
         </div>
         @endif
 
         <p class="coc-desc">
-            The Certificate of Confirmation (COC) is an official document issued by the 
-            National Commission on Indigenous Peoples (NCIP). It serves as proof of an 
-            individual's recognition as a member of an Indigenous Cultural Community (ICC) 
-            or Indigenous Peoples (IP) group.
+            {{ __('The Certificate of Confirmation (COC) is an official document issued by the National Commission on Indigenous Peoples (NCIP). It serves as proof of an individual\'s recognition as a member of an Indigenous Cultural Community (ICC) or Indigenous Peoples (IP) group.') }}
         </p>
         
         <ul class="coc-list">
-            <li>✔ Fill up Information Index Form</li>
-            <li>✔ Fill up Genealogy Form</li>
-            <li>✔ Certification of IP Membership</li>
-            <li>✔ Two (2) identical 2x2 ID photos (Bring to office)</li>
-            <li>✔ Two (2) documentary stamps (Pay in office only)</li>
-            <li>✔ Birth Certificate</li>
-            <li>✔ Certification from the Office of the Tribal Chieftain</li>
+            <li>✔ {{ __('Fill up Information Index Form') }}</li>
+            <li>✔ {{ __('Fill up Genealogy Form') }}</li>
+            <li>✔ {{ __('Certification of IP Membership') }}</li>
+            <li>✔ {{ __('Two (2) identical 2x2 ID photos (Bring to office)') }}</li>
+            <li>✔ {{ __('Two (2) documentary stamps (Pay in office only)') }}</li>
+            <li>✔ {{ __('Birth Certificate') }}</li>
+            <li>✔ {{ __('Certification from the Office of the Tribal Chieftain') }}</li>
         </ul>
         
         <div class="coc-alert">
             <i class="fas fa-exclamation-triangle"></i>
             <p>
-                Important Notice: Before applying for the Certificate of Confirmation (COC), 
-                ensure you have all the required documents. Incomplete applications may be rejected.
+                {{ __('Important Notice: Before applying for the Certificate of Confirmation (COC), ensure you have all the required documents. Incomplete applications may be rejected.') }}
             </p>
         </div>
         
@@ -276,12 +270,11 @@
         @if(isset($application) && $application->status === 'Under Review')
         <div class="coc-info">
             <h5>
-                <i class="fas fa-hourglass-half"></i> Application Pending
-                <span class="status-badge" style="background:#fff3cd;color:#856404;">Pending Review</span>
+                <i class="fas fa-hourglass-half"></i> {{ __('Application Pending') }}
+                <span class="status-badge" style="background:#fff3cd;color:#856404;">{{ __('Pending Review') }}</span>
             </h5>
             <p>
-                You already have a COC application currently under review. Please wait for it to be
-                approved or rejected before submitting a new one.
+                {{ __('You already have a COC application currently under review. Please wait for it to be approved or rejected before submitting a new one.') }}
             </p>
         </div>
         @endif
@@ -292,7 +285,7 @@
                 && !($application->status === 'Approved' && $application->coc_status === 'Approved')))
         <div class="coc-action">
             <a href="{{ route('applicant.coc.step1') }}" class="coc-btn">
-                <i class="fas fa-paper-plane"></i> Request COC
+                <i class="fas fa-paper-plane"></i> {{ __('Request COC') }}
             </a>
         </div>
         @endif

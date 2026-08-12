@@ -1,7 +1,7 @@
 @extends('layouts.applicant')
 
-@section('title', 'COC Form')
-@section('page-title', 'NCIP COC Form 4')
+@section('title', __('COC Form'))
+@section('page-title', __('NCIP COC Form 4'))
 
 @section('content')
     @include('applicant.coc.progress-circle', ['currentStep' => 4])
@@ -10,9 +10,9 @@
             <div class="col-12 col-lg-11">
                 <div class="form-container">
                     <div class="form-header">
-                        <h2 class="form-title">NCIP COC FORM 4 (Genealogy - Mother Side)</h2>
+                        <h2 class="form-title">{{ __('NCIP COC FORM 4 (Genealogy - Mother Side)') }}</h2>
                         <p class="form-subtitle">
-                            Complete your maternal family genealogy information
+                            {{ __('Complete your maternal family genealogy information') }}
                         </p>
                     </div>
 
@@ -26,34 +26,34 @@
 
                             {{-- Generation Marker - Mother --}}
                             <div class="generation-marker">
-                                <span class="generation-label">First Generation - Mother</span>
+                                <span class="generation-label">{{ __('First Generation - Mother') }}</span>
                             </div>
 
                             {{-- Applicant's Mother --}}
                             <div class="form-section family-section">
-                                <h4 class="family-title">Applicant Mother</h4>
+                                <h4 class="family-title">{{ __('Applicant Mother') }}</h4>
                                 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="mother_first_name">First Name</label>
+                                            <label class="form-label" for="mother_first_name">{{ __('First Name') }}</label>
                                             <input type="text" 
                                                    name="mother_first_name" 
                                                    id="mother_first_name"
                                                    class="form-control" 
-                                                   placeholder="First name"
+                                                   placeholder="{{ __('First name') }}"
                                                    autocomplete="off"
                                                    value="{{ old('mother_first_name', $step4['mother_first_name'] ?? '') }}">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="mother_last_name">Last Name</label>
+                                            <label class="form-label" for="mother_last_name">{{ __('Last Name') }}</label>
                                             <input type="text" 
                                                    name="mother_last_name" 
                                                    id="mother_last_name"
                                                    class="form-control" 
-                                                   placeholder="Last name"
+                                                   placeholder="{{ __('Last name') }}"
                                                    autocomplete="off"
                                                    value="{{ old('mother_last_name', $step4['mother_last_name'] ?? '') }}">
                                         </div>
@@ -61,15 +61,15 @@
                                     <div class="col-md-6">
                                         <x-origin-picker
                                         name="mother"
-                                        label="Place of Origin:"
+                                        :label="__('Place of Origin:')"
                                         :old-value="old('mother_origin', $step4['mother_origin'] ?? '')"
                                         :required="false" />
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="mother_ipgroup">IP Group</label>
+                                            <label class="form-label" for="mother_ipgroup">{{ __('IP Group') }}</label>
                                             <select name="mother_ipgroup" id="mother_ipgroup" class="form-control">
-                                                <option value="">Select IP Group</option>
+                                                <option value="">{{ __('Select IP Group') }}</option>
                                                 @foreach($ipGroups as $group)
                                                     <option value="{{ $group }}" {{ old('mother_ipgroup', $step4['mother_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
                                                 @endforeach
@@ -81,17 +81,17 @@
 
                             {{-- Generation Marker - Grandparents --}}
                             <div class="generation-marker">
-                                <span class="generation-label">Second Generation - Grandparents (Mother's Side)</span>
+                                <span class="generation-label">{{ __('Second Generation - Grandparents (Mother\'s Side)') }}</span>
                             </div>
 
                             {{-- Maternal Grandfather --}}
                             <div class="form-section family-section">
-                                <h4 class="family-title">Grandfather (Mother's Side)</h4>
+                                <h4 class="family-title">{{ __('Grandfather (Mother\'s Side)') }}</h4>
                                 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="maternal_grandfather_first_name">First Name</label>
+                                            <label class="form-label" for="maternal_grandfather_first_name">{{ __('First Name') }}</label>
                                             <input type="text" 
                                                    name="maternal_grandfather_first_name" 
                                                    id="maternal_grandfather_first_name"
@@ -103,7 +103,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="maternal_grandfather_last_name">Last Name</label>
+                                            <label class="form-label" for="maternal_grandfather_last_name">{{ __('Last Name') }}</label>
                                             <input type="text" 
                                                    name="maternal_grandfather_last_name" 
                                                    id="maternal_grandfather_last_name"
@@ -116,15 +116,15 @@
                                     <div class="col-md-6">
                                         <x-origin-picker
                                         name="maternal_grandfather"
-                                        label="Place of Origin:"
+                                        :label="__('Place of Origin:')"
                                         :old-value="old('maternal_grandfather_origin', $step4['maternal_grandfather_origin'] ?? '')"
                                         :required="false" />
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="maternal_grandfather_ipgroup">IP Group</label>
+                                            <label class="form-label" for="maternal_grandfather_ipgroup">{{ __('IP Group') }}</label>
                                             <select name="maternal_grandfather_ipgroup" id="maternal_grandfather_ipgroup" class="form-control">
-                                                <option value="">Select IP Group</option>
+                                                <option value="">{{ __('Select IP Group') }}</option>
                                                 @foreach($ipGroups as $group)
                                                     <option value="{{ $group }}" {{ old('maternal_grandfather_ipgroup', $step4['maternal_grandfather_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
                                                 @endforeach
@@ -136,12 +136,12 @@
 
                             {{-- Maternal Grandmother --}}
                             <div class="form-section family-section">
-                                <h4 class="family-title">Grandmother (Mother's Side)</h4>
+                                <h4 class="family-title">{{ __('Grandmother (Mother\'s Side)') }}</h4>
                                 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="maternal_grandmother_first_name">First Name</label>
+                                            <label class="form-label" for="maternal_grandmother_first_name">{{ __('First Name') }}</label>
                                             <input type="text" 
                                                    name="maternal_grandmother_first_name" 
                                                    id="maternal_grandmother_first_name"
@@ -153,7 +153,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="maternal_grandmother_last_name">Last Name</label>
+                                            <label class="form-label" for="maternal_grandmother_last_name">{{ __('Last Name') }}</label>
                                             <input type="text" 
                                                    name="maternal_grandmother_last_name" 
                                                    id="maternal_grandmother_last_name"
@@ -166,15 +166,15 @@
                                     <div class="col-md-6">
                                         <x-origin-picker
                                         name="maternal_grandmother"
-                                        label="Place of Origin:"
+                                        :label="__('Place of Origin:')"
                                         :old-value="old('maternal_grandmother_origin', $step4['maternal_grandmother_origin'] ?? '')"
                                         :required="false" />
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="maternal_grandmother_ipgroup">IP Group</label>
+                                            <label class="form-label" for="maternal_grandmother_ipgroup">{{ __('IP Group') }}</label>
                                             <select name="maternal_grandmother_ipgroup" id="maternal_grandmother_ipgroup" class="form-control">
-                                                <option value="">Select IP Group</option>
+                                                <option value="">{{ __('Select IP Group') }}</option>
                                                 @foreach($ipGroups as $group)
                                                     <option value="{{ $group }}" {{ old('maternal_grandmother_ipgroup', $step4['maternal_grandmother_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
                                                 @endforeach
@@ -186,17 +186,17 @@
 
                             {{-- Generation Marker - Great Grandparents --}}
                             <div class="generation-marker">
-                                <span class="generation-label">Third Generation - Great Grandparents (Grandfather's Side)</span>
+                                <span class="generation-label">{{ __('Third Generation - Great Grandparents (Grandfather\'s Side)') }}</span>
                             </div>
 
                             {{-- Great Grandfather (Grandfather's Father) --}}
                             <div class="form-section family-section">
-                                <h4 class="family-title">Great Grandfather (Grandfather's Father)</h4>
+                                <h4 class="family-title">{{ __('Great Grandfather (Grandfather\'s Father)') }}</h4>
                                 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="great_grandfather_grandfather_mother_first_name">First Name</label>
+                                            <label class="form-label" for="great_grandfather_grandfather_mother_first_name">{{ __('First Name') }}</label>
                                             <input type="text" 
                                                    name="great_grandfather_grandfather_mother_first_name" 
                                                    id="great_grandfather_grandfather_mother_first_name"
@@ -208,7 +208,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="great_grandfather_grandfather_mother_last_name">Last Name</label>
+                                            <label class="form-label" for="great_grandfather_grandfather_mother_last_name">{{ __('Last Name') }}</label>
                                             <input type="text" 
                                                    name="great_grandfather_grandfather_mother_last_name" 
                                                    id="great_grandfather_grandfather_mother_last_name"
@@ -221,15 +221,15 @@
                                     <div class="col-md-6">
                                         <x-origin-picker
                                         name="great_grandfather_grandfather_mother"
-                                        label="Place of Origin:"
+                                        :label="__('Place of Origin:')"
                                         :old-value="old('great_grandfather_grandfather_mother_origin', $step4['great_grandfather_grandfather_mother_origin'] ?? '')"
                                         :required="true" />
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="great_grandfather_grandfather_mother_ipgroup">IP Group</label>
+                                            <label class="form-label" for="great_grandfather_grandfather_mother_ipgroup">{{ __('IP Group') }}</label>
                                             <select name="great_grandfather_grandfather_mother_ipgroup" id="great_grandfather_grandfather_mother_ipgroup" class="form-control" required>
-                                                <option value="">Select IP Group</option>
+                                                <option value="">{{ __('Select IP Group') }}</option>
                                                 @foreach($ipGroups as $group)
                                                     <option value="{{ $group }}" {{ old('great_grandfather_grandfather_mother_ipgroup', $step4['great_grandfather_grandfather_mother_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
                                                 @endforeach
@@ -241,12 +241,12 @@
 
                             {{-- Great Grandmother (Grandfather's Mother) --}}
                             <div class="form-section family-section">
-                                <h4 class="family-title">Great Grandmother (Grandfather's Mother)</h4>
+                                <h4 class="family-title">{{ __('Great Grandmother (Grandfather\'s Mother)') }}</h4>
                                 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="great_grandmother_grandfather_mother_first_name">First Name</label>
+                                            <label class="form-label" for="great_grandmother_grandfather_mother_first_name">{{ __('First Name') }}</label>
                                             <input type="text" 
                                                    name="great_grandmother_grandfather_mother_first_name" 
                                                    id="great_grandmother_grandfather_mother_first_name"
@@ -258,7 +258,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="great_grandmother_grandfather_mother_last_name">Last Name</label>
+                                            <label class="form-label" for="great_grandmother_grandfather_mother_last_name">{{ __('Last Name') }}</label>
                                             <input type="text" 
                                                    name="great_grandmother_grandfather_mother_last_name" 
                                                    id="great_grandmother_grandfather_mother_last_name"
@@ -271,15 +271,15 @@
                                     <div class="col-md-6">
                                         <x-origin-picker
                                         name="great_grandmother_grandfather_mother"
-                                        label="Place of Origin:"
+                                        :label="__('Place of Origin:')"
                                         :old-value="old('great_grandmother_grandfather_mother_origin', $step4['great_grandmother_grandfather_mother_origin'] ?? '')"
                                         :required="true" />
                                     </div>
                                     <div class="col-md-6">
                                        <div class="form-group">
-                                            <label class="form-label" for="great_grandmother_grandfather_mother_ipgroup">IP Group</label>
+                                            <label class="form-label" for="great_grandmother_grandfather_mother_ipgroup">{{ __('IP Group') }}</label>
                                             <select name="great_grandmother_grandfather_mother_ipgroup" id="great_grandmother_grandfather_mother_ipgroup" class="form-control" required>
-                                                <option value="">Select IP Group</option>
+                                                <option value="">{{ __('Select IP Group') }}</option>
                                                 @foreach($ipGroups as $group)
                                                     <option value="{{ $group }}" {{ old('great_grandmother_grandfather_mother_ipgroup', $step4['great_grandmother_grandfather_mother_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
                                                 @endforeach
@@ -291,17 +291,17 @@
 
                             {{-- Generation Marker - Great Grandparents (Grandmother's Side) --}}
                             <div class="generation-marker">
-                                <span class="generation-label">Third Generation - Great Grandparents (Grandmother's Side)</span>
+                                <span class="generation-label">{{ __('Third Generation - Great Grandparents (Grandmother\'s Side)') }}</span>
                             </div>
 
                             {{-- Great Grandfather (Grandmother's Father) --}}
                             <div class="form-section family-section">
-                                <h4 class="family-title">Great Grandfather (Grandmother's Father)</h4>
+                                <h4 class="family-title">{{ __('Great Grandfather (Grandmother\'s Father)') }}</h4>
                                 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="great_grandfather_grandmother_mother_first_name">First Name</label>
+                                            <label class="form-label" for="great_grandfather_grandmother_mother_first_name">{{ __('First Name') }}</label>
                                             <input type="text" 
                                                    name="great_grandfather_grandmother_mother_first_name" 
                                                    id="great_grandfather_grandmother_mother_first_name"
@@ -313,7 +313,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="great_grandfather_grandmother_mother_last_name">Last Name</label>
+                                            <label class="form-label" for="great_grandfather_grandmother_mother_last_name">{{ __('Last Name') }}</label>
                                             <input type="text" 
                                                    name="great_grandfather_grandmother_mother_last_name" 
                                                    id="great_grandfather_grandmother_mother_last_name"
@@ -326,15 +326,15 @@
                                     <div class="col-md-6">
                                         <x-origin-picker
                                         name="great_grandfather_grandmother_mother"
-                                        label="Place of Origin:"
+                                        :label="__('Place of Origin:')"
                                         :old-value="old('great_grandfather_grandmother_mother_origin', $step4['great_grandfather_grandmother_mother_origin'] ?? '')"
                                         :required="true" />
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="great_grandfather_grandmother_mother_ipgroup">IP Group</label>
+                                            <label class="form-label" for="great_grandfather_grandmother_mother_ipgroup">{{ __('IP Group') }}</label>
                                             <select name="great_grandfather_grandmother_mother_ipgroup" id="great_grandfather_grandmother_mother_ipgroup" class="form-control" required>
-                                                <option value="">Select IP Group</option>
+                                                <option value="">{{ __('Select IP Group') }}</option>
                                                 @foreach($ipGroups as $group)
                                                     <option value="{{ $group }}" {{ old('great_grandfather_grandmother_mother_ipgroup', $step4['great_grandfather_grandmother_mother_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
                                                 @endforeach
@@ -346,12 +346,12 @@
 
                             {{-- Great Grandmother (Grandmother's Mother) --}}
                             <div class="form-section family-section">
-                                <h4 class="family-title">Great Grandmother (Grandmother's Mother)</h4>
+                                <h4 class="family-title">{{ __('Great Grandmother (Grandmother\'s Mother)') }}</h4>
                                 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="great_grandmother_grandmother_mother_first_name">First Name</label>
+                                            <label class="form-label" for="great_grandmother_grandmother_mother_first_name">{{ __('First Name') }}</label>
                                             <input type="text" 
                                                    name="great_grandmother_grandmother_mother_first_name" 
                                                    id="great_grandmother_grandmother_mother_first_name"
@@ -363,7 +363,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="great_grandmother_grandmother_mother_last_name">Last Name</label>
+                                            <label class="form-label" for="great_grandmother_grandmother_mother_last_name">{{ __('Last Name') }}</label>
                                             <input type="text" 
                                                    name="great_grandmother_grandmother_mother_last_name" 
                                                    id="great_grandmother_grandmother_mother_last_name"
@@ -376,15 +376,15 @@
                                     <div class="col-md-6">
                                         <x-origin-picker
                                             name="great_grandmother_grandmother_mother"
-                                            label="Place of Origin:"
+                                            :label="__('Place of Origin:')"
                                             :old-value="old('great_grandmother_grandmother_mother_origin', $step4['great_grandmother_grandmother_mother_origin'] ?? '')"
                                             :required="true" />
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label" for="great_grandmother_grandmother_mother_ipgroup">IP Group</label>
+                                            <label class="form-label" for="great_grandmother_grandmother_mother_ipgroup">{{ __('IP Group') }}</label>
                                             <select name="great_grandmother_grandmother_mother_ipgroup" id="great_grandmother_grandmother_mother_ipgroup" class="form-control" required>
-                                                <option value="">Select IP Group</option>
+                                                <option value="">{{ __('Select IP Group') }}</option>
                                                 @foreach($ipGroups as $group)
                                                     <option value="{{ $group }}" {{ old('great_grandmother_grandmother_mother_ipgroup', $step4['great_grandmother_grandmother_mother_ipgroup'] ?? '') == $group ? 'selected' : '' }}>{{ $group }}</option>
                                                 @endforeach
@@ -401,7 +401,7 @@
                                     <i class="fas fa-info-circle"></i>
                                 </div>
                                 <div class="alert-content">
-                                    <strong>Important:</strong> Please <span class="text-highlight">download and print</span> the Genealogy Form before proceeding to Step 5. You will need to upload the completed PDF in the next step.
+                                    <strong>{{ __('Important:') }}</strong> {{ __('Please') }} <span class="text-highlight">{{ __('download and print') }}</span> {{ __('the Genealogy Form before proceeding to Step 5. You will need to upload the completed PDF in the next step.') }}
                                 </div>
                             </div>
 
@@ -410,18 +410,18 @@
                                 <a href="{{ route('applicant.coc.genealogy-print') }}" 
                                 id="previewGenealogyBtn"
                                 class="btn btn-download">
-                                    <i class="fas fa-eye"></i> Preview Genealogy Form
+                                    <i class="fas fa-eye"></i> {{ __('Preview Genealogy Form') }}
                                 </a>
                                 <a href="{{ route('applicant.coc.genealogy-download') }}" 
                                 id="downloadGenealogyBtn"
                                 class="btn btn-download">
-                                    <i class="fas fa-file-pdf"></i> Download as PDF
+                                    <i class="fas fa-file-pdf"></i> {{ __('Download as PDF') }}
                                 </a>
                             </div>
 
                             {{-- Form Actions --}}
                             <div class="form-actions">
-                                <a href="{{ route('applicant.coc.step3') }}" class="btn btn-back">← Back</a>
+                                <a href="{{ route('applicant.coc.step3') }}" class="btn btn-back">← {{ __('Back') }}</a>
 
                                 @if(
                                     $application->status === 'Returned' && 
@@ -430,16 +430,16 @@
                                     empty($application->documents_status)
                                 )
                                     <button type="submit" class="btn btn-next btn-resubmit">
-                                        <span class="btn-text"><i class="fas fa-paper-plane"></i> Resubmit Application</span>
+                                        <span class="btn-text"><i class="fas fa-paper-plane"></i> {{ __('Resubmit Application') }}</span>
                                         <div class="btn-loading d-none">
-                                            <i class="fas fa-spinner fa-spin"></i> Processing...
+                                            <i class="fas fa-spinner fa-spin"></i> {{ __('Processing...') }}
                                         </div>
                                     </button>
                                 @else
                                     <button type="submit" class="btn btn-next">
-                                        <span class="btn-text">Next Step →</span>
+                                        <span class="btn-text">{{ __('Next Step') }} →</span>
                                         <div class="btn-loading d-none">
-                                            <i class="fas fa-spinner fa-spin"></i> Processing...
+                                            <i class="fas fa-spinner fa-spin"></i> {{ __('Processing...') }}
                                         </div>
                                     </button>
                                 @endif

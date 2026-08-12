@@ -1,6 +1,6 @@
 @extends('layouts.applicant')
-@section('page-title', 'Profile')
-@section('title', 'My Profile')
+@section('page-title', __('Profile'))
+@section('title', __('My Profile'))
 
 @section('content')
 <style>
@@ -191,10 +191,10 @@
             </div>
             <div class="profile-info">
                 <h2>{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</h2>
-                <div class="profile-role">Certificate of Confirmation Applicant</div>
+                <div class="profile-role">{{ __('Certificate of Confirmation Applicant') }}</div>
                 <div class="profile-status">
                     <div class="status-indicator"></div>
-                    <span>{{ ucfirst(Auth::user()->status ?? 'Pending') }}</span>
+                    <span>{{ __(ucfirst(Auth::user()->status ?? 'Pending')) }}</span>
                 </div>
             </div>
         </div>
@@ -203,21 +203,21 @@
         <div class="profile-card">
             <div class="card-header">
                 <div class="card-title">
-                    <i class="fas fa-user"></i> Personal Information
+                    <i class="fas fa-user"></i> {{ __('Personal Information') }}
                 </div>
             </div>
             <div class="card-body">
                 <div class="info-row">
-                    <span class="info-label">Full Name</span>
+                    <span class="info-label">{{ __('Full Name') }}</span>
                     <span class="info-value">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Email</span>
+                    <span class="info-label">{{ __('Email') }}</span>
                     <span class="info-value">{{ Auth::user()->email }}</span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Contact</span>
-                    <span class="info-value">{{ Auth::user()->contact ?? 'N/A' }}</span>
+                    <span class="info-label">{{ __('Contact') }}</span>
+                    <span class="info-value">{{ Auth::user()->contact ?? __('N/A') }}</span>
                 </div>
             </div>
         </div>
@@ -225,61 +225,62 @@
         <div class="profile-card">
             <div class="card-header">
                 <div class="card-title">
-                    <i class="fas fa-users"></i> Indigenous Community
+                    <i class="fas fa-users"></i> {{ __('Indigenous Community') }}
                 </div>
             </div>
             <div class="card-body">
                 <div class="info-row">
-                    <span class="info-label">Tribe</span>
-                    <span class="info-value">{{ Auth::user()->tribe ?? 'N/A' }}</span>
+                    <span class="info-label">{{ __('Tribe') }}</span>
+                    <span class="info-value">{{ Auth::user()->tribe ?? __('N/A') }}</span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Leader</span>
-                    <span class="info-value">{{ Auth::user()->leader ?? 'N/A' }}</span>
+                    <span class="info-label">{{ __('Leader') }}</span>
+                    <span class="info-value">{{ Auth::user()->leader ?? __('N/A') }}</span>
                 </div>
             </div>
         </div>
         <div class="profile-card">
             <div class="card-header">
                 <div class="card-title">
-                    <i class="fas fa-clipboard-check"></i> Application Status
+                    <i class="fas fa-clipboard-check"></i> {{ __('Application Status') }}
                 </div>
             </div>
             <div class="card-body">
                 <div class="info-row">
-                    <span class="info-label">Current Status</span>
+                    <span class="info-label">{{ __('Current Status') }}</span>
                     <span class="info-value">
                         @if(!$application)
-                            <span class="badge bg-secondary">No Application Submitted</span>
+                            <span class="badge bg-secondary">{{ __('No Application Submitted') }}</span>
                         @elseif($application->status === 'Approved')
-                            <span class="badge bg-success">Issued</span>
+                            <span class="badge bg-success">{{ __('Issued') }}</span>
                         @elseif($application->status === 'Rejected')
-                            <span class="badge bg-danger">Rejected</span>
+                            <span class="badge bg-danger">{{ __('Rejected') }}</span>
                         @else
-                            <span class="badge bg-warning text-dark">{{ $application->status }}</span>
+                            <span class="badge bg-warning text-dark">{{ __($application->status) }}</span>
                         @endif
                     </span>
                 </div>
 
                 <div class="info-row mt-2">
-                    <span class="info-label">Application Date</span>
+                    <span class="info-label">{{ __('Application Date') }}</span>
                     <span class="info-value">
-                        {{ $application ? $application->created_at->format('F d, Y') : 'N/A' }}
+                        {{ $application ? $application->created_at->format('F d, Y') : __('N/A') }}
                     </span>
                 </div>
 
                 <div class="mt-3">
                     @if($application)
                         <a href="{{ route('applicant.track-status') }}" class="btn btn-success">
-                            <i class="fas fa-eye"></i> View Detailed Status
+                            <i class="fas fa-eye"></i> {{ __('View Detailed Status') }}
                         </a>
                     @else
                         <button class="btn btn-secondary" disabled>
-                            <i class="fas fa-eye"></i> No Application Yet
+                            <i class="fas fa-eye"></i> {{ __('No Application Yet') }}
                         </button>
                     @endif
                 </div>
             </div>
         </div>
-
+    </div>
+</div>
 @endsection

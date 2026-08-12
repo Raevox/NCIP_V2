@@ -194,6 +194,62 @@
         margin-left: 30px;
     }
 
+    /* lang switcher  */
+    .topbar-wrapper {
+        justify-content: space-between;
+    }
+
+    .lang-switcher {
+        position: relative;
+    }
+
+    .lang-switcher button {
+        background: none;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 6px 14px;
+        font-size: clamp(13px, 1.2vw, 14px);
+        color: #333;
+        cursor: pointer;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .lang-switcher button:hover {
+        border-color: #3e7b27;
+        color: #3e7b27;
+    }
+
+    .lang-dropdown {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        margin-top: 6px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        min-width: 130px;
+        z-index: 1100;
+    }
+
+    .lang-dropdown.show {
+        display: block;
+    }
+
+    .lang-dropdown a {
+        display: block;
+        padding: 10px 14px;
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .lang-dropdown a:hover {
+        background: #f5f5f5;
+        color: #3e7b27;
+    }
+
     /* --- Main Content --- */
     .main {
         transition: margin-left 0.3s ease, width 0.3s ease;
@@ -255,16 +311,16 @@
 
         <ul class="nav mt-3">
             <li class="{{ request()->routeIs('applicant.dashboard') ? 'active' : '' }}">
-                <a href="{{ route('applicant.dashboard') }}"><i class="fas fa-home"></i> Home</a>
+                <a href="{{ route('applicant.dashboard') }}"><i class="fas fa-home"></i> {{ __('Home') }}</a>
             </li>
             <li class="{{ request()->routeIs('applicant.profile') ? 'active' : '' }}">
-                <a href="{{ route('applicant.profile') }}"><i class="fas fa-user"></i> Profile</a>
+                <a href="{{ route('applicant.profile') }}"><i class="fas fa-user"></i> {{ __('Profile') }}</a>
             </li>
             <li class="{{ request()->routeIs('applicant.history') ? 'active' : '' }}">
-                <a href="{{ route('applicant.history') }}"><i class="fas fa-history"></i> COC History</a>
+                <a href="{{ route('applicant.history') }}"><i class="fas fa-history"></i> {{ __('COC History') }}</a>
             </li>
             <li class="{{ request()->routeIs('applicant.coc.application') ? 'active' : '' }}">
-                <a href="{{ route('applicant.coc.application') }}"><i class="fas fa-file-alt"></i> COC Application</a>
+                <a href="{{ route('applicant.coc.application') }}"><i class="fas fa-file-alt"></i> {{ __('COC Application') }}</a>
             </li>
         </ul>
 
@@ -276,7 +332,7 @@
         <div class="logout">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button class="btn-logout"><i class="fas fa-sign-out-alt"></i> Log Out</button>
+                <button class="btn-logout"><i class="fas fa-sign-out-alt"></i> {{ __('Log Out') }}</button>
             </form>
         </div>
     </div>
@@ -285,7 +341,20 @@
     <div class="main" id="mainContent">
         <div class="topbar-wrapper">
             <h2>@yield('page-title', 'Dashboard')</h2>
+
+            <div class="lang-switcher">
+                <button onclick="document.getElementById('langDropdown').classList.toggle('show')">
+                    <i class="fas fa-globe"></i> {{ app()->getLocale() === 'tl' ? 'Filipino' : 'English' }}
+                </button>
+                <div id="langDropdown" class="lang-dropdown">
+                    <a href="{{ route('lang.switch', 'en') }}">English</a>
+                    <a href="{{ route('lang.switch', 'tl') }}">Filipino</a>
+                </div>
+            </div>
         </div>
+
+
+
 
         <div class="container-fluid px-3 py-3">
             @yield('content')
@@ -311,6 +380,12 @@
     }
         hamburger.addEventListener('click', toggleSidebar);
         overlay.addEventListener('click', toggleSidebar);
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.lang-switcher')) {
+                document.getElementById('langDropdown')?.classList.remove('show');
+            }
+        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>

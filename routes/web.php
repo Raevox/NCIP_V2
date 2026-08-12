@@ -35,6 +35,14 @@ use App\Http\Controllers\Api\NotificationController   as ApiNotificationControll
 // Landing Page
 Route::get('/', [NewsController::class, 'latestNewsPreview'])->name('landingpage');
 
+// language switcher
+Route::get('/lang/{locale}', function ($locale) {
+    if (in_array($locale, ['en', 'tl'])) {
+        session(['locale' => $locale]);
+    }
+    return redirect()->back();
+})->name('lang.switch');
+
 // Public Pages
 Route::get('/about-us', function () {
     $tribes = \App\Models\Tribe::where('is_active', true)->orderBy('name')->get();

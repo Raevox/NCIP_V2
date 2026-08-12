@@ -1,6 +1,6 @@
 @extends('layouts.applicant')
-@section('title', 'COC History')
-@section('page-title', 'COC History')
+@section('title', __('COC History'))
+@section('page-title', __('COC History'))
 @section('content')
 
 <style>
@@ -249,7 +249,7 @@
     <div class="coc-header">
         <h5>
             <i class="fas fa-history"></i>
-            My COC History
+            {{ __('My COC History') }}
         </h5>
     </div>
     
@@ -258,7 +258,7 @@
         @if($cocHistory->isEmpty())
             <div class="empty-state">
                 <i class="fas fa-inbox"></i>
-                <p>No approved COC forms yet.</p>
+                <p>{{ __('No approved COC forms yet.') }}</p>
             </div>
         @else
             <!-- Desktop Table View -->
@@ -268,10 +268,10 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Application No.</th>
-                                <th>Status</th>
-                                <th>Approved Date</th>
-                                <th>Action</th>
+                                <th>{{ __('Application No.') }}</th>
+                                <th>{{ __('Status') }}</th>
+                                <th>{{ __('Approved Date') }}</th>
+                                <th>{{ __('Action') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -285,7 +285,7 @@
                                 <td class="fw-semibold">{{ $coc->id }}</td>
                                 <td>
                                     <span class="status-badge">
-                                        {{ $coc->status }}
+                                        {{ __($coc->status) }}
                                     </span>
                                 </td>
                                 <td>
@@ -298,7 +298,7 @@
                                 <td>
                                     @if($coc->status === 'Draft')
                                         <a href="{{ route('applicant.coc.step1') }}" class="btn btn-sm" style="background: var(--primary-green); color: white;">
-                                            Continue
+                                            {{ __('Continue') }}
                                         </a>
                                     @endif
                                 </td>
@@ -315,14 +315,14 @@
                 <div class="history-card-item">
                     <div class="card-item-header">
                         <div class="card-item-number">{{ $index + 1 }}</div>
-                        <span class="status-badge">{{ $coc->status }}</span>
+                        <span class="status-badge">{{ __($coc->status) }}</span>
                     </div>
                     
                     <div class="card-item-info">
                         <div class="info-row">
                             <span class="info-label">
                                 <i class="fas fa-hashtag" style="font-size: 0.7rem;"></i> 
-                                Application No.
+                                {{ __('Application No.') }}
                             </span>
                             <span class="info-value">{{ $coc->id }}</span>
                         </div>
@@ -330,7 +330,7 @@
                         <div class="info-row">
                             <span class="info-label">
                                 <i class="fas fa-calendar-check" style="font-size: 0.7rem;"></i> 
-                                Approved Date
+                                {{ __('Approved Date') }}
                             </span>
                             <span class="info-value">
                                 @if($coc->status === 'Approved')
@@ -343,7 +343,7 @@
                         @if($coc->status === 'Draft')
                             <div class="info-row">
                                 <a href="{{ route('applicant.coc.step1') }}" class="btn btn-sm w-100" style="background: var(--primary-green); color: white;">
-                                    Continue Filling Form
+                                    {{ __('Continue Filling Form') }}
                                 </a>
                             </div>
                         @endif

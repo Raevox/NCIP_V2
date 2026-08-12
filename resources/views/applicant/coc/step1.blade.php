@@ -1,7 +1,7 @@
 @extends('layouts.applicant')
 
-@section('title', 'COC Form')
-@section('page-title', 'NCIP COC Form 1')
+@section('title', __('COC Form'))
+@section('page-title', __('NCIP COC Form 1'))
 
 @section('content')
 @include('applicant.coc.progress-circle', ['currentStep' => 1])
@@ -10,7 +10,7 @@
         <div class="col-12 col-lg-11">
             <div class="form-card">
                 <div class="card-header">
-                    <h2 class="card-title">NCIP COC Form 1</h2>
+                    <h2 class="card-title">{{ __('NCIP COC Form 1') }}</h2>
                 </div>
 
                 <div class="card-body">
@@ -19,15 +19,15 @@
 
                         {{-- Region Info --}}
                         <div class="form-section">
-                            <h4 class="section-title">Region Information</h4>
+                            <h4 class="section-title">{{ __('Region Information') }}</h4>
 
                             <div class="form-group">
-                                <label class="form-label required" for="provinceSearch">Province</label>
+                                <label class="form-label required" for="provinceSearch">{{ __('Province') }}</label>
                                 <div class="searchable-select">
                                     <input type="text" 
                                            id="provinceSearch" 
                                            class="form-control search-input" 
-                                           placeholder="Search province" 
+                                           placeholder="{{ __('Search province') }}" 
                                            autocomplete="address-level1"
                                            required
                                            value="{{ old('province_name', session('coc_step1.province_name') ?? '') }}">
@@ -39,12 +39,12 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label required" for="municipalitySearch">Municipality</label>
+                                <label class="form-label required" for="municipalitySearch">{{ __('Municipality') }}</label>
                                 <div class="searchable-select">
                                     <input type="text" 
                                            id="municipalitySearch" 
                                            class="form-control search-input" 
-                                           placeholder="Search municipality" 
+                                           placeholder="{{ __('Search municipality') }}" 
                                            autocomplete="address-level2"
                                            required
                                            value="{{ old('municipality_name', session('coc_step1.municipality_name') ?? '') }}">
@@ -56,12 +56,12 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label required" for="barangaySearch">Barangay</label>
+                                <label class="form-label required" for="barangaySearch">{{ __('Barangay') }}</label>
                                 <div class="searchable-select">
                                     <input type="text" 
                                            id="barangaySearch" 
                                            class="form-control search-input" 
-                                           placeholder="Search barangay" 
+                                           placeholder="{{ __('Search barangay') }}" 
                                            autocomplete="address-level3"
                                            required
                                            value="{{ old('barangay_name', session('coc_step1.barangay_name') ?? '') }}">
@@ -76,7 +76,7 @@
                         {{-- Purpose --}}
                         <div class="form-section">
                             {{-- <h4 class="section-title">Purpose</h4> --}}
-                              <legend class="form-label">Purpose: (Check only one box)</legend>
+                              <legend class="form-label">{{ __('Purpose: (Check only one box)') }}</legend>
                             @php
                                 $purposes = [
                                     'Scholarship (SCH)','Local Employment (LE)','Land Matter (LM)','Civil Service Commission (CSC)',
@@ -87,7 +87,7 @@
                             @endphp
 
                             <fieldset>
-                                <legend class="visually-hidden">Select purposes</legend>
+                                <legend class="visually-hidden">{{ __('Select purposes') }}</legend>
                                 <div class="checkbox-grid">
                                     @foreach ($purposes as $key => $purpose)
                                         <label class="checkbox-item">
@@ -104,12 +104,12 @@
                             </fieldset>
 
                             <div class="form-group mt-3">
-                                <label class="form-label" for="purpose_others">Others (specify)</label>
+                                <label class="form-label" for="purpose_others">{{ __('Others (specify)') }}</label>
                                 <input type="text" 
                                        id="purpose_others"
                                        name="purpose_others" 
                                        class="form-control" 
-                                       placeholder="Type if not listed above"
+                                       placeholder="{{ __('Type if not listed above') }}"
                                        autocomplete="off"
                                        value="{{ session('coc_step1.purpose_others') ?? '' }}">
                             </div>
@@ -117,12 +117,12 @@
 
                         {{-- Personal Information --}}
                         <div class="form-section">
-                            <h4 class="section-title">Personal Information</h4>
+                            <h4 class="section-title">{{ __('Personal Information') }}</h4>
 
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label required" for="first_name">First Name</label>
+                                        <label class="form-label required" for="first_name">{{ __('First Name') }}</label>
                                         <input type="text" 
                                                id="first_name"
                                                name="first_name" 
@@ -134,7 +134,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label required" for="last_name">Last Name</label>
+                                        <label class="form-label required" for="last_name">{{ __('Last Name') }}</label>
                                         <input type="text" 
                                                id="last_name"
                                                name="last_name" 
@@ -149,23 +149,23 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label required" for="sex">Sex</label>
+                                        <label class="form-label required" for="sex">{{ __('Sex') }}</label>
                                         <select name="sex" id="sex" class="form-control" autocomplete="sex" required>
-                                            <option value="">Select</option>
-                                            <option value="Male" {{ old('sex', session('coc_step1.sex', '')) == 'Male' ? 'selected' : '' }}>Male</option>
-                                            <option value="Female" {{ old('sex', session('coc_step1.sex', '')) == 'Female' ? 'selected' : '' }}>Female</option>
+                                            <option value="">{{ __('Select') }}</option>
+                                            <option value="Male" {{ old('sex', session('coc_step1.sex', '')) == 'Male' ? 'selected' : '' }}>{{ __('Male') }}</option>
+                                            <option value="Female" {{ old('sex', session('coc_step1.sex', '')) == 'Female' ? 'selected' : '' }}>{{ __('Female') }}</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label required" for="civil_status">Civil Status</label>
+                                        <label class="form-label required" for="civil_status">{{ __('Civil Status') }}</label>
                                         <select name="civil_status" id="civil_status" class="form-control" autocomplete="off" required>
-                                            <option value="">Select</option>
-                                            <option value="Single" {{ old('civil_status', session('coc_step1.civil_status', '')) == 'Single' ? 'selected' : '' }}>Single</option>
-                                            <option value="Married" {{ old('civil_status', session('coc_step1.civil_status', '')) == 'Married' ? 'selected' : '' }}>Married</option>
-                                            <option value="Widowed" {{ old('civil_status', session('coc_step1.civil_status', '')) == 'Widowed' ? 'selected' : '' }}>Widowed</option>
-                                            <option value="Separated" {{ old('civil_status', session('coc_step1.civil_status', '')) == 'Separated' ? 'selected' : '' }}>Separated</option>
+                                            <option value="">{{ __('Select') }}</option>
+                                            <option value="Single" {{ old('civil_status', session('coc_step1.civil_status', '')) == 'Single' ? 'selected' : '' }}>{{ __('Single') }}</option>
+                                            <option value="Married" {{ old('civil_status', session('coc_step1.civil_status', '')) == 'Married' ? 'selected' : '' }}>{{ __('Married') }}</option>
+                                            <option value="Widowed" {{ old('civil_status', session('coc_step1.civil_status', '')) == 'Widowed' ? 'selected' : '' }}>{{ __('Widowed') }}</option>
+                                            <option value="Separated" {{ old('civil_status', session('coc_step1.civil_status', '')) == 'Separated' ? 'selected' : '' }}>{{ __('Separated') }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -174,14 +174,14 @@
                             <!-- // will be change -->
 
                             <div class="form-group">
-                                <label class="form-label required">Place of Origin</label>
+                                <label class="form-label required">{{ __('Place of Origin') }}</label>
                                 <div class="row g-3">
                                     <div class="col-md-4">
                                         <div class="searchable-select">
                                             <input type="text"
                                                 id="originProvinceSearch"
                                                 class="form-control search-input"
-                                                placeholder="Search province"
+                                                placeholder="{{ __('Search province') }}"
                                                 autocomplete="off"
                                                 required
                                                 value="{{ old('origin_province_name', session('coc_step1.origin_province_name') ?? '') }}">
@@ -196,7 +196,7 @@
                                             <input type="text"
                                                 id="originMunicipalitySearch"
                                                 class="form-control search-input"
-                                                placeholder="Search municipality"
+                                                placeholder="{{ __('Search municipality') }}"
                                                 autocomplete="off"
                                                 required
                                                 value="{{ old('origin_municipality_name', session('coc_step1.origin_municipality_name') ?? '') }}">
@@ -211,7 +211,7 @@
                                             <input type="text"
                                                 id="originBarangaySearch"
                                                 class="form-control search-input"
-                                                placeholder="Search barangay"
+                                                placeholder="{{ __('Search barangay') }}"
                                                 autocomplete="off"
                                                 required
                                                 value="{{ old('origin_barangay_name', session('coc_step1.origin_barangay_name') ?? '') }}">
@@ -230,7 +230,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label" for="date_of_birth">Date of Birth</label>
+                                        <label class="form-label" for="date_of_birth">{{ __('Date of Birth') }}</label>
                                         <input type="date" 
                                                id="date_of_birth"
                                                name="date_of_birth" 
@@ -241,9 +241,9 @@
                                 </div>
                                <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="ip_group">IP Group</label>
+                                    <label class="form-label" for="ip_group">{{ __('IP Group') }}</label>
                                     <select name="ip_group" id="ip_group" class="form-control" autocomplete="off">
-                                        <option value="">Select</option>
+                                        <option value="">{{ __('Select') }}</option>
                                         @php
                                             $ipGroups = \App\Models\Tribe::active()->orderBy('name')->pluck('name')->toArray();
                                             $selectedIpGroup = old('ip_group', session('coc_step1.ip_group', ''));
@@ -262,29 +262,29 @@
                         {{-- Spouse Information --}}
                 
                         <div class="form-section">
-                            <p class="spouse-note">If married, provide the name of your spouse. If not married, indicate N/A.</p>
+                            <p class="spouse-note">{{ __('If married, provide the name of your spouse. If not married, indicate N/A.') }}</p>
                             
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label" for="spouse_first_name">First Name</label>
+                                        <label class="form-label" for="spouse_first_name">{{ __('First Name') }}</label>
                                         <input type="text" 
                                                name="spouse_first_name" 
                                                id="spouse_first_name"
                                                class="form-control"
-                                               placeholder="First name"
+                                               placeholder="{{ __('First name') }}"
                                                autocomplete="off"
                                                value="{{ old('spouse_first_name', $user->spouse_first_name ?? '') }}">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label" for="spouse_last_name">Last Name</label>
+                                        <label class="form-label" for="spouse_last_name">{{ __('Last Name') }}</label>
                                         <input type="text" 
                                                name="spouse_last_name" 
                                                id="spouse_last_name"
                                                class="form-control"
-                                               placeholder="Last name"
+                                               placeholder="{{ __('Last name') }}"
                                                autocomplete="off"
                                                value="{{ old('spouse_last_name', $user->spouse_last_name ?? '') }}">
                                     </div>
@@ -296,7 +296,7 @@
                         {{-- Submit --}}
                         <div class="form-actions">
                             <button type="submit" class="btn-submit">
-                                <span class="btn-text">Next Step</span>
+                                <span class="btn-text">{{ __('Next Step') }}</span>
                             </button>
                         </div>
                     </form>
@@ -744,7 +744,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 
                 if (items.length === 0) {
                     const li = document.createElement("li");
-                    li.textContent = "No results found";
+                    li.textContent = "{{ __('No results found') }}";
                     li.style.color = "#6c757d";
                     li.style.fontStyle = "italic";
                     li.setAttribute('role', 'option');
@@ -845,13 +845,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             if (!province || !municipality || !barangay) {
                 e.preventDefault();
-                alert("Please select Province, Municipality, and Barangay from the dropdown lists.");
+                alert("{{ __('Please select Province, Municipality, and Barangay from the dropdown lists.') }}");
                 return;
             }
 
             if (!originProvince || !originMunicipality || !originBarangay) {
                 e.preventDefault();
-                alert("Please select Place of Origin (Province, Municipality, Barangay) from the dropdown lists.");
+                alert("{{ __('Please select Place of Origin (Province, Municipality, Barangay) from the dropdown lists.') }}");
                 return;
             }
 
@@ -863,7 +863,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } catch (error) {
         console.error('Error loading location data:', error);
-        alert('Error loading location data. Please refresh the page.');
+        alert('{{ __('Error loading location data. Please refresh the page.') }}');
     }
 
     if ('ontouchstart' in window) {

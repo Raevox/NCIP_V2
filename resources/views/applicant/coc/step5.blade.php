@@ -1,7 +1,7 @@
 @extends('layouts.applicant')
 
-@section('title', 'COC Form - Step 5')
-@section('page-title', 'Step 5: Upload Documents')
+@section('title', __('COC Form - Step 5'))
+@section('page-title', __('Step 5: Upload Documents'))
 
 @section('content')
     @include('applicant.coc.progress-circle', ['currentStep' => 5])
@@ -10,8 +10,8 @@
             <div class="col-12 col-lg-11">
                 <div class="upload-card">
                     <div class="card-header">
-                        <h2 class="card-title">Upload Required Documents</h2>
-                        <p class="card-subtitle">Please upload all required documents to proceed</p>
+                        <h2 class="card-title">{{ __('Upload Required Documents') }}</h2>
+                        <p class="card-subtitle">{{ __('Please upload all required documents to proceed') }}</p>
                     </div>
 
                     <div class="card-body">
@@ -22,7 +22,7 @@
                             <div class="upload-section">
                                 <label class="upload-label required" for="applicant_picture">
                                     <i class="fas fa-user-circle"></i>
-                                    Applicant Picture
+                                    {{ __('Applicant Picture') }}
                                 </label>
                                 <div class="upload-wrapper">
                                     <input type="file" 
@@ -33,7 +33,7 @@
                                            accept="image/*">
                                     <div class="upload-placeholder">
                                         <i class="fas fa-cloud-upload-alt"></i>
-                                        <span class="upload-text">Choose file or drag here</span>
+                                        <span class="upload-text">{{ __('Choose file or drag here') }}</span>
                                         <span class="upload-hint">JPG, PNG, JPEG</span>
                                     </div>
                                     <div class="file-info d-none"></div>
@@ -48,7 +48,7 @@
                             <div class="upload-section">
                                 <label class="upload-label required" for="tribal_certificate">
                                     <i class="fas fa-certificate"></i>
-                                    Tribal Certificate
+                                    {{ __('Tribal Certificate') }}
                                 </label>
                                 <div class="upload-wrapper">
                                     <input type="file" 
@@ -59,7 +59,7 @@
                                            accept=".pdf,.jpg,.jpeg,.png">
                                     <div class="upload-placeholder">
                                         <i class="fas fa-cloud-upload-alt"></i>
-                                        <span class="upload-text">Choose file or drag here</span>
+                                        <span class="upload-text">{{ __('Choose file or drag here') }}</span>
                                         <span class="upload-hint">PDF, JPG, PNG (Max 10MB)</span>
                                     </div>
                                     <div class="file-info d-none"></div>
@@ -73,7 +73,7 @@
                             <div class="upload-section">
                                 <label class="upload-label required" for="genealogy_form">
                                     <i class="fas fa-file-alt"></i>
-                                    Completed Genealogy Form
+                                    {{ __('Completed Genealogy Form') }}
                                 </label>
                                 <div class="upload-wrapper">
                                     <input type="file" 
@@ -84,7 +84,7 @@
                                            accept=".pdf,image/*">
                                     <div class="upload-placeholder">
                                         <i class="fas fa-cloud-upload-alt"></i>
-                                        <span class="upload-text">Choose file or drag here</span>
+                                        <span class="upload-text">{{ __('Choose file or drag here') }}</span>
                                         <span class="upload-hint">PDF, JPG, PNG, JPEG (Max 10MB)</span>
                                     </div>
                                     <div class="file-info d-none"></div>
@@ -98,12 +98,12 @@
                             <div class="notice-box">
                                 <div class="notice-header">
                                     <i class="fas fa-exclamation-triangle"></i>
-                                    <strong>Important Notice</strong>
+                                    <strong>{{ __('Important Notice') }}</strong>
                                 </div>
                                 <p class="notice-text">
-                                    Please download the Genealogy Form from Step 4, print it, and have it attested by 
-                                    <strong>Council of Elders / IP Leader / Punong Barangay</strong> 
-                                    with <strong>SIGNATURE OVER PRINTED NAME</strong>. Only completed and signed forms can be uploaded here.
+                                    {{ __('Please download the Genealogy Form from Step 4, print it, and have it attested by') }}
+                                    <strong>{{ __('Council of Elders / IP Leader / Punong Barangay') }}</strong>
+                                    {{ __('with') }} <strong>{{ __('SIGNATURE OVER PRINTED NAME') }}</strong>. {{ __('Only completed and signed forms can be uploaded here.') }}
                                 </p>
                             </div>
 
@@ -111,7 +111,7 @@
                             <div class="action-buttons">
                                 <a href="{{ route('applicant.coc.step4') }}" class="btn-secondary">
                                     <i class="fas fa-arrow-left"></i>
-                                    Back
+                                    {{ __('Back') }}
                                 </a>
 
                                 @if(
@@ -122,11 +122,11 @@
                                 )
                                     <button type="submit" class="btn-primary">
                                         <i class="fas fa-paper-plane"></i>
-                                        Resubmit Application
+                                        {{ __('Resubmit Application') }}
                                     </button>
                                 @else
                                     <button type="submit" class="btn-primary">
-                                        Next Step
+                                        {{ __('Next Step') }}
                                         <i class="fas fa-arrow-right"></i>
                                     </button>
                                 @endif

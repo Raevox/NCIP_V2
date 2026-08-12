@@ -1,6 +1,6 @@
 @props([
     'name',              // field prefix, e.g. 'father', 'maternal_grandfather'
-    'label' => 'Place of Origin',
+    'label' => __('Place of Origin'),
     'oldValue' => '',
     'required' => false,
 ])
@@ -10,7 +10,7 @@
     <div class="row g-2">
         <div class="col-md-4">
             <div class="searchable-select">
-                <input type="text" class="form-control search-input origin-province-search" placeholder="Search province" autocomplete="off">
+                <input type="text" class="form-control search-input origin-province-search" placeholder="{{ __('Search province') }}" autocomplete="off">
                 <i class="fas fa-chevron-down dropdown-icon"></i>
                 <input type="hidden" class="origin-province-code">
                 <input type="hidden" class="origin-province-name">
@@ -19,7 +19,7 @@
         </div>
         <div class="col-md-4">
             <div class="searchable-select">
-                <input type="text" class="form-control search-input origin-municipality-search" placeholder="Search municipality" autocomplete="off">
+                <input type="text" class="form-control search-input origin-municipality-search" placeholder="{{ __('Search municipality') }}" autocomplete="off">
                 <i class="fas fa-chevron-down dropdown-icon"></i>
                 <input type="hidden" class="origin-municipality-code">
                 <input type="hidden" class="origin-municipality-name">
@@ -28,7 +28,7 @@
         </div>
         <div class="col-md-4">
             <div class="searchable-select">
-                <input type="text" class="form-control search-input origin-barangay-search" placeholder="Search barangay" autocomplete="off">
+                <input type="text" class="form-control search-input origin-barangay-search" placeholder="{{ __('Search barangay') }}" autocomplete="off">
                 <i class="fas fa-chevron-down dropdown-icon"></i>
                 <input type="hidden" class="origin-barangay-code">
                 <input type="hidden" class="origin-barangay-name">
