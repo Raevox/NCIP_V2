@@ -157,7 +157,9 @@
     border: none;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
+    white-space: nowrap;
 }
 
 .btn-view {
@@ -176,6 +178,85 @@
     background: #e9ecef;
     color: #6c757d;
     cursor: not-allowed;
+}
+
+.btn-documents {
+    background: #fff;
+    color: var(--primary-green);
+    border: 1px solid var(--primary-green);
+}
+
+.btn-documents:hover {
+    background: var(--primary-green-light);
+    color: var(--primary-green-hover);
+    border-color: var(--primary-green-hover);
+}
+
+.document-count {
+    min-width: 20px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    background: var(--primary-green);
+    color: #fff;
+    font-size: 11px;
+    line-height: 18px;
+}
+
+.no-files {
+    color: #6c757d;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.document-list {
+    display: grid;
+    gap: 10px;
+}
+
+.document-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    color: #212529;
+    text-decoration: none;
+}
+
+.document-link:hover {
+    border-color: var(--primary-green);
+    background: var(--primary-green-light);
+    color: var(--primary-green-hover);
+}
+
+.document-link > i:first-child {
+    width: 22px;
+    color: var(--primary-green);
+    text-align: center;
+    font-size: 18px;
+}
+
+.document-link .document-details {
+    min-width: 0;
+    flex: 1;
+}
+
+.document-link .document-name,
+.document-link .document-file-name {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.document-link .document-name {
+    font-weight: 600;
+}
+
+.document-link .document-file-name {
+    color: #6c757d;
+    font-size: 12px;
 }
 
 .empty-state {
@@ -241,56 +322,20 @@
                     </div>
                 </div>
             </div>
-            <div class="stats-badge bg-white text-dark">
-                <i class="fas fa-file-alt"></i>
-                <span>{{ $applications->count() }} Application(s)</span>
+            <div class="d-flex flex-column align-items-end gap-2">
+                <div class="stats-badge bg-white text-dark">
+                    <i class="fas fa-file-alt"></i>
+                    <span>{{ $applications->count() }} Application(s)</span>
+                </div>
+                @if(!empty($applicant->document_path))
+                    <a href="{{ asset('storage/' . $applicant->document_path) }}" target="_blank" rel="noopener noreferrer" class="text-white small fw-semibold">
+                        <i class="fas fa-id-card me-1"></i>
+                        View Registration Document
+                    </a>
+                @endif
             </div>
         </div>
     </div>
-
-    {{-- Uploaded Documents Card --}}
-    @php
-        $uploadedDocs = [];
-        if (!empty($applicant->document_path)) {
-            $uploadedDocs[] = ['name' => 'Registration Document', 'url' => asset('storage/' . $applicant->document_path), 'icon' => 'fas fa-file-alt'];
-        }
-        foreach ($applications as $app) {
-            if (!empty($app->applicant_picture)) {
-                $uploadedDocs[] = ['name' => 'Applicant Picture', 'url' => asset('storage/' . $app->applicant_picture), 'icon' => 'fas fa-image'];
-            }
-            if (!empty($app->tribal_certificate)) {
-                $uploadedDocs[] = ['name' => 'Tribal Certificate', 'url' => asset('storage/' . $app->tribal_certificate), 'icon' => 'fas fa-certificate'];
-            }
-            if (!empty($app->birth_certificate)) {
-                $uploadedDocs[] = ['name' => 'Birth Certificate', 'url' => asset('storage/' . $app->birth_certificate), 'icon' => 'fas fa-file-medical'];
-            }
-            if (!empty($app->genealogy_form)) {
-                $uploadedDocs[] = ['name' => 'Genealogy Form', 'url' => asset('storage/' . $app->genealogy_form), 'icon' => 'fas fa-sitemap'];
-            }
-        }
-    @endphp
-
-    @if(count($uploadedDocs) > 0)
-        <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px; background: #fff;">
-            <div class="card-header bg-transparent border-bottom py-3 d-flex align-items-center justify-content-between">
-                <h5 class="mb-0 fw-bold" style="font-size: 15px; color: var(--primary-green);">
-                    <i class="fas fa-folder-open me-2"></i>Uploaded Documents
-                </h5>
-                <span class="badge bg-success bg-opacity-10 text-success fw-bold">{{ count($uploadedDocs) }} File(s)</span>
-            </div>
-            <div class="card-body p-3">
-                <div class="d-flex flex-wrap gap-2">
-                    @foreach($uploadedDocs as $doc)
-                        <a href="{{ $doc['url'] }}" target="_blank" class="btn btn-outline-success btn-sm d-inline-flex align-items-center gap-2 rounded-2 px-3 py-2 text-decoration-none" style="font-size: 13px;">
-                            <i class="{{ $doc['icon'] }}" style="color: var(--primary-green);"></i>
-                            <span class="fw-semibold">{{ $doc['name'] }}</span>
-                            <i class="fas fa-external-link-alt ms-1 text-muted" style="font-size: 10px;"></i>
-                        </a>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    @endif
 
     {{-- History Table --}}
     <div class="custom-table">
@@ -300,11 +345,20 @@
                     <th class="text-center" style="width: 80px;">#</th>
                     <th>Submitted Date</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center" style="width: 180px;">Documents</th>
                     <th class="text-center" style="width: 150px;">Action</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($applications as $index => $app)
+                @php
+                    $submissionDocuments = collect([
+                        ['name' => 'Applicant Picture', 'path' => $app->applicant_picture, 'icon' => 'fas fa-image'],
+                        ['name' => 'Tribal Certificate', 'path' => $app->tribal_certificate, 'icon' => 'fas fa-certificate'],
+                        ['name' => 'Birth Certificate', 'path' => $app->birth_certificate, 'icon' => 'fas fa-file-medical'],
+                        ['name' => 'Genealogy Form', 'path' => $app->genealogy_form, 'icon' => 'fas fa-sitemap'],
+                    ])->filter(fn ($document) => !empty($document['path']))->values();
+                @endphp
                 <tr>
                     <td class="text-center">
                         <span class="fw-bold" style="color: var(--primary-green);">{{ $index + 1 }}</span>
@@ -337,6 +391,17 @@
                         </span>
                     </td>
                     <td class="text-center">
+                        @if($submissionDocuments->isNotEmpty())
+                            <button type="button" class="action-btn btn-documents" data-bs-toggle="modal" data-bs-target="#documentsModal{{ $app->id }}" aria-label="View documents for application {{ $app->id }}">
+                                <i class="fas fa-folder-open"></i>
+                                View Files
+                                <span class="document-count">{{ $submissionDocuments->count() }}</span>
+                            </button>
+                        @else
+                            <span class="no-files"><i class="fas fa-folder-minus me-1"></i>No files</span>
+                        @endif
+                    </td>
+                    <td class="text-center">
                         @if($app->coc_status === 'Approved')
                             <a href="{{ route('admin.applicants.coc.view', $app->id) }}" 
                                class="action-btn btn-view">
@@ -353,7 +418,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                         <div class="empty-state">
                             <i class="fas fa-inbox"></i>
                             <p>No COC applications found for this applicant.</p>
@@ -364,6 +429,47 @@
             </tbody>
         </table>
     </div>
+
+    @foreach($applications as $app)
+        @php
+            $submissionDocuments = collect([
+                ['name' => 'Applicant Picture', 'path' => $app->applicant_picture, 'icon' => 'fas fa-image'],
+                ['name' => 'Tribal Certificate', 'path' => $app->tribal_certificate, 'icon' => 'fas fa-certificate'],
+                ['name' => 'Birth Certificate', 'path' => $app->birth_certificate, 'icon' => 'fas fa-file-medical'],
+                ['name' => 'Genealogy Form', 'path' => $app->genealogy_form, 'icon' => 'fas fa-sitemap'],
+            ])->filter(fn ($document) => !empty($document['path']))->values();
+        @endphp
+
+        @if($submissionDocuments->isNotEmpty())
+            <div class="modal fade" id="documentsModal{{ $app->id }}" tabindex="-1" aria-labelledby="documentsModalLabel{{ $app->id }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div>
+                                <h5 class="modal-title" id="documentsModalLabel{{ $app->id }}">Uploaded Documents</h5>
+                                <small class="text-muted">Application #{{ $app->id }} &middot; {{ $app->submitted_at?->format('M d, Y') ?? 'Not submitted' }}</small>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="document-list">
+                                @foreach($submissionDocuments as $document)
+                                    <a href="{{ asset('storage/' . $document['path']) }}" target="_blank" rel="noopener noreferrer" class="document-link">
+                                        <i class="{{ $document['icon'] }}"></i>
+                                        <span class="document-details">
+                                            <span class="document-name">{{ $document['name'] }}</span>
+                                            <span class="document-file-name">{{ basename($document['path']) }}</span>
+                                        </span>
+                                        <i class="fas fa-external-link-alt text-muted"></i>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+    @endforeach
 </div>
 
 @endsection
