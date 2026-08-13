@@ -43,6 +43,39 @@
       padding: 20px;
     }
 
+    /* ── BACK TO LANDING PAGE ── */
+    .back-home {
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      z-index: 10;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--green-deep);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(30, 77, 43, 0.10);
+      backdrop-filter: blur(8px);
+      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .back-home:hover {
+      transform: translateX(-3px);
+      background: var(--white);
+      box-shadow: 0 8px 24px rgba(30, 77, 43, 0.16);
+    }
+
+    .back-home:focus-visible {
+      outline: 3px solid rgba(76, 175, 110, 0.35);
+      outline-offset: 3px;
+    }
+
     /* ── CARD ── */
     .login-card {
       display: flex;
@@ -484,7 +517,8 @@
     }
 
     @media (max-width: 460px) {
-      body { padding: 12px; }
+      body { padding: 68px 12px 12px; }
+      .back-home { top: 14px; left: 14px; }
       .left-panel  { min-height: 180px; }
       .right-panel { padding: 28px 20px; }
       .logo { width: 58px; }
@@ -492,6 +526,11 @@
   </style>
 </head>
 <body>
+
+  <a href="{{ route('landingpage') }}" class="back-home" aria-label="Back to landing page">
+    <i class="fas fa-arrow-left" aria-hidden="true"></i>
+    <span>Back to Home</span>
+  </a>
 
   <div class="login-card">
 
