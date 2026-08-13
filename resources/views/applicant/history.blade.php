@@ -117,6 +117,34 @@
     font-weight: 600;
 }
 
+.history-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.document-action {
+    background: var(--primary-green);
+    border: 1px solid var(--primary-green);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 34px;
+    padding: 0.4rem 0.7rem;
+    text-decoration: none;
+}
+
+.document-action:hover,
+.document-action:focus {
+    background: var(--primary-green-hover);
+    border-color: var(--primary-green-hover);
+    color: #fff;
+}
+
 /* Mobile Card Design */
 .history-card-item {
     background: white;
@@ -296,11 +324,20 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if($coc->status === 'Draft')
-                                        <a href="{{ route('applicant.coc.step1') }}" class="btn btn-sm" style="background: var(--primary-green); color: white;">
-                                            {{ __('Continue') }}
+                                    <div class="history-actions">
+                                        <a href="{{ route('applicant.history.documents', $coc) }}"
+                                           class="btn btn-sm document-action"
+                                           title="{{ __('View uploaded documents') }}">
+                                            <i class="fas fa-eye" aria-hidden="true"></i>
+                                            <span>{{ __('Documents') }}</span>
                                         </a>
-                                    @endif
+                                        @if($coc->status === 'Draft')
+                                            <a href="{{ route('applicant.coc.step1') }}" class="btn btn-sm document-action">
+                                                <i class="fas fa-pen" aria-hidden="true"></i>
+                                                <span>{{ __('Continue') }}</span>
+                                            </a>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                             @endforeach
@@ -340,10 +377,18 @@
                                 @endif
                             </span>
                         </div>
+                        <div class="info-row">
+                            <a href="{{ route('applicant.history.documents', $coc) }}"
+                               class="btn btn-sm w-100 document-action">
+                                <i class="fas fa-eye" aria-hidden="true"></i>
+                                <span>{{ __('View Uploaded Documents') }}</span>
+                            </a>
+                        </div>
                         @if($coc->status === 'Draft')
                             <div class="info-row">
-                                <a href="{{ route('applicant.coc.step1') }}" class="btn btn-sm w-100" style="background: var(--primary-green); color: white;">
-                                    {{ __('Continue Filling Form') }}
+                                <a href="{{ route('applicant.coc.step1') }}" class="btn btn-sm w-100 document-action">
+                                    <i class="fas fa-pen" aria-hidden="true"></i>
+                                    <span>{{ __('Continue Filling Form') }}</span>
                                 </a>
                             </div>
                         @endif

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use App\Models\IpRecord;
 use App\Models\IpApplicant;
 use App\Models\CocApplication;
@@ -992,7 +994,7 @@ public function resubmitFinal(Request $request, $id)
 
 public function history(Request $request)
 {
-    $query = CocApplication::where('user_id', Auth::id())
+    $query = CocApplication::where('user_id', Auth::guard('applicant')->id())
         ->orderBy('updated_at', 'desc');
 
     if ($request->filled('status')) {
@@ -1003,10 +1005,64 @@ public function history(Request $request)
         $query->where('id', 'like', '%' . $request->search . '%');
     }
 
-    // use paginate instead of get
-    $cocHistory = $query->paginate(10); // 10 items per page
+    $cocHistory = $query->paginate(10);
 
     return view('applicant.history', compact('cocHistory'));
+}
+
+public function viewDocuments(CocApplication $application)
+{
+    $this->ensureApplicantOwnsApplication($application);
+
+    $documents = $this->applicationDocuments($application);
+
+    return view('applicant.documents', compact('application', 'documents'));
+}
+
+public function viewDocument(CocApplication $application, string $document)
+{
+    $this->ensureApplicantOwnsApplication($application);
+
+    $documents = $this->applicationDocuments($application);
+    abort_unless(isset($documents[$document]), 404, 'Document not found.');
+
+    $path = $documents[$document]['path'];
+    abort_unless(Storage::disk('public')->exists($path), 404, 'Document not found.');
+
+    return Storage::disk('public')->response($path, basename($path), [
+        'Content-Disposition' => 'inline; filename="' . basename($path) . '"',
+        'X-Content-Type-Options' => 'nosniff',
+    ]);
+}
+
+private function ensureApplicantOwnsApplication(CocApplication $application): void
+{
+    abort_unless(
+        (int) $application->user_id === (int) Auth::guard('applicant')->id(),
+        404
+    );
+}
+
+private function applicationDocuments(CocApplication $application): array
+{
+    $documentFields = [
+        'applicant_picture' => ['label' => 'Applicant Photo', 'icon' => 'fa-user'],
+        'tribal_certificate' => ['label' => 'Tribal Certificate', 'icon' => 'fa-file-contract'],
+        'genealogy_form' => ['label' => 'Genealogy Form', 'icon' => 'fa-sitemap'],
+    ];
+
+    return collect($documentFields)
+        ->filter(fn (array $details, string $field) => filled($application->{$field}))
+        ->map(function (array $details, string $field) use ($application) {
+            $path = $application->{$field};
+
+            return $details + [
+                'path' => $path,
+                'filename' => basename($path),
+                'type' => Str::upper(pathinfo($path, PATHINFO_EXTENSION)),
+            ];
+        })
+        ->all();
 }
     
 // ----- Start New Application with Prefilled Data -----

@@ -289,6 +289,13 @@ Route::middleware(['auth:applicant'])->prefix('applicant')->name('applicant.')->
 
     // History
     Route::get('/history', [ApplicantDashboardController::class, 'history'])->name('history');
+    Route::get('/history/{application}/documents', [ApplicantDashboardController::class, 'viewDocuments'])
+        ->whereNumber('application')
+        ->name('history.documents');
+    Route::get('/history/{application}/documents/{document}', [ApplicantDashboardController::class, 'viewDocument'])
+        ->whereNumber('application')
+        ->whereIn('document', ['applicant_picture', 'tribal_certificate', 'genealogy_form'])
+        ->name('history.documents.view');
 
     // Track Status
     Route::get('/track-status', [ApplicantDashboardController::class, 'trackStatus'])->name('track-status');
