@@ -31,6 +31,61 @@
             min-height: 100vh;
         }
         /* Navigation */
+        .lang-switcher-nav {
+            position: relative;
+            margin-left: 12px;
+        }
+        .lang-switcher-nav button {
+            background: none;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            cursor: pointer;
+        }
+        .lang-switcher-nav button:hover {
+            border-color: #3E7B27;
+            color: #3E7B27;
+        }
+        .lang-switcher-nav .lang-dropdown-nav {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 6px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 130px;
+            z-index: 1100;
+        }
+        .lang-switcher-nav .lang-dropdown-nav.show {
+            display: block;
+        }
+        .lang-switcher-nav .lang-dropdown-nav a {
+            display: block;
+            padding: 10px 14px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+        }
+        .lang-switcher-nav .lang-dropdown-nav a:hover {
+            background: #f5f5f5;
+            color: #3E7B27;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        @media (max-width: 768px) {
+            .nav-actions {
+                display: none;
+            }
+        }
         .nav-bar {
             background: white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -785,102 +840,6 @@
                 font-size: 0.9rem;
             }
             
-            /* Universal dropdown panel for all screen sizes */
-            .nav-menu {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 60px; /* below header */
-                right: 10px;
-                width: 100%;
-                max-width: 100%; 
-                background: rgba(255, 255, 255, 0.98);
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                z-index: 999;
-                padding: 1rem;
-                margin-top: 9px;
-            }
-
-            .nav-menu.active {
-                display: flex;
-            }
-
-            /* Menu items */
-            .nav-menu li {
-                border-bottom: 1px solid #ddd;
-                margin: 0.3rem 0;
-                padding: 0.5rem 0;
-            }
-
-            .nav-menu li:last-child {
-                border-bottom: none;
-            }
-
-            /* Login button inside menu */
-            .mobile-login .login-btn {
-                display: block;
-                width: 100%;
-                margin-top: 1rem;
-                text-align: center;
-                padding: 12px;
-                background: #2c5530;
-                color: #fff !important;
-                border-radius: 6px;
-                font-weight: 600;
-                font-size: 0.95rem;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            }
-
-
-            /* Always show hamburger button in all devices */
-            .mobile-menu-btn {
-                display: block;
-                background: none;
-                border: none;
-                font-size: 1.8rem;
-                cursor: pointer;
-                color: #333;
-            }
-
-            
-            .nav-menu > li {
-                border-bottom: 1px solid #f0f0f0;
-                width: 100%;
-            }
-            
-            .nav-menu > li:last-child {
-                border-bottom: none;
-            }
-            
-            .nav-menu > li > a {
-                padding: 1rem 1.5rem;
-                border-bottom: none;
-            }
-            
-            .dropdown {
-                position: static;
-                opacity: 1;
-                visibility: visible;
-                transform: none;
-                box-shadow: none;
-                background: #f8f9fa;
-                margin: 0;
-                border-radius: 0;
-                width: 100%;
-                max-height: 0;
-                overflow: hidden;
-                transition: max-height 0.3s ease;
-            }
-            
-            .dropdown.active {
-                max-height: 500px;
-            }
-            
-            .dropdown a {
-                padding-left: 3rem;
-                font-size: 0.9rem;
-            }
-            
             .mobile-login {
                 display: block;
             }
@@ -932,32 +891,43 @@
                 <!-- <div class="page-indicator" id="pageIndicator">Home</div> -->
                     <ul class="nav-menu" id="navMenu">
                         <li>
-                            <a href="{{ route('landingpage') }}">Home</a>
+                            <a href="{{ route('landingpage') }}">{{ __('Home') }}</a>
                         </li>
                         <li class="dropdown-item">
-                            <a href="#about" onclick="toggleDropdown(event, this.parentNode)">About <i class="fa-solid fa-chevron-down arrow"></i></a>
+                            <a href="#about" onclick="toggleDropdown(event, this.parentNode)">{{ __('About') }} <i class="fa-solid fa-chevron-down arrow"></i></a>
                             <div class="dropdown">
-                                <a href="{{ url('about-us') }}">About Us</a>
-                                <a href="{{ url('iccs-ips-rights') }}">ICCs/IPs Rights</a>
+                                <a href="{{ url('about-us') }}">{{ __('About Us') }}</a>
+                                <a href="{{ url('iccs-ips-rights') }}">{{ __('ICCs/IPs Rights') }}</a>
                             </div>
                         </li>
                 
 
                         <li class="dropdown-item">
                             <a href="#program" onclick="toggleDropdown(event, this.parentNode)">
-                                Program <i class="fa-solid fa-chevron-down arrow"></i>
+                                {{ __('Program') }} <i class="fa-solid fa-chevron-down arrow"></i>
                             </a>
                             <div class="dropdown">
-                                <a href="{{ url('programs-pps') }}">Project, Programs & Services (PPS)</a>
-                                <a href="{{ url('accomplishments') }}">Accomplishments</a>
+                                <a href="{{ url('programs-pps') }}">{{ __('Project, Programs & Services (PPS)') }}</a>
+                                <a href="{{ url('accomplishments') }}">{{ __('Accomplishments') }}</a>
                             </div>
                         </li>
-                        <li><a href="{{ url('partnership') }}">Partnership</a></li>
-                        <li><a href="{{ url('contacts') }}">Contact Us</a></li>
-                        <li><a href="#news"class="active">News </a> </li>
-                        <li class="mobile-login"><a href="{{ route('login') }}" class="login-btn">Login</a></li>
+                        <li><a href="{{ url('partnership') }}">{{ __('Partnership') }}</a></li>
+                        <li><a href="{{ url('contacts') }}">{{ __('Contact Us') }}</a></li>
+                        <li><a href="#news"class="active">{{ __('News') }}</a></li>
+                        <li class="mobile-login"><a href="{{ route('login') }}" class="login-btn">{{ __('Login') }}</a></li>
                     </ul>
-                        <a href="{{ route('login') }}" class="login-btn desktop-login">Login</a>
+                        <div class="nav-actions">
+                            <a href="{{ route('login') }}" class="login-btn desktop-login">{{ __('Login') }}</a>
+                            <div class="lang-switcher-nav lang-switcher-desktop">
+                                <button type="button" onclick="document.getElementById('navLangDropdownNews').classList.toggle('show')">
+                                    <i class="fas fa-globe"></i> {{ app()->getLocale() === 'tl' ? 'Filipino' : 'English' }}
+                                </button>
+                                <div id="navLangDropdownNews" class="lang-dropdown-nav">
+                                    <a href="{{ route('lang.switch', 'en') }}">English</a>
+                                    <a href="{{ route('lang.switch', 'tl') }}">Filipino</a>
+                                </div>
+                            </div>
+                        </div>
 
             </div>
         </nav>
@@ -967,8 +937,8 @@
             <div class="header-container">
                 <div class="logo"></div>
                 <div class="org-title">
-                    <h1>NCIP Nueva Ecija Provincial Office</h1>
-                    <p> News & Updates</p>
+                    <h1>{{ __('NCIP Nueva Ecija Provincial Office') }}</h1>
+                    <p>{{ __('News & Updates') }}</p>
                 </div>
             </div>
         </header>
@@ -976,8 +946,8 @@
           <!-- Page Title Section -->
         <div class="page-title">
             <div class="overlay">
-                 <h2>News and Updates</h2>
-                <p>Stay informed with the latest news, announcements, and updates from our indigenous communities across Nueva Ecija.</p>
+                <h2>{{ __('News and Updates') }}</h2>
+                <p>{{ __('Stay informed with the latest news, announcements, and updates from our indigenous communities across Nueva Ecija.') }}</p>
             </div>
         </div>
         
@@ -989,7 +959,7 @@
         <div class="section-wrapper">
             <div class="section-header">
             <h2 class="section-title">
-                <span class="highlight-green">Latest</span> News & Updates
+                <span class="highlight-green">{{ __('Latest') }}</span> {{ __('News & Updates') }}
             </h2>
             </div>
 
@@ -1013,51 +983,46 @@
                     {{ Str::limit($item->description, 200, '...') }}
                     </p>
 
-                    <a href="{{ route('news.show', $item->id) }}" class="read-more-btn">Read More</a>
+                    <a href="{{ route('news.show', $item->id) }}" class="read-more-btn">{{ __('Read More') }}</a>
                 </div>
                 </article>
                 @endif
             @empty
-                <p style="text-align:center; color:#555;">No news available at the moment.</p>
+                <p style="text-align:center; color:#555;">{{ __('No news available at the moment.') }}</p>
             @endforelse
+            </div>
+
+            <!-- Pagination -->
+            <div style="margin-top: 25px;">
+                {{ $news->links() }}
             </div>
         </div>
         </section>
 
 </div>
 
-
-    <!-- Pagination -->
-    <div style="margin-top: 25px;">
-        {{ $news->links() }}
-    </div>
-</div>
-
-            
-        </section>
-        </div>
         <!-- Footer -->
         <footer class="footer" id="contact">
         <div class="footer-content">
             <!-- Quick Links -->
             <div class="footer-links">
-            <h3>Quick Links</h3>
+            <h3>{{ __('Quick Links') }}</h3>
             <ul>
-                 <li><a href="{{ route('landingpage') }}">Home</a></li>
-                <li><a href="{{ url('about-us') }}">About Us</a></li>
-                <li><a href="{{ url('iccs-ips-rights') }}">ICCs/IPs Rights</a></li>
-                <li><a href="{{ url('programs-pps') }}">Programs, Projects & Services</a></li>
-                <li><a href="{{ url('accomplishments') }}">Accomplishments</a></li>
-                <li><a href="{{ url('partnership') }}">Partnership</a></li>
-                <li><a href="{{ url('contacts') }}">Contact Us</a></li>
-                <li><a href="{{ url('news') }}">News</a></li>
+                <li><a href="{{ route('landingpage') }}">{{ __('Home') }}</a></li>
+                <li><a href="{{ url('about-us') }}">{{ __('About Us') }}</a></li>
+                <li><a href="{{ url('iccs-ips-rights') }}">{{ __('ICCs/IPs Rights') }}</a></li>
+                <li><a href="{{ url('programs-pps') }}">{{ __('Programs, Projects & Services') }}</a></li>
+                <li><a href="{{ url('accomplishments') }}">{{ __('Accomplishments') }}</a></li>
+                <li><a href="{{ url('partnership') }}">{{ __('Partnership') }}</a></li>
+                <li><a href="{{ url('contacts') }}">{{ __('Contact Us') }}</a></li>
+                <li><a href="{{ url('news') }}">{{ __('News') }}</a></li>
             </ul>
             </div>
 
             <!-- Social Media -->
             <div class="footer-social">
-            <h3>Connect With Us</h3>
-            <p>Stay updated with our latest news and activities:</p>
+            <h3>{{ __('Connect With Us') }}</h3>
+            <p>{{ __('Stay updated with our latest news and activities:') }}</p>
             <div class="social-icons">
                 <a href="https://facebook.com/NCIPNuevaEcija" target="_blank"><i class="fab fa-facebook-f"></i></a>
                 <a href="viber://chat?number=+639176543210" target="_blank"><i class="fab fa-viber"></i></a>
@@ -1075,7 +1040,7 @@
         </div>
 
         <div class="footer-bottom">
-            <p>&copy; 2025 National Commission on Indigenous Peoples - Nueva Ecija. All Rights Reserved.</p>
+            <p>&copy; 2025 {{ __('National Commission on Indigenous Peoples - Nueva Ecija. All Rights Reserved.') }}</p>
         </div>
         </footer>
 
@@ -1085,7 +1050,18 @@
      // Toggle mobile menu
     function toggleMobileMenu() {
         const navMenu = document.getElementById('navMenu');
+        const mobileBtn = document.querySelector('.mobile-menu-btn');
+        const icon = mobileBtn.querySelector('i');
+
         navMenu.classList.toggle('active');
+
+        if (navMenu.classList.contains('active')) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-times');
+        } else {
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+        }
     }
 
     // Toggle dropdown in mobile view only
@@ -1098,6 +1074,12 @@
             arrow.style.transform = dropdown.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
         }
     }
+
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.lang-switcher-nav')) {
+            document.getElementById('navLangDropdownNews')?.classList.remove('show');
+        }
+    });
 
     // Close menu when clicking outside
     document.addEventListener('click', function(event) {

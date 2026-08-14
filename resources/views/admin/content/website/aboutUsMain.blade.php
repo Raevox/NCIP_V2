@@ -10,6 +10,70 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet"/>
 <style>
+      .lang-switcher-nav {
+        position: relative;
+        margin-left: 12px;
+      }
+
+      .lang-switcher-nav button {
+        background: none;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 6px 14px;
+        font-size: 14px;
+        font-family: 'Poppins', sans-serif;
+        color: #333;
+        cursor: pointer;
+      }
+
+      .lang-switcher-nav button:hover {
+        border-color: #3E7B27;
+        color: #3E7B27;
+      }
+
+      .lang-switcher-nav .lang-dropdown-nav {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        margin-top: 6px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        min-width: 130px;
+        z-index: 1100;
+      }
+
+      .lang-switcher-nav .lang-dropdown-nav.show {
+        display: block;
+      }
+
+      .lang-switcher-nav .lang-dropdown-nav a {
+        display: block;
+        padding: 10px 14px;
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+      }
+
+      .lang-switcher-nav .lang-dropdown-nav a:hover {
+        background: #f5f5f5;
+        color: #3E7B27;
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      @media (max-width: 768px) {
+        .nav-actions {
+          display: none;
+        }
+      }
+
       /* Base Styles */
       * {
         margin: 0;
@@ -1194,32 +1258,43 @@
           <!-- <div class="page-indicator" id="pageIndicator">Home</div> -->
           <ul class="nav-menu" id="navMenu">
            <li>
-             <a href="{{ route('landingpage') }}">Home</a>
+             <a href="{{ route('landingpage') }}">{{ __('Home') }}</a>
            </li>
            <li>
               <a href="#about" class="active" onclick="toggleDropdown(event, this.parentNode)">
-                About <i class="fa-solid fa-chevron-down arrow"></i>
+                {{ __('About') }} <i class="fa-solid fa-chevron-down arrow"></i>
               </a>
               <div class="dropdown">
-                 <a href="{{ url('about-us') }}">About Us</a>
-                 <a href="{{ url('iccs-ips-rights') }}">ICCs/IPs Rights</a>
+                 <a href="{{ url('about-us') }}">{{ __('About Us') }}</a>
+                 <a href="{{ url('iccs-ips-rights') }}">{{ __('ICCs/IPs Rights') }}</a>
               </div>
             </li>
            <li class="dropdown-item">
                 <a href="#program" onclick="toggleDropdown(event, this.parentNode)">
-                    Program <i class="fa-solid fa-chevron-down arrow"></i>
+                    {{ __('Program') }} <i class="fa-solid fa-chevron-down arrow"></i>
                 </a>
                 <div class="dropdown">
-                    <a href="{{ url('programs-pps') }}">Project, Programs & Services (PPS)</a>
-                    <a href="{{ url('accomplishments') }}">Accomplishments</a>
+                    <a href="{{ url('programs-pps') }}">{{ __('Project, Programs & Services (PPS)') }}</a>
+                    <a href="{{ url('accomplishments') }}">{{ __('Accomplishments') }}</a>
                 </div>
             </li>
-             <li><a href="{{ url('partnership') }}">Partnership</a></li>
-             <li><a href="{{ url('contacts') }}">Contact Us</a></li>
-             <li><a href="{{ url('news') }}">News</a></li>
-            <li class="mobile-login"><a href="{{ route('login') }}" class="login-btn">Login</a></li>
+             <li><a href="{{ url('partnership') }}">{{ __('Partnership') }}</a></li>
+             <li><a href="{{ url('contacts') }}">{{ __('Contact Us') }}</a></li>
+             <li><a href="{{ url('news') }}">{{ __('News') }}</a></li>
+            <li class="mobile-login"><a href="{{ route('login') }}" class="login-btn">{{ __('Login') }}</a></li>
           </ul>
-          <a href="{{ route('login') }}" class="login-btn desktop-login">Login</a>
+          <div class="nav-actions">
+            <a href="{{ route('login') }}" class="login-btn desktop-login">{{ __('Login') }}</a>
+            <div class="lang-switcher-nav lang-switcher-desktop">
+              <button type="button" onclick="document.getElementById('navLangDropdownDesktop').classList.toggle('show')">
+                <i class="fas fa-globe"></i> {{ app()->getLocale() === 'tl' ? 'Filipino' : 'English' }}
+              </button>
+              <div id="navLangDropdownDesktop" class="lang-dropdown-nav">
+                <a href="{{ route('lang.switch', 'en') }}">English</a>
+                <a href="{{ route('lang.switch', 'tl') }}">Filipino</a>
+              </div>
+            </div>
+          </div>
         </div>
       </nav>
 
@@ -1229,8 +1304,8 @@
         <div class="header-container">
           <div class="logo"></div>
           <div class="org-title">
-            <h1>NCIP Nueva Ecija Provincial Office</h1>
-            <p>About Us</p>
+            <h1>{{ __('NCIP Nueva Ecija Provincial Office') }}</h1>
+            <p>{{ __('About Us') }}</p>
           </div>
         </div>
       </header>
@@ -1238,10 +1313,9 @@
       <!-- Page Title Section -->
       <div class="page-title">
         <div class="overlay">
-          <h2>About NCIP Nueva Ecija</h2>
+          <h2>{{ __('About NCIP Nueva Ecija') }}</h2>
           <p>
-            Mandate, Vision, Mission, Goals & Objectives and the Indigenous
-            Communities we serve
+            {{ __('Mandate, Vision, Mission, Goals & Objectives and the Indigenous Communities we serve') }}
           </p>
         </div>
       </div>
@@ -1252,14 +1326,9 @@
         <div class="intro-section">
           <div class="intro-container">
             <div class="intro-text">
-              <h3>NCIP Nueva Ecija Provincial Office</h3>
+              <h3>{{ __('NCIP Nueva Ecija Provincial Office') }}</h3>
               <p>
-                NCIP Nueva Ecija Provincial Office is located in Cabanatuan
-                City, Nueva Ecija, serving as the provincial center for programs
-                and services dedicated to Indigenous Cultural Communities and
-                Indigenous Peoples. We are committed to protecting, promoting,
-                and fulfilling the rights and welfare of ICCs/IPs throughout the
-                province.
+                {{ __('NCIP Nueva Ecija Provincial Office is located in Cabanatuan City, Nueva Ecija, serving as the provincial center for programs and services dedicated to Indigenous Cultural Communities and Indigenous Peoples. We are committed to protecting, promoting, and fulfilling the rights and welfare of ICCs/IPs throughout the province.') }}
               </p>
             </div>
             <div class="intro-logo"></div>
@@ -1270,16 +1339,11 @@
         <div class="content-section">
           <div class="section-header">
             <h3>Republic Act 8371 <i class="fas fa-balance-scale"></i></h3>
-            <p>The Indigenous Peoples Rights Act of 1997</p>
+            <p>{{ __('The Indigenous Peoples Rights Act of 1997') }}</p>
           </div>
           <div class="section-content">
             <p style="font-size: 16px; color: #000000; line-height: 1.66">
-              Republic Act No. 8371, officially known as the Indigenous Peoples'
-              Rights Act of 1997, aims to safeguard the rights of Indigenous
-              Peoples (IPs) and Indigenous Cultural Communities (ICCs) in the
-              Philippines. This landmark legislation acknowledges their distinct
-              identities, cultures, and traditional territories, providing a
-              legal framework for the recognition of their rights.
+              {{ __('Republic Act No. 8371, officially known as the Indigenous Peoples\' Rights Act of 1997, aims to safeguard the rights of Indigenous Peoples (IPs) and Indigenous Cultural Communities (ICCs) in the Philippines. This landmark legislation acknowledges their distinct identities, cultures, and traditional territories, providing a legal framework for the recognition of their rights.') }}
             </p>
           </div>
         </div>
@@ -1288,41 +1352,28 @@
         <div class="content-section">
           <div class="section-header">
             <h3>NCIP Central Office <i class="fas fa-building"></i></h3>
-            <p>Mandate, Vision and Mission</p>
+            <p>{{ __('Mandate, Vision and Mission') }}</p>
           </div>
           <div class="section-content">
             <div class="vmgo-grid">
               <div class="vmgo-card">
-                <h4><i class="fas fa-gavel"></i>Mandate</h4>
+                <h4><i class="fas fa-gavel"></i>{{ __('Mandate') }}</h4>
                 <p>
-                  The NCIP shall protect and promote the interest and well-being
-                  of the Indigenous Cultural Communities/Indigenous Peoples with
-                  due regard to their beliefs, customs, traditions, and
-                  institutions.
+                  {{ __('The NCIP shall protect and promote the interest and well-being of the Indigenous Cultural Communities/Indigenous Peoples with due regard to their beliefs, customs, traditions, and institutions.') }}
                 </p>
               </div>
 
               <div class="vmgo-card">
-                <h4><i class="fas fa-eye"></i>Vision</h4>
+                <h4><i class="fas fa-eye"></i>{{ __('Vision') }}</h4>
                 <p>
-                  By 2040, all Philippine Indigenous Cultural
-                  Communities/Indigenous Peoples will be fully empowered, their
-                  rights genuinely fulfilled and realized, their cultural
-                  heritage observed, respected, and preserved, and their
-                  ancestral domains and land sustainably protected and
-                  developed, ensuring active participation and contribution to
-                  nation-building with their identity remaining intact as they
-                  adapt to evolving times, and thus securing a lasting legacy
-                  for future generations.
+                  {{ __('By 2040, all Philippine Indigenous Cultural Communities/Indigenous Peoples will be fully empowered, their rights genuinely fulfilled and realized, their cultural heritage observed, respected, and preserved, and their ancestral domains and land sustainably protected and developed, ensuring active participation and contribution to nation-building with their identity remaining intact as they adapt to evolving times, and thus securing a lasting legacy for future generations.') }}
                 </p>
               </div>
 
               <div class="vmgo-card">
-                <h4><i class="fas fa-bullseye"></i>Mission</h4>
+                <h4><i class="fas fa-bullseye"></i>{{ __('Mission') }}</h4>
                 <p>
-                  A trusted partner and lead advocate of ICCs/IPs in upholding
-                  their rights and well-being as enshrined in the Indigenous
-                  Peoples' Rights Act.
+                  {{ __('A trusted partner and lead advocate of ICCs/IPs in upholding their rights and well-being as enshrined in the Indigenous Peoples\' Rights Act.') }}
                 </p>
               </div>
             </div>
@@ -1336,12 +1387,12 @@
               NCIP Nueva Ecija Provincial Office
               <i class="fas fa-map-marked-alt"></i>
             </h3>
-            <p>Vision, Mission, Goals, Core Values & Objectives</p>
+            <p>{{ __('Vision, Mission, Goals, Core Values & Objectives') }}</p>
           </div>
           <div class="section-content">
             <div class="vmgo-grid">
               <div class="vmgo-card">
-                <h4><i class="fas fa-eye"></i>Vision</h4>
+                <h4><i class="fas fa-eye"></i>{{ __('Vision') }}</h4>
                 <p>
                   We DREAM to be at the HEART OF EVERY INDIGENOUS PEOPLES WOMEN
                   AND MEN, empowering them to live in dignity; and at the CENTER
@@ -1357,7 +1408,7 @@
               </div>
 
               <div class="vmgo-card">
-                <h4><i class="fas fa-bullseye"></i>Mission</h4>
+                <h4><i class="fas fa-bullseye"></i>{{ __('Mission') }}</h4>
                 <p>
                   To achieve our vision, we commit with passion to do these
                   FIRST: IMPLEMENT innovative policies, programs and projects
@@ -1381,7 +1432,7 @@
               </div>
 
               <div class="vmgo-card">
-                <h4><i class="fas fa-chart-line"></i> Goals</h4>
+                <h4><i class="fas fa-chart-line"></i> {{ __('Goals') }}</h4>
                 <p>
                   The goals of NCIP NEPO are the following: 1. Document and
                   conduct social, historical, ethnographic, action researches
@@ -1402,7 +1453,7 @@
               </div>
 
               <div class="vmgo-card">
-                <h4><i class="fas fa-handshake"></i> Core Values</h4>
+                <h4><i class="fas fa-handshake"></i> {{ __('Core Values') }}</h4>
                 <p>
                   NCIP NEPO adhere to the National Motto under RA 8491, Chapter
                   III, Section 40 and share the values of Maka-Diyos, Maka-Tao,
@@ -1411,7 +1462,7 @@
               </div>
 
               <div class="vmgo-card">
-                <h4><i class="fas fa-list-check"></i>Objectives</h4>
+                <h4><i class="fas fa-list-check"></i>{{ __('Objectives') }}</h4>
                 <ul>
                   <li>
                     1. Continuously implement the GAA Funded Programs,
@@ -1465,8 +1516,8 @@
           <!-- ICCs/IPs in Nueva Ecija -->
 <div class="ip-group">
   <div class="ip-header">
-    <h3><i class="fas fa-users"></i> Indigenous Peoples Group</h3>
-    <p class="ip-subtitle">Recognized ICCs/IPs in Nueva Ecija Province</p>
+    <h3><i class="fas fa-users"></i> {{ __('Indigenous Peoples Group') }}</h3>
+    <p class="ip-subtitle">{{ __('Recognized ICCs/IPs in Nueva Ecija Province') }}</p>
   </div>
 
   <div class="ip-content">
@@ -1474,7 +1525,7 @@
       @forelse ($tribes as $tribe)
         <li><strong>{{ $tribe->name }}</strong></li>
       @empty
-        <li><em>No tribes listed at the moment.</em></li>
+        <li><em>{{ __('No tribes listed at the moment.') }}</em></li>
       @endforelse
     </ul>
   </div>
@@ -1484,15 +1535,15 @@
 <!-- Nueva Ecija Municipalities -->
 <div class="municipality-group">
   <div class="municipality-header">
-    <h3><i class="fas fa-map-marked-alt"></i> Province of Nueva Ecija</h3>
-    <p class="municipality-subtitle">Municipalities and Cities under NCIP NEPO Coverage</p>
+    <h3><i class="fas fa-map-marked-alt"></i> {{ __('Province of Nueva Ecija') }}</h3>
+    <p class="municipality-subtitle">{{ __('Municipalities and Cities under NCIP NEPO Coverage') }}</p>
   </div>
 
   <div class="municipality-content">
     <div class="municipality-grid">
       <!-- South -->
       <div class="municipality-column">
-        <h4><i class="fas fa-map-marker-alt"></i> Nueva Ecija (South)</h4>
+        <h4><i class="fas fa-map-marker-alt"></i> {{ __('Nueva Ecija (South)') }}</h4>
         <ul class="municipality-list">
           <li data-letter="A"><strong>Aliaga</strong></li>
           <li data-letter="B"><strong>Bongabon</strong></li>
@@ -1509,7 +1560,7 @@
 
       <!-- North -->
       <div class="municipality-column">
-        <h4><i class="fas fa-map-marker-alt"></i> Nueva Ecija (North)</h4>
+        <h4><i class="fas fa-map-marker-alt"></i> {{ __('Nueva Ecija (North)') }}</h4>
         <ul class="municipality-list">
           <li data-letter="C"><strong>Caranglan</strong></li>
           <li data-letter="L"><strong>Lupao</strong></li>
@@ -1528,25 +1579,23 @@
     <!-- FAQ Section -->
     <section class="content-section faq-section">
       <div class="section-header">
-       <h3 class="faq-title">Frequently <span class="highlight-green">Asked Questions <i class="fas fa-question-circle"></i></span>
+       <h3 class="faq-title">{{ __('Frequently') }} <span class="highlight-green">{{ __('Asked Questions') }} <i class="fas fa-question-circle"></i></span>
       </h3>
       <p class="faq-tagline">
-        Find answers to common questions about your COC Request
+        {{ __('Find answers to common questions about your COC Request') }}
       </p>
 
     
       </div>
 
-        <div class="faq-container">
-          <!-- Q1 -->
-          <div class="faq-item">
+        <div class="faq-container          <div class="faq-item">
             <button class="faq-question">
-              What is the Certificate of Confirmation (COC)?
+              {{ __('What is the Certificate of Confirmation (COC)?') }}
               <i class="fa-solid fa-chevron-down arrow"></i>
             </button>
             <div class="faq-answer">
               <p>
-                The Certificate of Confirmation (COC) is an official document issued by the National Commission on Indigenous Peoples (NCIP) that verifies a person’s membership in an Indigenous Cultural Community or Indigenous Peoples (ICC/IP) group. It serves as proof of recognition and allows IPs to avail benefits and services from government programs.
+                {{ __('The Certificate of Confirmation (COC) is an official document issued by the National Commission on Indigenous Peoples (NCIP) that verifies a person\'s membership in an Indigenous Cultural Community or Indigenous Peoples (ICC/IP) group. It serves as proof of recognition and allows IPs to avail benefits and services from government programs.') }}
               </p>
             </div>
           </div>
@@ -1554,20 +1603,20 @@
           <!-- Q2 -->
           <div class="faq-item">
             <button class="faq-question">
-              </i>How can I request a COC online?
+              </i>{{ __('How can I request a COC online?') }}
               <i class="fa-solid fa-chevron-down arrow"></i>
             </button>
             <div class="faq-answer">
               <p>
-                You can request a COC by creating an account on the website, filling out the COC request form, and uploading the required documents such as:
+                {{ __('You can request a COC by creating an account on the website, filling out the COC request form, and uploading the required documents such as:') }}
               </p>
               <ul>
-                <li>Birth certificate</li>
-                <li>Photo of the applicant</li>
-                <li>Certificate issued by the Tribal Chieftain</li>
+                <li>{{ __('Birth certificate') }}</li>
+                <li>{{ __('Photo of the applicant') }}</li>
+                <li>{{ __('Certificate issued by the Tribal Chieftain') }}</li>
               </ul>
               <p>
-                Once submitted, the NCIP staff will review your application before it is approved by the admin.
+                {{ __('Once submitted, the NCIP staff will review your application before it is approved by the admin.') }}
               </p>
             </div>
           </div>
@@ -1575,12 +1624,12 @@
           <!-- Q3 -->
           <div class="faq-item">
             <button class="faq-question">
-               How long does it take to process my COC request?
+               {{ __('How long does it take to process my COC request?') }}
               <i class="fa-solid fa-chevron-down arrow"></i>
             </button>
             <div class="faq-answer">
               <p>
-                Processing usually takes a few working days after submission. The exact duration depends on the completeness and accuracy of your uploaded documents.
+                {{ __('Processing usually takes a few working days after submission. The exact duration depends on the completeness and accuracy of your uploaded documents.') }}
               </p>
             </div>
           </div>
@@ -1588,12 +1637,12 @@
           <!-- Q4 -->
           <div class="faq-item">
             <button class="faq-question">
-               How will I know if my COC request is approved?
+               {{ __('How will I know if my COC request is approved?') }}
               <i class="fa-solid fa-chevron-down arrow"></i>
             </button>
             <div class="faq-answer">
               <p>
-                You will receive a notification through your account about your application status (Pending, Approved, or Rejected). You can also track your request on your dashboard.
+                {{ __('You will receive a notification through your account about your application status (Pending, Approved, or Rejected). You can also track your request on your dashboard.') }}
               </p>
             </div>
           </div>
@@ -1601,12 +1650,12 @@
           <!-- Q5 -->
           <div class="faq-item">
             <button class="faq-question">
-              What should I do if my application is rejected?
+              {{ __('What should I do if my application is rejected?') }}
               <i class="fa-solid fa-chevron-down arrow"></i>
             </button>
             <div class="faq-answer">
               <p>
-                If your application is rejected, you will receive feedback or remarks explaining the reason. You can edit or re-submit your documents for another review.
+                {{ __('If your application is rejected, you will receive feedback or remarks explaining the reason. You can edit or re-submit your documents for another review.') }}
               </p>
             </div>
           </div>
@@ -1614,15 +1663,15 @@
           <!-- Q10 -->
           <div class="faq-item">
             <button class="faq-question">
-              Is there a fee for requesting a COC online?
+              {{ __('Is there a fee for requesting a COC online?') }}
               <i class="fa-solid fa-chevron-down arrow"></i>
             </button>
             <div class="faq-answer">
               <p>
-                Currently, no fee is required for online submission. However, applicants may need to pay standard government processing fees upon approval (depending on NCIP regulations).
+                {{ __('Currently, no fee is required for online submission. However, applicants may need to pay standard government processing fees upon approval (depending on NCIP regulations).') }}
               </p>
             </div>
-          </div>
+          </div>/div>
         </div>
     </section>
       
@@ -1631,23 +1680,23 @@
         <div class="footer-content">
           <!-- Quick Links -->
           <div class="footer-links">
-            <h3>Quick Links</h3>
+            <h3>{{ __('Quick Links') }}</h3>
             <ul>
-               <li><a href="{{ route('landingpage') }}">Home</a></li>
-                <li><a href="{{ url('about-us') }}">About Us</a></li>
-                <li><a href="{{ url('iccs-ips-rights') }}">ICCs/IPs Rights</a></li>
-                <li><a href="{{ url('programs-pps') }}">Programs, Projects & Services</a></li>
-                <li><a href="{{ url('accomplishments') }}">Accomplishments</a></li>
-                <li><a href="{{ url('partnership') }}">Partnership</a></li>
-                <li><a href="{{ url('contacts') }}">Contact Us</a></li>
-                <li><a href="{{ url('news') }}">News</a></li>
+               <li><a href="{{ route('landingpage') }}">{{ __('Home') }}</a></li>
+                <li><a href="{{ url('about-us') }}">{{ __('About Us') }}</a></li>
+                <li><a href="{{ url('iccs-ips-rights') }}">{{ __('ICCs/IPs Rights') }}</a></li>
+                <li><a href="{{ url('programs-pps') }}">{{ __('Programs, Projects & Services') }}</a></li>
+                <li><a href="{{ url('accomplishments') }}">{{ __('Accomplishments') }}</a></li>
+                <li><a href="{{ url('partnership') }}">{{ __('Partnership') }}</a></li>
+                <li><a href="{{ url('contacts') }}">{{ __('Contact Us') }}</a></li>
+                <li><a href="{{ url('news') }}">{{ __('News') }}</a></li>
             </ul>
           </div>
 
           <!-- Social Media -->
           <div class="footer-social">
-            <h3>Connect With Us</h3>
-            <p>Stay updated with our latest news and activities:</p>
+            <h3>{{ __('Connect With Us') }}</h3>
+            <p>{{ __('Stay updated with our latest news and activities:') }}</p>
             <div class="social-icons">
               <a href="https://facebook.com/NCIPNuevaEcija" target="_blank"
                 ><i class="fab fa-facebook-f"></i
@@ -1676,8 +1725,7 @@
 
         <div class="footer-bottom">
           <p>
-            &copy; 2025 National Commission on Indigenous Peoples - Nueva Ecija.
-            All Rights Reserved.
+            &copy; 2025 {{ __('National Commission on Indigenous Peoples - Nueva Ecija. All Rights Reserved.') }}
           </p>
         </div>
       </footer>
@@ -1712,6 +1760,13 @@
             : "rotate(0deg)";
         }
       }
+
+      // Close language dropdown when clicking outside
+      document.addEventListener("click", function (event) {
+        if (!event.target.closest('.lang-switcher-nav')) {
+          document.getElementById('navLangDropdownDesktop')?.classList.remove('show');
+        }
+      });
 
       // Close menu when clicking outside
       document.addEventListener("click", function (event) {

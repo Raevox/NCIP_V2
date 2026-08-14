@@ -38,6 +38,61 @@
       }
 
       /* Navigation */
+      .lang-switcher-nav {
+        position: relative;
+        margin-left: 12px;
+      }
+      .lang-switcher-nav button {
+        background: none;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 6px 14px;
+        font-size: 14px;
+        font-family: 'Poppins', sans-serif;
+        color: #333;
+        cursor: pointer;
+      }
+      .lang-switcher-nav button:hover {
+        border-color: #3E7B27;
+        color: #3E7B27;
+      }
+      .lang-switcher-nav .lang-dropdown-nav {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        margin-top: 6px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        min-width: 130px;
+        z-index: 1100;
+      }
+      .lang-switcher-nav .lang-dropdown-nav.show {
+        display: block;
+      }
+      .lang-switcher-nav .lang-dropdown-nav a {
+        display: block;
+        padding: 10px 14px;
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+      }
+      .lang-switcher-nav .lang-dropdown-nav a:hover {
+        background: #f5f5f5;
+        color: #3E7B27;
+      }
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      @media (max-width: 768px) {
+        .nav-actions {
+          display: none;
+        }
+      }
       .nav-bar {
         background: white;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -997,13 +1052,13 @@ background-size: cover;
                 <!-- <div class="page-indicator" id="pageIndicator">Home</div> -->
                     <ul class="nav-menu" id="navMenu">
                         <li>
-                            <a href="{{ route('landingpage') }}">Home</a>
+                            <a href="{{ route('landingpage') }}">{{ __('Home') }}</a>
                         </li>
                         <li class="dropdown-item">
-                            <a href="#about" onclick="toggleDropdown(event, this.parentNode)">About <i class="fa-solid fa-chevron-down arrow"></i></a>
+                            <a href="#about" onclick="toggleDropdown(event, this.parentNode)">{{ __('About') }} <i class="fa-solid fa-chevron-down arrow"></i></a>
                             <div class="dropdown">
-                                <a href="{{ url('about-us') }}">About Us</a>
-                                <a href="{{ url('iccs-ips-rights') }}">ICCs/IPs Rights</a>
+                                <a href="{{ url('about-us') }}">{{ __('About Us') }}</a>
+                                <a href="{{ url('iccs-ips-rights') }}">{{ __('ICCs/IPs Rights') }}</a>
                             </div>
                         </li>
                 
@@ -1013,19 +1068,30 @@ background-size: cover;
                 href="#programs-pps"
                 class="active"
                 onclick="toggleDropdown(event, this.parentNode)"
-                >Program <i class="fa-solid fa-chevron-down arrow"></i
+                >{{ __('Program') }} <i class="fa-solid fa-chevron-down arrow"></i
               ></a>
                             <div class="dropdown">
-                                <a href="{{ url('programs-pps') }}">Project, Programs & Services (PPS)</a>
-                                <a href="{{ url('accomplishments') }}">Accomplishments</a>
+                                <a href="{{ url('programs-pps') }}">{{ __('Project, Programs & Services (PPS)') }}</a>
+                                <a href="{{ url('accomplishments') }}">{{ __('Accomplishments') }}</a>
                             </div>
                         </li>
-                        <li><a href="{{ url('partnership') }}">Partnership</a></li>
-                        <li><a href="{{ url('contacts') }}">Contact Us</a></li>
-                        <li><a href="{{ url('news') }}">News</a></li>
-                        <li class="mobile-login"><a href="{{ route('login') }}" class="login-btn">Login</a></li>
+                        <li><a href="{{ url('partnership') }}">{{ __('Partnership') }}</a></li>
+                        <li><a href="{{ url('contacts') }}">{{ __('Contact Us') }}</a></li>
+                        <li><a href="{{ url('news') }}">{{ __('News') }}</a></li>
+                        <li class="mobile-login"><a href="{{ route('login') }}" class="login-btn">{{ __('Login') }}</a></li>
                     </ul>
-                        <a href="{{ route('login') }}" class="login-btn desktop-login">Login</a>
+                        <div class="nav-actions">
+                            <a href="{{ route('login') }}" class="login-btn desktop-login">{{ __('Login') }}</a>
+                            <div class="lang-switcher-nav lang-switcher-desktop">
+                                <button type="button" onclick="document.getElementById('navLangDropdownPps').classList.toggle('show')">
+                                    <i class="fas fa-globe"></i> {{ app()->getLocale() === 'tl' ? 'Filipino' : 'English' }}
+                                </button>
+                                <div id="navLangDropdownPps" class="lang-dropdown-nav">
+                                    <a href="{{ route('lang.switch', 'en') }}">English</a>
+                                    <a href="{{ route('lang.switch', 'tl') }}">Filipino</a>
+                                </div>
+                            </div>
+                        </div>
             </div>
         </nav>
       <!-- Header -->
@@ -1033,8 +1099,8 @@ background-size: cover;
         <div class="header-container">
           <div class="logo"></div>
           <div class="org-title">
-            <h1>NCIP Nueva Ecija Provincial Office</h1>
-            <p>Program, Projects & Services (PPS)</p>
+            <h1>{{ __('NCIP Nueva Ecija Provincial Office') }}</h1>
+            <p>{{ __('Program, Projects & Services (PPS)') }}</p>
           </div>
         </div>
       </header>
@@ -1042,11 +1108,8 @@ background-size: cover;
       <!-- Page Title Section -->
       <div class="page-title">
         <div class="overlay">
-          <h2>NCIP Rights-Based Programs, Projects and Servicess</h2>
-          <p>
-            Comprehensive programs designed to protect and promote the rights of
-            Indigenous Cultural Communities and Indigenous Peoples
-          </p>
+          <h2>{{ __('NCIP Rights-Based Programs, Projects and Services') }}</h2>
+          <p>{{ __('Comprehensive programs designed to protect and promote the rights of Indigenous Cultural Communities and Indigenous Peoples') }}</p>
         </div>
       </div>
 
@@ -1054,19 +1117,19 @@ background-size: cover;
       <div class="container">
         <!-- Statistics Section -->
         <div class="stats-section">
-          <h3>Program Overview</h3>
+          <h3>{{ __('Program Overview') }}</h3>
           <div class="stats-grid">
             <div class="stat-item">
               <span class="stat-number">4</span>
-              <span class="stat-label">Mandated Programs</span>
+              <span class="stat-label">{{ __('Mandated Programs') }}</span>
             </div>
             <div class="stat-item">
               <span class="stat-number">20+</span>
-              <span class="stat-label">Sub-Programs</span>
+              <span class="stat-label">{{ __('Sub-Programs') }}</span>
             </div>
             <div class="stat-item">
-              <span class="stat-number">Multiple</span>
-              <span class="stat-label">Partnership Programs</span>
+              <span class="stat-number">{{ __('Multiple') }}</span>
+              <span class="stat-label">{{ __('Partnership Programs') }}</span>
             </div>
           </div>
         </div>
@@ -1076,65 +1139,30 @@ background-size: cover;
           <!-- Program 1: Rights to Ancestral Domains -->
           <div class="program-card">
             <div class="program-header">
-              <div class="program-number">Program 1</div>
-              <h3>
-                Rights to Ancestral Domains: Ancestral Domain And Land Security
-                Development Program Services
-              </h3>
+              <div class="program-number">{{ __('Program 1') }}</div>
+              <h3>{{ __('Rights to Ancestral Domains: Ancestral Domain And Land Security Development Program Services') }}</h3>
             </div>
             <div class="program-content">
               <ol class="sub-programs-list">
                 <li>
-                  <div class="sub-program-title">
-                    Certificate of Ancestral Domain Title (CADT) Delineation,
-                    Registration and Recognition
-                  </div>
-                  <div class="sub-program-description">
-                    Comprehensive mapping, documentation, and legal recognition
-                    of ancestral domains through proper surveying and titling
-                    processes.
-                  </div>
+                  <div class="sub-program-title">{{ __('Certificate of Ancestral Domain Title (CADT) Delineation, Registration and Recognition') }}</div>
+                  <div class="sub-program-description">{{ __('Comprehensive mapping, documentation, and legal recognition of ancestral domains through proper surveying and titling processes.') }}</div>
                 </li>
                 <li>
-                  <div class="sub-program-title">
-                    Certificate of Ancestral Land Title (CALT) Delineation,
-                    Registration and Recognition
-                  </div>
-                  <div class="sub-program-description">
-                    Individual ancestral land titling services ensuring legal
-                    ownership and protection of traditional lands.
-                  </div>
+                  <div class="sub-program-title">{{ __('Certificate of Ancestral Land Title (CALT) Delineation, Registration and Recognition') }}</div>
+                  <div class="sub-program-description">{{ __('Individual ancestral land titling services ensuring legal ownership and protection of traditional lands.') }}</div>
                 </li>
                 <li>
-                  <div class="sub-program-title">
-                    Ancestral Domain Sustainable Development and Protection Plan
-                    (ADSDPP) Formulation Assistance
-                  </div>
-                  <div class="sub-program-description">
-                    Technical assistance in developing sustainable management
-                    plans for ancestral domains balancing development and
-                    conservation.
-                  </div>
+                  <div class="sub-program-title">{{ __('Ancestral Domain Sustainable Development and Protection Plan (ADSDPP) Formulation Assistance') }}</div>
+                  <div class="sub-program-description">{{ __('Technical assistance in developing sustainable management plans for ancestral domains balancing development and conservation.') }}</div>
                 </li>
                 <li>
-                  <div class="sub-program-title">
-                    Community Resources and Development Plan (CRDP) Formulation
-                    Assistance
-                  </div>
-                  <div class="sub-program-description">
-                    Collaborative planning for community resource management and
-                    sustainable development initiatives.
-                  </div>
+                  <div class="sub-program-title">{{ __('Community Resources and Development Plan (CRDP) Formulation Assistance') }}</div>
+                  <div class="sub-program-description">{{ __('Collaborative planning for community resource management and sustainable development initiatives.') }}</div>
                 </li>
                 <li>
-                  <div class="sub-program-title">
-                    Free Prior & Informed Consent (FPIC) Processes and MOA
-                    Facilitation
-                  </div>
-                  <div class="sub-program-description">
-                    Ensuring proper consultation and consent processes for
-                    projects affecting ancestral domains and communities.
-                  </div>
+                  <div class="sub-program-title">{{ __('Free Prior & Informed Consent (FPIC) Processes and MOA Facilitation') }}</div>
+                  <div class="sub-program-description">{{ __('Ensuring proper consultation and consent processes for projects affecting ancestral domains and communities.') }}</div>
                 </li>
               </ol>
             </div>
@@ -1143,60 +1171,30 @@ background-size: cover;
           <!-- Program 2: Rights to Self-Governance -->
           <div class="program-card">
             <div class="program-header">
-              <div class="program-number">Program 2</div>
-              <h3>
-                Rights to Self-Governance and Empowerment: Indigenous Peoples
-                Self-Governance, Empowerment and Protection Program Services
-              </h3>
+              <div class="program-number">{{ __('Program 2') }}</div>
+              <h3>{{ __('Rights to Self-Governance and Empowerment: Indigenous Peoples Self-Governance, Empowerment and Protection Program Services') }}</h3>
             </div>
             <div class="program-content">
               <ol class="sub-programs-list">
                 <li>
-                  <div class="sub-program-title">
-                    Indigenous Peoples Participation and Representation (IPS,
-                    IPO, IPMR) Advocacy, Processing, and Installation
-                  </div>
-                  <div class="sub-program-description">
-                    Supporting indigenous participation in governance through
-                    Indigenous Peoples Senators, Organizations, and Mandatory
-                    Representatives.
-                  </div>
+                  <div class="sub-program-title">{{ __('Indigenous Peoples Participation and Representation (IPS, IPO, IPMR) Advocacy, Processing, and Installation') }}</div>
+                  <div class="sub-program-description">{{ __('Supporting indigenous participation in governance through Indigenous Peoples Senators, Organizations, and Mandatory Representatives.') }}</div>
                 </li>
                 <li>
-                  <div class="sub-program-title">
-                    Establishment and Maintenance of Ancestral Domain Management
-                    Office (ADMO)
-                  </div>
-                  <div class="sub-program-description">
-                    Creating and supporting local offices for effective
-                    ancestral domain management and governance.
-                  </div>
+                  <div class="sub-program-title">{{ __('Establishment and Maintenance of Ancestral Domain Management Office (ADMO)') }}</div>
+                  <div class="sub-program-description">{{ __('Creating and supporting local offices for effective ancestral domain management and governance.') }}</div>
                 </li>
                 <li>
-                  <div class="sub-program-title">
-                    Ancestral Domain Defense System (ADDS) Security
-                    Establishment
-                  </div>
-                  <div class="sub-program-description">
-                    Developing community-based security systems to protect
-                    ancestral domains from encroachment and illegal activities.
-                  </div>
+                  <div class="sub-program-title">{{ __('Ancestral Domain Defense System (ADDS) Security Establishment') }}</div>
+                  <div class="sub-program-description">{{ __('Developing community-based security systems to protect ancestral domains from encroachment and illegal activities.') }}</div>
                 </li>
                 <li>
-                  <div class="sub-program-title">
-                    Indigenous Peoples Legal Assistance (IPLA)
-                  </div>
-                  <div class="sub-program-description">
-                    Providing legal support and representation for indigenous
-                    peoples in various legal matters and disputes.
-                  </div>
+                  <div class="sub-program-title">{{ __('Indigenous Peoples Legal Assistance (IPLA)') }}</div>
+                  <div class="sub-program-description">{{ __('Providing legal support and representation for indigenous peoples in various legal matters and disputes.') }}</div>
                 </li>
                 <li>
-                  <div class="sub-program-title">Adjudication Services</div>
-                  <div class="sub-program-description">
-                    Traditional and formal dispute resolution services
-                    respecting customary laws and practices.
-                  </div>
+                  <div class="sub-program-title">{{ __('Adjudication Services') }}</div>
+                  <div class="sub-program-description">{{ __('Traditional and formal dispute resolution services respecting customary laws and practices.') }}</div>
                 </li>
               </ol>
             </div>
@@ -1205,65 +1203,30 @@ background-size: cover;
           <!-- Program 3: Rights to Social Justice -->
           <div class="program-card">
             <div class="program-header">
-              <div class="program-number">Program 3</div>
-              <h3>
-                Rights to Social Justice and Human Rights: Indigenous
-                Peoples-Based Socio-Economic Development, Environmental and
-                Human Rights Program Services
-              </h3>
+              <div class="program-number">{{ __('Program 3') }}</div>
+              <h3>{{ __('Rights to Social Justice and Human Rights: Indigenous Peoples-Based Socio-Economic Development, Environmental and Human Rights Program Services') }}</h3>
             </div>
             <div class="program-content">
               <ol class="sub-programs-list">
                 <li>
-                  <div class="sub-program-title">
-                    Indigenous Peoples Economic Development and Cooperative
-                    Program
-                  </div>
-                  <div class="sub-program-description">
-                    Supporting economic empowerment through cooperative
-                    development, livelihood programs, and sustainable enterprise
-                    initiatives.
-                  </div>
+                  <div class="sub-program-title">{{ __('Indigenous Peoples Economic Development and Cooperative Program') }}</div>
+                  <div class="sub-program-description">{{ __('Supporting economic empowerment through cooperative development, livelihood programs, and sustainable enterprise initiatives.') }}</div>
                 </li>
                 <li>
-                  <div class="sub-program-title">
-                    Indigenous Peoples Disaster Risks, Climate Change, and
-                    Environmental Protection Project
-                  </div>
-                  <div class="sub-program-description">
-                    Building resilience against disasters and climate change
-                    while promoting environmental conservation and protection.
-                  </div>
+                  <div class="sub-program-title">{{ __('Indigenous Peoples Disaster Risks, Climate Change, and Environmental Protection Project') }}</div>
+                  <div class="sub-program-description">{{ __('Building resilience against disasters and climate change while promoting environmental conservation and protection.') }}</div>
                 </li>
                 <li>
-                  <div class="sub-program-title">
-                    Indigenous Peoples Education and Advocacy (IP EAP) Project
-                  </div>
-                  <div class="sub-program-description">
-                    Promoting culturally appropriate education programs and
-                    advocacy for indigenous peoples' educational rights.
-                  </div>
+                  <div class="sub-program-title">{{ __('Indigenous Peoples Education and Advocacy (IP EAP) Project') }}</div>
+                  <div class="sub-program-description">{{ __("Promoting culturally appropriate education programs and advocacy for indigenous peoples' educational rights.") }}</div>
                 </li>
                 <li>
-                  <div class="sub-program-title">
-                    Indigenous Peoples Emergency Medical and Financial
-                    Assistance
-                  </div>
-                  <div class="sub-program-description">
-                    Providing immediate medical and financial support during
-                    emergencies and critical situations affecting indigenous
-                    communities.
-                  </div>
+                  <div class="sub-program-title">{{ __('Indigenous Peoples Emergency Medical and Financial Assistance') }}</div>
+                  <div class="sub-program-description">{{ __('Providing immediate medical and financial support during emergencies and critical situations affecting indigenous communities.') }}</div>
                 </li>
                 <li>
-                  <div class="sub-program-title">
-                    Indigenous Peoples Rights Advocacy, Monitoring Treaty
-                    Obligations Project
-                  </div>
-                  <div class="sub-program-description">
-                    Monitoring implementation of indigenous rights and ensuring
-                    compliance with national and international obligations.
-                  </div>
+                  <div class="sub-program-title">{{ __('Indigenous Peoples Rights Advocacy, Monitoring Treaty Obligations Project') }}</div>
+                  <div class="sub-program-description">{{ __('Monitoring implementation of indigenous rights and ensuring compliance with national and international obligations.') }}</div>
                 </li>
               </ol>
             </div>
@@ -1272,42 +1235,22 @@ background-size: cover;
           <!-- Program 4: Rights to Cultural Integrity -->
           <div class="program-card">
             <div class="program-header">
-              <div class="program-number">Program 4</div>
-              <h3>
-                Rights to Cultural Integrity: Indigenous Peoples Culture Program
-                Services
-              </h3>
+              <div class="program-number">{{ __('Program 4') }}</div>
+              <h3>{{ __('Rights to Cultural Integrity: Indigenous Peoples Culture Program Services') }}</h3>
             </div>
             <div class="program-content">
               <ol class="sub-programs-list">
                 <li>
-                  <div class="sub-program-title">
-                    Indigenous Peoples Research and Documentation Project
-                  </div>
-                  <div class="sub-program-description">
-                    Supporting economic empowerment through cooperative
-                    development, livelihood programs, and sustainable enterprise
-                    initiatives.
-                  </div>
+                  <div class="sub-program-title">{{ __('Indigenous Peoples Research and Documentation Project') }}</div>
+                  <div class="sub-program-description">{{ __('Supporting economic empowerment through cooperative development, livelihood programs, and sustainable enterprise initiatives.') }}</div>
                 </li>
                 <li>
-                  <div class="sub-program-title">
-                    Indigenous Peoples Cultural Advocacy and Intergeneration
-                    Project
-                  </div>
-                  <div class="sub-program-description">
-                    Building resilience against disasters and climate change
-                    while promoting environmental conservation and protection.
-                  </div>
+                  <div class="sub-program-title">{{ __('Indigenous Peoples Cultural Advocacy and Intergeneration Project') }}</div>
+                  <div class="sub-program-description">{{ __('Building resilience against disasters and climate change while promoting environmental conservation and protection.') }}</div>
                 </li>
                 <li>
-                  <div class="sub-program-title">
-                    Indigenous Peoples Cultural Protection Project
-                  </div>
-                  <div class="sub-program-description">
-                    Promoting culturally appropriate education programs and
-                    advocacy for indigenous peoples' educational rights.
-                  </div>
+                  <div class="sub-program-title">{{ __('Indigenous Peoples Cultural Protection Project') }}</div>
+                  <div class="sub-program-description">{{ __("Promoting culturally appropriate education programs and advocacy for indigenous peoples' educational rights.") }}</div>
                 </li>
               </ol>
             </div>
@@ -1320,24 +1263,24 @@ background-size: cover;
         <div class="footer-content">
           <!-- Quick Links -->
             <div class="footer-links">
-            <h3>Quick Links</h3>
+            <h3>{{ __('Quick Links') }}</h3>
             <ul>
-                <li><a href="{{ route('landingpage') }}">Home</a></li>
-                <li><a href="{{ url('about-us') }}">About Us</a></li>
-                <li><a href="{{ url('iccs-ips-rights') }}">ICCs/IPs Rights</a></li>
-                <li><a href="{{ url('programs-pps') }}">Programs, Projects & Services</a></li>
-                <li><a href="{{ url('accomplishments') }}">Accomplishments</a></li>
-                <li><a href="{{ url('partnership') }}">Partnership</a></li>
-                <li><a href="{{ url('contacts') }}">Contact Us</a></li>
-                <li><a href="{{ url('news') }}">News</a></li>
+                <li><a href="{{ route('landingpage') }}">{{ __('Home') }}</a></li>
+                <li><a href="{{ url('about-us') }}">{{ __('About Us') }}</a></li>
+                <li><a href="{{ url('iccs-ips-rights') }}">{{ __('ICCs/IPs Rights') }}</a></li>
+                <li><a href="{{ url('programs-pps') }}">{{ __('Programs, Projects & Services') }}</a></li>
+                <li><a href="{{ url('accomplishments') }}">{{ __('Accomplishments') }}</a></li>
+                <li><a href="{{ url('partnership') }}">{{ __('Partnership') }}</a></li>
+                <li><a href="{{ url('contacts') }}">{{ __('Contact Us') }}</a></li>
+                <li><a href="{{ url('news') }}">{{ __('News') }}</a></li>
 
             </ul>
             </div>
 
           <!-- Social Media -->
           <div class="footer-social">
-            <h3>Connect With Us</h3>
-            <p>Stay updated with our latest news and activities:</p>
+            <h3>{{ __('Connect With Us') }}</h3>
+            <p>{{ __('Stay updated with our latest news and activities:') }}</p>
             <div class="social-icons">
               <a href="https://facebook.com/NCIPNuevaEcija" target="_blank"
                 ><i class="fab fa-facebook-f"></i
@@ -1365,10 +1308,7 @@ background-size: cover;
         </div>
 
         <div class="footer-bottom">
-          <p>
-            &copy; 2025 National Commission on Indigenous Peoples - Nueva Ecija.
-            All Rights Reserved.
-          </p>
+          <p>&copy; 2025 {{ __('National Commission on Indigenous Peoples - Nueva Ecija. All Rights Reserved.') }}</p>
         </div>
       </footer>
     </div>
@@ -1392,6 +1332,12 @@ background-size: cover;
             : "rotate(0deg)";
         }
       }
+
+      document.addEventListener("click", function (event) {
+        if (!event.target.closest('.lang-switcher-nav')) {
+          document.getElementById('navLangDropdownPps')?.classList.remove('show');
+        }
+      });
 
       // Close menu when clicking outside
       document.addEventListener("click", function (event) {

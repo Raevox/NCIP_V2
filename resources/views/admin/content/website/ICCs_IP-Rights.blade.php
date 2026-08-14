@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICCs/IPs Rights | NCIP Nueva Ecija</title>
+    <title>{{ __('ICCs/IPs Rights') }} | NCIP Nueva Ecija</title>
     <link rel="icon" href="{{ asset('images/ncip_logo.jpg') }}" type="image/jpeg">
     <link rel="icon" href="{{ asset('images/favicon.png') }}" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -30,6 +30,61 @@
             min-height: 100vh;
         }
         /* Navigation */
+        .lang-switcher-nav {
+            position: relative;
+            margin-left: 12px;
+        }
+        .lang-switcher-nav button {
+            background: none;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            cursor: pointer;
+        }
+        .lang-switcher-nav button:hover {
+            border-color: #3E7B27;
+            color: #3E7B27;
+        }
+        .lang-switcher-nav .lang-dropdown-nav {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 6px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 130px;
+            z-index: 1100;
+        }
+        .lang-switcher-nav .lang-dropdown-nav.show {
+            display: block;
+        }
+        .lang-switcher-nav .lang-dropdown-nav a {
+            display: block;
+            padding: 10px 14px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+        }
+        .lang-switcher-nav .lang-dropdown-nav a:hover {
+            background: #f5f5f5;
+            color: #3E7B27;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        @media (max-width: 768px) {
+            .nav-actions {
+                display: none;
+            }
+        }
         .nav-bar {
             background: white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -914,37 +969,57 @@ background-size: cover;
                 <!-- <div class="page-indicator" id="pageIndicator">Home</div> -->
                     <ul class="nav-menu" id="navMenu">
                         <li>
-                            <a href="{{ route('landingpage') }}">Home</a>
+                            <a href="{{ route('landingpage') }}">{{ __('Home') }}</a>
                         </li>
                        <li>
               <a
                 href="#iccs_ips-rights"
                 class="active"
                 onclick="toggleDropdown(event, this.parentNode)"
-                >About <i class="fa-solid fa-chevron-down arrow"></i
+                >{{ __('About') }} <i class="fa-solid fa-chevron-down arrow"></i
               ></a>
               <div class="dropdown">
-                 <a href="{{ url('about-us') }}">About Us</a>
-                 <a href="{{ url('iccs-ips-rights') }}">ICCs/IPs Rights</a>
+                 <a href="{{ url('about-us') }}">{{ __('About Us') }}</a>
+                 <a href="{{ url('iccs-ips-rights') }}">{{ __('ICCs/IPs Rights') }}</a>
               </div>
             </li>
                 
 
                         <li class="dropdown-item">
                             <a href="#program" onclick="toggleDropdown(event, this.parentNode)">
-                                Program <i class="fa-solid fa-chevron-down arrow"></i>
+                                {{ __('Program') }} <i class="fa-solid fa-chevron-down arrow"></i>
                             </a>
                             <div class="dropdown">
-                                <a href="{{ url('programs-pps') }}">Project, Programs & Services (PPS)</a>
-                                <a href="{{ url('accomplishments') }}">Accomplishments</a>
+                                <a href="{{ url('programs-pps') }}">{{ __('Project, Programs & Services (PPS)') }}</a>
+                                <a href="{{ url('accomplishments') }}">{{ __('Accomplishments') }}</a>
                             </div>
                         </li>
-                        <li><a href="{{ url('partnership') }}">Partnership</a></li>
-                        <li><a href="{{ url('contacts') }}">Contact Us</a></li>
-                        <li><a href="{{ url('news') }}">News</a></li>
-                        <li class="mobile-login"><a href="{{ route('login') }}" class="login-btn">Login</a></li>
+                        <li><a href="{{ url('partnership') }}">{{ __('Partnership') }}</a></li>
+                        <li><a href="{{ url('contacts') }}">{{ __('Contact Us') }}</a></li>
+                        <li><a href="{{ url('news') }}">{{ __('News') }}</a></li>
+                        <li class="mobile-login"><a href="{{ route('login') }}" class="login-btn">{{ __('Login') }}</a></li>
+                        <li class="lang-switcher-nav lang-switcher-mobile" style="display:none;">
+                            <button type="button" onclick="document.getElementById('navLangDropdownRightsMobile').classList.toggle('show')">
+                                <i class="fas fa-globe"></i> {{ app()->getLocale() === 'tl' ? 'Filipino' : 'English' }}
+                            </button>
+                            <div id="navLangDropdownRightsMobile" class="lang-dropdown-nav">
+                                <a href="{{ route('lang.switch', 'en') }}">English</a>
+                                <a href="{{ route('lang.switch', 'tl') }}">Filipino</a>
+                            </div>
+                        </li>
                     </ul>
-                        <a href="{{ route('login') }}" class="login-btn desktop-login">Login</a>
+                        <div class="nav-actions">
+                            <a href="{{ route('login') }}" class="login-btn desktop-login">{{ __('Login') }}</a>
+                            <div class="lang-switcher-nav lang-switcher-desktop">
+                                <button type="button" onclick="document.getElementById('navLangDropdownRights').classList.toggle('show')">
+                                    <i class="fas fa-globe"></i> {{ app()->getLocale() === 'tl' ? 'Filipino' : 'English' }}
+                                </button>
+                                <div id="navLangDropdownRights" class="lang-dropdown-nav">
+                                    <a href="{{ route('lang.switch', 'en') }}">English</a>
+                                    <a href="{{ route('lang.switch', 'tl') }}">Filipino</a>
+                                </div>
+                            </div>
+                        </div>
 
             </div>
         </nav>
@@ -954,8 +1029,8 @@ background-size: cover;
             <div class="header-container">
                 <div class="logo"></div>
                 <div class="org-title">
-                    <h1>NCIP Nueva Ecija Provincial Office</h1>
-                    <p>ICCs/IPs Bundles of Rights and 36 Specific Rights</p>
+                    <h1>{{ __('NCIP Nueva Ecija Provincial Office') }}</h1>
+                    <p>{{ __('ICCs/IPs Bundles of Rights and 36 Specific Rights') }}</p>
                 </div>
             </div>
         </header>
@@ -963,8 +1038,8 @@ background-size: cover;
          <!-- Page Title Section -->
             <div class="page-title">
                 <div class="overlay">
-                    <h2>ICCs/IPs Rights Framework</h2>
-                    <p>The Rights Framework is anchored on the Indigenous Peoples Rights Act of 1997 (R.A. 8371), ensuring that the voices and traditions of Indigenous Cultural Communities and Indigenous Peoples are recognized and protected.</p>
+                    <h2>{{ __('ICCs/IPs Rights Framework') }}</h2>
+                    <p>{{ __('The Rights Framework is anchored on the Indigenous Peoples Rights Act of 1997 (R.A. 8371), ensuring that the voices and traditions of Indigenous Cultural Communities and Indigenous Peoples are recognized and protected.') }}</p>
                 </div>
             </div>
 
@@ -973,17 +1048,17 @@ background-size: cover;
 
             <!-- Summary Section -->
             <div class="summary-section">
-                <h3>Complete Rights Framework Overview</h3>
-                <p>The Indigenous Peoples Rights Act (IPRA) establishes a comprehensive framework that recognizes and protects the rights of Indigenous Cultural Communities and Indigenous Peoples through four fundamental bundles of rights encompassing 36 specific rights.</p>
+                <h3>{{ __('Complete Rights Framework Overview') }}</h3>
+                <p>{{ __('The Indigenous Peoples Rights Act (IPRA) establishes a comprehensive framework that recognizes and protects the rights of Indigenous Cultural Communities and Indigenous Peoples through four fundamental bundles of rights encompassing 36 specific rights.') }}</p>
                 
                 <div class="summary-stats">
                     <div class="stat-item">
                         <span class="stat-number">4</span>
-                        <span class="stat-label">Bundles of Rights</span>
+                        <span class="stat-label">{{ __('Bundles of Rights') }}</span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-number">36</span>
-                        <span class="stat-label">Specific Rights</span>
+                        <span class="stat-label">{{ __('Specific Rights') }}</span>
                     </div>
                 </div>
             </div>
@@ -993,51 +1068,51 @@ background-size: cover;
                 <!-- Bundle 1: Ancestral Domain Rights -->
                 <div class="rights-bundle">
                     <div class="bundle-header">
-                        <div class="bundle-number">Bundle 1</div>
-                        <h3>Rights to Ancestral Domains/Lands</h3>
-                        <p>ICCs/IPs have the right to their ancestral domains, which include lands, waters, and natural resources that they have occupied since time immemorial.</p>
+                        <div class="bundle-number">{{ __('Bundle 1') }}</div>
+                        <h3>{{ __('Rights to Ancestral Domains/Lands') }}</h3>
+                        <p>{{ __('ICCs/IPs have the right to their ancestral domains, which include lands, waters, and natural resources that they have occupied since time immemorial.') }}</p>
                     </div>
                     <div class="bundle-content">
                         <ol class="rights-list">
                             <li>
-                                <strong>Right of ownership</strong>
-                                <p>Full ownership rights over ancestral domains and lands with legal recognition and protection.</p>
+                                <strong>{{ __('Right of ownership') }}</strong>
+                                <p>{{ __('Full ownership rights over ancestral domains and lands with legal recognition and protection.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to develop lands and natural resources</strong>
-                                <p>Authority to develop and manage natural resources within ancestral territories according to traditional practices.</p>
+                                <strong>{{ __('Right to develop lands and natural resources') }}</strong>
+                                <p>{{ __('Authority to develop and manage natural resources within ancestral territories according to traditional practices.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to stay in territories</strong>
-                                <p>Guaranteed right to remain and reside in ancestral lands without forced displacement.</p>
+                                <strong>{{ __('Right to stay in territories') }}</strong>
+                                <p>{{ __('Guaranteed right to remain and reside in ancestral lands without forced displacement.') }}</p>
                             </li>
                             <li>
-                                <strong>Right in case of displacement</strong>
-                                <p>Rights to compensation, rehabilitation, and return in cases of involuntary displacement.</p>
+                                <strong>{{ __('Right in case of displacement') }}</strong>
+                                <p>{{ __('Rights to compensation, rehabilitation, and return in cases of involuntary displacement.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to regulate entry of migrants</strong>
-                                <p>Authority to control and regulate the entry of non-indigenous people into ancestral territories.</p>
+                                <strong>{{ __('Right to regulate entry of migrants') }}</strong>
+                                <p>{{ __('Authority to control and regulate the entry of non-indigenous people into ancestral territories.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to safe and clean air and water</strong>
-                                <p>Environmental rights ensuring access to clean and safe natural resources.</p>
+                                <strong>{{ __('Right to safe and clean air and water') }}</strong>
+                                <p>{{ __('Environmental rights ensuring access to clean and safe natural resources.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to claim parts of reservation (except those reserved and intended for common and public welfare and service)</strong>
-                                <p>Ability to claim ancestral lands within government reservations (except those reserved for public welfare).</p>
+                                <strong>{{ __('Right to claim parts of reservation (except those reserved and intended for common and public welfare and service)') }}</strong>
+                                <p>{{ __('Ability to claim ancestral lands within government reservations (except those reserved for public welfare).') }}</p>
                             </li>
                             <li>
-                                <strong>Right to resolve conflict</strong>
-                                <p>Authority to resolve disputes and conflicts using traditional justice systems and customary laws.</p>
+                                <strong>{{ __('Right to resolve conflict') }}</strong>
+                                <p>{{ __('Authority to resolve disputes and conflicts using traditional justice systems and customary laws.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to transfer land/property among members of the same ICCs/IPs, subject to customary laws and traditions of the community concerned</strong>
-                                <p>Freedom to transfer land and property within the community according to customary laws.</p>
+                                <strong>{{ __('Right to transfer land/property among members of the same ICCs/IPs, subject to customary laws and traditions of the community concerned') }}</strong>
+                                <p>{{ __('Freedom to transfer land and property within the community according to customary laws.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to redemption of all transferred to a non-IP</strong>
-                                <p>Right to reclaim transferred lands when transfers were made under duress or unfair conditions.</p>
+                                <strong>{{ __('Right to redemption of all transferred to a non-IP') }}</strong>
+                                <p>{{ __('Right to reclaim transferred lands when transfers were made under duress or unfair conditions.') }}</p>
                             </li>
                         </ol>
                     </div>
@@ -1046,39 +1121,39 @@ background-size: cover;
                 <!-- Bundle 2: Self-Governance Rights -->
                 <div class="rights-bundle">
                     <div class="bundle-header">
-                        <div class="bundle-number">Bundle 2</div>
-                        <h3>Rights to Self-Governance and Empowerment</h3>
-                        <p>The IPRA empowers ICCs/IPs to govern their own affairs and participate in local governance. </p>
+                        <div class="bundle-number">{{ __('Bundle 2') }}</div>
+                        <h3>{{ __('Rights to Self-Governance and Empowerment') }}</h3>
+                        <p>{{ __('The IPRA empowers ICCs/IPs to govern their own affairs and participate in local governance.') }} </p>
                     </div>
                     <div class="bundle-content">
                         <ol class="rights-list" style="counter-reset: rights-counter 10;">
                             <li>
-                                <strong>Authentication of Indigenous leadership titles</strong>
-                                <p>Recognition and validation of traditional leadership structures and certificates of tribal membership.</p>
+                                <strong>{{ __('Authentication of Indigenous leadership titles') }}</strong>
+                                <p>{{ __('Recognition and validation of traditional leadership structures and certificates of tribal membership.') }}</p>
                             </li>
                             <li>
-                                <strong>Recognition of socio-political institutions</strong>
-                                <p>Formal recognition of indigenous political systems and traditional governance structures.</p>
+                                <strong>{{ __('Recognition of socio-political institutions') }}</strong>
+                                <p>{{ __('Formal recognition of indigenous political systems and traditional governance structures.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to use traditional justice systems</strong>
-                                <p>Authority to implement customary laws, conflict resolution mechanisms, and peace-building processes.</p>
+                                <strong>{{ __('Right to use traditional justice systems') }}</strong>
+                                <p>{{ __('Authority to implement customary laws, conflict resolution mechanisms, and peace-building processes.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to participate in decision-making</strong>
-                                <p>Mandatory representation in policy-making bodies and local legislative councils affecting their communities.</p>
+                                <strong>{{ __('Right to participate in decision-making') }}</strong>
+                                <p>{{ __('Mandatory representation in policy-making bodies and local legislative councils affecting their communities.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to determine development priorities</strong>
-                                <p>Authority to set and decide priorities for community development initiatives and programs.</p>
+                                <strong>{{ __('Right to determine development priorities') }}</strong>
+                                <p>{{ __('Authority to set and decide priorities for community development initiatives and programs.') }}</p>
                             </li>
                             <li>
-                                <strong>Tribal barangays</strong>
-                                <p>Right to form or constitute separate barangays in accordance with the Local Government Code.</p>
+                                <strong>{{ __('Tribal barangays') }}</strong>
+                                <p>{{ __('Right to form or constitute separate barangays in accordance with the Local Government Code.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to organize and associate</strong>
-                                <p>Freedom to form organizations and associations for collective action and representation.</p>
+                                <strong>{{ __('Right to organize and associate') }}</strong>
+                                <p>{{ __('Freedom to form organizations and associations for collective action and representation.') }}</p>
                             </li>
                         </ol>
                     </div>
@@ -1087,39 +1162,39 @@ background-size: cover;
                 <!-- Bundle 3: Social Justice Rights -->
                 <div class="rights-bundle">
                     <div class="bundle-header">
-                        <div class="bundle-number">Bundle 3</div>
-                        <h3>Social Justice & Human Rights</h3>
-                        <p>The act aims to ensure social justice and human rights for ICCs/IPs, addressing historical injustices and promoting their economic and cultural well-being. </p>
+                        <div class="bundle-number">{{ __('Bundle 3') }}</div>
+                        <h3>{{ __('Social Justice & Human Rights') }}</h3>
+                        <p>{{ __('The act aims to ensure social justice and human rights for ICCs/IPs, addressing historical injustices and promoting their economic and cultural well-being.') }} </p>
                     </div>
                     <div class="bundle-content">
                         <ol class="rights-list" style="counter-reset: rights-counter 17;">
                             <li>
-                                <strong>Equal protection and non-discrimination</strong>
-                                <p>Constitutional guarantee of equal treatment and protection against all forms of discrimination.</p>
+                                <strong>{{ __('Equal protection and non-discrimination') }}</strong>
+                                <p>{{ __('Constitutional guarantee of equal treatment and protection against all forms of discrimination.') }}</p>
                             </li>
                             <li>
-                                <strong>Rights during armed conflict</strong>
-                                <p>Special protection and rights during times of armed conflict and military operations.</p>
+                                <strong>{{ __('Rights during armed conflict') }}</strong>
+                                <p>{{ __('Special protection and rights during times of armed conflict and military operations.') }}</p>
                             </li>
                             <li>
-                                <strong>Freedom from discrimination</strong>
-                                <p>Right to equal opportunity and treatment in all aspects of life and governance.</p>
+                                <strong>{{ __('Freedom from discrimination') }}</strong>
+                                <p>{{ __('Right to equal opportunity and treatment in all aspects of life and governance.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to basic services</strong>
-                                <p>Access to essential government services including healthcare, education, and infrastructure.</p>
+                                <strong>{{ __('Right to basic services') }}</strong>
+                                <p>{{ __('Access to essential government services including healthcare, education, and infrastructure.') }}</p>
                             </li>
                             <li>
-                                <strong>Rights of women</strong>
-                                <p>Specific protections and rights for indigenous women including gender equality and empowerment.</p>
+                                <strong>{{ __('Rights of women') }}</strong>
+                                <p>{{ __('Specific protections and rights for indigenous women including gender equality and empowerment.') }}</p>
                             </li>
                             <li>
-                                <strong>Rights of children and youth</strong>
-                                <p>Special protection and rights for indigenous children and youth including education and welfare.</p>
+                                <strong>{{ __('Rights of children and youth') }}</strong>
+                                <p>{{ __('Special protection and rights for indigenous children and youth including education and welfare.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to integrated system of education</strong>
-                                <p>Access to culturally appropriate education that integrates indigenous knowledge systems.</p>
+                                <strong>{{ __('Right to integrated system of education') }}</strong>
+                                <p>{{ __('Access to culturally appropriate education that integrates indigenous knowledge systems.') }}</p>
                             </li>
                         </ol>
                     </div>
@@ -1128,59 +1203,59 @@ background-size: cover;
                 <!-- Bundle 4: Cultural Integrity Rights -->
                 <div class="rights-bundle">
                     <div class="bundle-header">
-                        <div class="bundle-number">Bundle 4</div>
-                        <h3>Rights to Cultural Integrity</h3>
-                        <p>The state must respect and protect the rights of ICCs/IPs to preserve and develop their cultures and traditions.</p>
+                        <div class="bundle-number">{{ __('Bundle 4') }}</div>
+                        <h3>{{ __('Rights to Cultural Integrity') }}</h3>
+                        <p>{{ __('The state must respect and protect the rights of ICCs/IPs to preserve and develop their cultures and traditions.') }}</p>
                     </div>
                     <div class="bundle-content">
                         <ol class="rights-list" style="counter-reset: rights-counter 24;">
                             <li>
-                                <strong>Protection of indigenous culture and traditions</strong>
-                                <p>Comprehensive protection of cultural practices, traditions, and institutions from external threats.</p>
+                                <strong>{{ __('Protection of indigenous culture and traditions') }}</strong>
+                                <p>{{ __('Comprehensive protection of cultural practices, traditions, and institutions from external threats.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to establish educational systems</strong>
-                                <p>Authority to create and control indigenous educational and learning systems based on traditional knowledge.</p>
+                                <strong>{{ __('Right to establish educational systems') }}</strong>
+                                <p>{{ __('Authority to create and control indigenous educational and learning systems based on traditional knowledge.') }}</p>
                             </li>
                             <li>
-                                <strong>Recognition of cultural diversity</strong>
-                                <p>Official recognition and respect for the diversity of indigenous cultures and practices.</p>
+                                <strong>{{ __('Recognition of cultural diversity') }}</strong>
+                                <p>{{ __('Official recognition and respect for the diversity of indigenous cultures and practices.') }}</p>
                             </li>
                             <li>
-                                <strong>Recognition of customary laws</strong>
-                                <p>Legal recognition of traditional laws and practices governing civil relations within communities.</p>
+                                <strong>{{ __('Recognition of customary laws') }}</strong>
+                                <p>{{ __('Legal recognition of traditional laws and practices governing civil relations within communities.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to name, identity and history</strong>
-                                <p>Right to preserve and promote indigenous names, identity, and historical narratives.</p>
+                                <strong>{{ __('Right to name, identity and history') }}</strong>
+                                <p>{{ __('Right to preserve and promote indigenous names, identity, and historical narratives.') }}</p>
                             </li>
                             <li>
-                                <strong>Protection of Community Intellectual Rights</strong>
-                                <p>Protection of indigenous knowledge, innovations, and cultural expressions from unauthorized use.</p>
+                                <strong>{{ __('Protection of Community Intellectual Rights') }}</strong>
+                                <p>{{ __('Protection of indigenous knowledge, innovations, and cultural expressions from unauthorized use.') }}</p>
                             </li>
                             <li>
-                                <strong>Rights to religious and cultural sites</strong>
-                                <p>Protection and access to sacred places, burial grounds, and sites of religious significance.</p>
+                                <strong>{{ __('Rights to religious and cultural sites') }}</strong>
+                                <p>{{ __('Protection and access to sacred places, burial grounds, and sites of religious significance.') }}</p>
                             </li>
                             <li>
-                                <strong>Rights to Indigenous Spiritual Beliefs</strong>
-                                <p>Freedom to practice traditional spiritual beliefs and protection of sacred places and ceremonies.</p>
+                                <strong>{{ __('Rights to Indigenous Spiritual Beliefs') }}</strong>
+                                <p>{{ __('Freedom to practice traditional spiritual beliefs and protection of sacred places and ceremonies.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to indigenous knowledge systems</strong>
-                                <p>Right to develop, practice, and protect traditional sciences and technologies.</p>
+                                <strong>{{ __('Right to indigenous knowledge systems') }}</strong>
+                                <p>{{ __('Right to develop, practice, and protect traditional sciences and technologies.') }}</p>
                             </li>
                             <li>
-                                <strong>Protection of biological and genetic resources</strong>
-                                <p>Control and protection of indigenous plant varieties and biological resources within ancestral territories.</p>
+                                <strong>{{ __('Protection of biological and genetic resources') }}</strong>
+                                <p>{{ __('Control and protection of indigenous plant varieties and biological resources within ancestral territories.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to sustainable agro-technological development</strong>
-                                <p>Right to develop sustainable agricultural practices using traditional and modern technologies.</p>
+                                <strong>{{ __('Right to sustainable agro-technological development') }}</strong>
+                                <p>{{ __('Right to develop sustainable agricultural practices using traditional and modern technologies.') }}</p>
                             </li>
                             <li>
-                                <strong>Right to receive funds for archaeological sites</strong>
-                                <p>Entitlement to funding for the preservation and maintenance of archaeological and historical sites.</p>
+                                <strong>{{ __('Right to receive funds for archaeological sites') }}</strong>
+                                <p>{{ __('Entitlement to funding for the preservation and maintenance of archaeological and historical sites.') }}</p>
                             </li>
                         </ol>
                     </div>
@@ -1194,23 +1269,23 @@ background-size: cover;
   <div class="footer-content">
     <!-- Quick Links -->
     <div class="footer-links">
-      <h3>Quick Links</h3>
+      <h3>{{ __('Quick Links') }}</h3>
       <ul>
-         <li><a href="{{ route('landingpage') }}">Home</a></li>
-                <li><a href="{{ url('about-us') }}">About Us</a></li>
-                <li><a href="{{ url('iccs-ips-rights') }}">ICCs/IPs Rights</a></li>
-                <li><a href="{{ url('programs-pps') }}">Programs, Projects & Services</a></li>
-                <li><a href="{{ url('accomplishments') }}">Accomplishments</a></li>
-                <li><a href="{{ url('partnership') }}">Partnership</a></li>
-                <li><a href="{{ url('contacts') }}">Contact Us</a></li>
-                <li><a href="{{ url('news') }}">News</a></li>
+         <li><a href="{{ route('landingpage') }}">{{ __('Home') }}</a></li>
+                <li><a href="{{ url('about-us') }}">{{ __('About Us') }}</a></li>
+                <li><a href="{{ url('iccs-ips-rights') }}">{{ __('ICCs/IPs Rights') }}</a></li>
+                <li><a href="{{ url('programs-pps') }}">{{ __('Programs, Projects & Services') }}</a></li>
+                <li><a href="{{ url('accomplishments') }}">{{ __('Accomplishments') }}</a></li>
+                <li><a href="{{ url('partnership') }}">{{ __('Partnership') }}</a></li>
+                <li><a href="{{ url('contacts') }}">{{ __('Contact Us') }}</a></li>
+                <li><a href="{{ url('news') }}">{{ __('News') }}</a></li>
       </ul>
     </div>
 
     <!-- Social Media -->
     <div class="footer-social">
-      <h3>Connect With Us</h3>
-      <p>Stay updated with our latest news and activities:</p>
+      <h3>{{ __('Connect With Us') }}</h3>
+      <p>{{ __('Stay updated with our latest news and activities:') }}</p>
       <div class="social-icons">
         <a href="https://facebook.com/NCIPNuevaEcija" target="_blank"><i class="fab fa-facebook-f"></i></a>
         <a href="viber://chat?number=+639176543210" target="_blank"><i class="fab fa-viber"></i></a>
@@ -1228,7 +1303,7 @@ background-size: cover;
   </div>
 
   <div class="footer-bottom">
-    <p>&copy; 2025 National Commission on Indigenous Peoples - Nueva Ecija. All Rights Reserved.</p>
+    <p>&copy; 2025 {{ __('National Commission on Indigenous Peoples - Nueva Ecija. All Rights Reserved.') }}</p>
   </div>
 </footer>
 
@@ -1251,6 +1326,13 @@ background-size: cover;
             arrow.style.transform = dropdown.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
         }
     }
+
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.lang-switcher-nav')) {
+            document.getElementById('navLangDropdownRights')?.classList.remove('show');
+            document.getElementById('navLangDropdownRightsMobile')?.classList.remove('show');
+        }
+    });
 
     // Close menu when clicking outside
     document.addEventListener('click', function(event) {

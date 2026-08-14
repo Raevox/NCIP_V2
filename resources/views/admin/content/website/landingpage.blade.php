@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Updated Title -->
-    <title>National Commission on Indigenous Peoples - Nueva Ecija</title>
+    <title>{{ __('National Commission on Indigenous Peoples - Nueva Ecija') }}</title>
     
     <!-- Meta Description for Google Search -->
     <meta name="description" content="Official NCIP Nueva Ecija - Certificate of Confirmation (COC) requests, indigenous rights, programs, and community resources for ICCs/IPs groups.">
@@ -24,6 +24,77 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="{{ asset('css/landing.css') }}?v=1.1">
+
+    <style>
+        .lang-switcher-nav {
+            position: relative;
+            margin-left: 12px;
+        }
+        .lang-switcher-nav button {
+            background: none;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            cursor: pointer;
+        }
+        .lang-switcher-nav button:hover {
+            border-color: #3E7B27;
+            color: #3E7B27;
+        }
+        .lang-switcher-nav .lang-dropdown-nav {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 6px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 130px;
+            z-index: 1100;
+        }
+        .lang-switcher-nav .lang-dropdown-nav.show {
+            display: block;
+        }
+        .lang-switcher-nav .lang-dropdown-nav a {
+            display: block;
+            padding: 10px 14px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+        }
+        .lang-switcher-nav .lang-dropdown-nav a:hover {
+            background: #f5f5f5;
+            color: #3E7B27;
+        }
+        @media (max-width: 768px) {
+            .lang-switcher-nav {
+                margin: 10px 0;
+            }
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lang-switcher-mobile {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .nav-actions {
+                display: none;
+            }
+            .lang-switcher-mobile {
+                display: block;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="main-container">
@@ -43,32 +114,55 @@
                             <a
                 href="#landingpage"
                 class="active"
-                >Home </a>
+                >{{ __('Home') }} </a>
                         </li>
                         <li class="dropdown-item">
-                            <a href="#about" onclick="toggleDropdown(event, this.parentNode)">About <i class="fa-solid fa-chevron-down arrow"></i></a>
+                            <a href="#about" onclick="toggleDropdown(event, this.parentNode)">{{ __('About') }} <i class="fa-solid fa-chevron-down arrow"></i></a>
                             <div class="dropdown">
-                                <a href="{{ url('about-us') }}">About Us</a>
-                                <a href="{{ url('iccs-ips-rights') }}">ICCs/IPs Rights</a>
+                                <a href="{{ url('about-us') }}">{{ __('About Us') }}</a>
+                                <a href="{{ url('iccs-ips-rights') }}">{{ __('ICCs/IPs Rights') }}</a>
                             </div>
                         </li>
                 
 
                         <li class="dropdown-item">
                             <a href="#program" onclick="toggleDropdown(event, this.parentNode)">
-                                Program <i class="fa-solid fa-chevron-down arrow"></i>
+                                {{ __('Program') }} <i class="fa-solid fa-chevron-down arrow"></i>
                             </a>
                             <div class="dropdown">
-                                <a href="{{ url('programs-pps') }}">Project, Programs & Services (PPS)</a>
-                                <a href="{{ url('accomplishments') }}">Accomplishments</a>
+                                <a href="{{ url('programs-pps') }}">{{ __('Project, Programs & Services (PPS)') }}</a>
+                                <a href="{{ url('accomplishments') }}">{{ __('Accomplishments') }}</a>
                             </div>
                         </li>
-                        <li><a href="{{ url('partnership') }}">Partnership</a></li>
-                        <li><a href="{{ url('contacts') }}">Contact Us</a></li>
-                        <li><a href="{{ url('news') }}">News</a></li>
-                        <li class="mobile-login"><a href="{{ route('login') }}" class="login-btn">Login</a></li>
+                        <li><a href="{{ url('partnership') }}">{{ __('Partnership') }}</a></li>
+                        <li><a href="{{ url('contacts') }}">{{ __('Contact Us') }}</a></li>
+                        <li><a href="{{ url('news') }}">{{ __('News') }}</a></li>
+                        <li class="mobile-login"><a href="{{ route('login') }}" class="login-btn">{{ __('Login') }}</a></li>
+                        <!-- <li class="lang-switcher-nav">
+                            <button type="button" onclick="document.getElementById('navLangDropdown').classList.toggle('show')">
+                                <i class="fas fa-globe"></i> {{ app()->getLocale() === 'tl' ? 'Filipino' : 'English' }}
+                            </button>
+                            <div id="navLangDropdown" class="lang-dropdown-nav">
+                                <a href="{{ route('lang.switch', 'en') }}">English</a>
+                                <a href="{{ route('lang.switch', 'tl') }}">Filipino</a>
+                            </div>
+                        </li> -->
+
                     </ul>
-                        <a href="{{ route('login') }}" class="login-btn desktop-login">Login</a>
+                        <!-- <a href="{{ route('login') }}" class="login-btn desktop-login">{{ __('Login') }}</a> -->
+                        <div class="nav-actions">
+                        <a href="{{ route('login') }}" class="login-btn desktop-login">{{ __('Login') }}</a>
+
+                        <div class="lang-switcher-nav lang-switcher-desktop">
+                            <button type="button" onclick="document.getElementById('navLangDropdownDesktop').classList.toggle('show')">
+                                <i class="fas fa-globe"></i> {{ app()->getLocale() === 'tl' ? 'Filipino' : 'English' }}
+                            </button>
+                            <div id="navLangDropdownDesktop" class="lang-dropdown-nav">
+                                <a href="{{ route('lang.switch', 'en') }}">English</a>
+                                <a href="{{ route('lang.switch', 'tl') }}">Filipino</a>
+                            </div>
+                        </div>
+                    </div>
 
             </div>
         </nav>
@@ -78,8 +172,8 @@
     <div class="header-container">
         <div class="logo" style="background-image: url('{{ asset('content/IP_logo.jpg') }}');"></div>
         <div class="org-title">
-            <h1>National Commission on Indigenous Peoples</h1>
-            <p>Nueva Ecija Provincial Office</p>
+            <h1>{{ __('National Commission on Indigenous Peoples') }}</h1>
+            <p>{{ __('Nueva Ecija Provincial Office') }}</p>
         </div>
     </div>
 </header>
@@ -89,10 +183,10 @@
             <div class="hero-container">
                 <div class="hero-text">
                  <h2 style="color:#000000; font-size:clamp(1.8rem,5vw,2.5rem); font-weight:800; text-align:center;">
-                        Recognizing <span style="color:#3E7B27;">Indigenous People</span> of Nueva Ecija</h2>
+                        {{ __('Recognizing') }} <span style="color:#3E7B27;">{{ __('Indigenous People') }}</span> {{ __('of Nueva Ecija') }}</h2>
 
-                    <p>Request for your Certificate of Confirmation (COC) online, access important resources, and stay connected with your community.</p>
-                    <a href="{{ route('login') }}" class="cta-button">Request COC</a>
+                    <p>{{ __('Request for your Certificate of Confirmation (COC) online, access important resources, and stay connected with your community.') }}</p>
+                    <a href="{{ route('login') }}" class="cta-button">{{ __('Request COC') }}</a>
                 </div>
                 <div class="hero-image">
                     <img src="{{ asset('content/bg.jpg') }}" alt="Indigenous People of Nueva Ecija">
@@ -129,7 +223,7 @@
         <section class="quote-section">
             <div class="quote-content">
                 <div>
-                    <div class="quote-text">"Indigenous People made huge contributions to this country. The biggest is in sharing the land and resources. People need to see that, understand that. Indigenous People should be viewed as the founding peoples of this land."</div>
+                    <div class="quote-text">{{ __('"Indigenous People made huge contributions to this country. The biggest is in sharing the land and resources. People need to see that, understand that. Indigenous People should be viewed as the founding peoples of this land."') }}</div>
                     <div class="quote-author">- Perry Bellegarde</div>
                 </div>
                 <!-- ADD inline style attribute here -->
@@ -140,8 +234,8 @@
       <!-- ICCs/IPs Groups -->
         <section class="groups-section" id="iccs-ips-groups">
             <div class="section-header">
-            <h2> <span class="highlight-green">ICCs/IPs Group </span> in the Province of Nueva Ecija</h2>
-                <p class="section-subtitle">Nueva Ecija is home to diverse indigenous groups with rich cultural heritage and traditional practices</p>
+            <h2> <span class="highlight-green">{{ __('ICCs/IPs Group') }} </span> {{ __('in the Province of Nueva Ecija') }}</h2>
+                <p class="section-subtitle">{{ __('Nueva Ecija is home to diverse indigenous groups with rich cultural heritage and traditional practices') }}</p>
             </div>
             <div class="groups-grid" id="groupsList">
 
@@ -158,51 +252,51 @@
                     @endif
                     <div class="group-content">
                         <h3 class="group-title">{{ $tribe->name }}</h3>
-                        <p class="group-description">{{ $tribe->description ?: 'An indigenous people group recognized in the province of Nueva Ecija.' }}</p>
+                        <p class="group-description">{{ $tribe->description ?: __('An indigenous people group recognized in the province of Nueva Ecija.') }}</p>
                     </div>
                 </div>
                 @empty
                 <div style="text-align:center; padding:40px; color:#666; grid-column:1/-1;">
                     <i class="fas fa-flag" style="font-size:2rem; opacity:0.3; margin-bottom:10px; display:block;"></i>
-                    <p>No tribes have been added yet.</p>
+                    <p>{{ __('No tribes have been added yet.') }}</p>
                 </div>
                 @endforelse
 
             </div>
             <!-- Pagination Controls -->
             <div class="pagination">
-                <button id="prevBtn" disabled>Previous</button>
+                <button id="prevBtn" disabled>{{ __('Previous') }}</button>
                 <span id="pageNumbers"></span>
-                <button id="nextBtn">Next</button>
+                <button id="nextBtn">{{ __('Next') }}</button>
             </div>
         </section>
 
         <!-- Livelihood -->
         <section class="livelihood-section">
             <div class="section-header">
-                <h2> <span class="highlight-green">Indigenous People </span> Livelihood & Economic Contributions</h2>
-                <p class="section-subtitle">The indigenous people of Nueva Ecija play a significant role in agriculture and traditional crafts</p>
+                <h2> <span class="highlight-green">{{ __('Indigenous People') }} </span> {{ __('Livelihood & Economic Contributions') }}</h2>
+                <p class="section-subtitle">{{ __('The indigenous people of Nueva Ecija play a significant role in agriculture and traditional crafts') }}</p>
             </div>
             <div class="livelihood-cards">
                 <div class="livelihood-card">
                     <div class="livelihood-icon"><i class="fa-solid fa-seedling"></i></div>
                     <div class="livelihood-content">
-                        <h3>✓ Sustainable Farming</h3>
-                        <p>Many Aetas practice organic agriculture, growing root crops like cassava, sweet potatoes, and yams</p>
+                        <h3>✓ {{ __('Sustainable Farming') }}</h3>
+                        <p>{{ __('Many Aetas practice organic agriculture, growing root crops like cassava, sweet potatoes, and yams') }}</p>
                     </div>
                 </div>
                 <div class="livelihood-card">
                     <div class="livelihood-icon"><i class="fa-solid fa-hand-holding-heart"></i></div>
                     <div class="livelihood-content">
-                        <h3>✓ Handicrafts & Weaving</h3>
-                        <p>Indigenous artisans produce woven baskets, rattan furniture, and tribal accessories</p>
+                        <h3>✓ {{ __('Handicrafts & Weaving') }}</h3>
+                        <p>{{ __('Indigenous artisans produce woven baskets, rattan furniture, and tribal accessories') }}</p>
                     </div>
                 </div>
                 <div class="livelihood-card">
                     <div class="livelihood-icon"><i class="fa-solid fa-fish-fins"></i></div>
                     <div class="livelihood-content">
-                        <h3>✓ Fishing & Hunting</h3>
-                        <p>Dumagat groups continue river fishing and hunting using traditional techniques</p>
+                        <h3>✓ {{ __('Fishing & Hunting') }}</h3>
+                        <p>{{ __('Dumagat groups continue river fishing and hunting using traditional techniques') }}</p>
                     </div>
                 </div>
             </div>
@@ -211,36 +305,32 @@
         <!-- Certificate of Confirmation Section -->
         <section class="coc-section">
             <div class="coc-intro">
-                <h2> <span class="highlight-green">Certificate of Confirmation</span> for Indigenous People</h2>
+                <h2> <span class="highlight-green">{{ __('Certificate of Confirmation') }}</span> {{ __('for Indigenous People') }}</h2>
                 <p>
-                    We provide assistance with applications for Certificates of Confirmation, an official
-                    document that confirms an individual's Indigenous identity and status. This certificate is
-                    important for accessing various programs, services, and rights specifically designated for
-                    Indigenous peoples.
+                    {{ __("We provide assistance with applications for Certificates of Confirmation, an official document that confirms an individual's Indigenous identity and status. This certificate is important for accessing various programs, services, and rights specifically designated for Indigenous peoples.") }}
                 </p>
                 <p>
-                    Our experienced team guides applicants through the entire process, from documentation
-                    preparation to submission and follow-up with relevant authorities.
+                    {{ __('Our experienced team guides applicants through the entire process, from documentation preparation to submission and follow-up with relevant authorities.') }}
                 </p>
             </div>
 
             <div class="coc-process">
-                <h3>COC Application Process</h3>
+                <h3>{{ __('COC Application Process') }}</h3>
                 <div class="process-steps">
                     <div class="step">
                         <div class="step-number"><i class="fas fa-file-alt"></i></div>
-                        <h4>Document Preparation</h4>
-                        <p>Gather all required documents including ID photos, birth certificate, and obtain certification from your tribal chieftain.</p>
+                        <h4>{{ __('Document Preparation') }}</h4>
+                        <p>{{ __('Gather all required documents including ID photos, birth certificate, and obtain certification from your tribal chieftain.') }}</p>
                     </div>
                     <div class="step">
                         <div class="step-number"><i class="fas fa-pen"></i></div>
-                        <h4>Form Completion</h4>
-                        <p>Fill out the Information Index Form and Genealogy Form completely and accurately with all required information.</p>
+                        <h4>{{ __('Form Completion') }}</h4>
+                        <p>{{ __('Fill out the Information Index Form and Genealogy Form completely and accurately with all required information.') }}</p>
                     </div>
                     <div class="step">
                         <div class="step-number"><i class="fas fa-check"></i></div>
-                        <h4>Application Submission</h4>
-                        <p>Submit your completed application form with all supporting documents.</p>
+                        <h4>{{ __('Application Submission') }}</h4>
+                        <p>{{ __('Submit your completed application form with all supporting documents.') }}</p>
                     </div>
                 </div>
             </div>
@@ -248,9 +338,8 @@
             <div class="data-privacy-short">
             <i class="fas fa-exclamation-triangle"></i>
             <p>
-                <strong>Data Privacy Notice:</strong> All personal information collected through this system is 
-                kept secure and used only for processing your <strong>Certificate of Confirmation (COC)</strong> 
-                in compliance with the <em>Data Privacy Act of 2012</em>.
+                <strong>{{ __('Data Privacy Notice:') }}</strong> {{ __('All personal information collected through this system is kept secure and used only for processing your') }} <strong>{{ __('Certificate of Confirmation (COC)') }}</strong> 
+                {{ __('in compliance with the') }} <em>{{ __('Data Privacy Act of 2012') }}</em>.
             </p>
             </div>
 
@@ -267,24 +356,22 @@
 
             <!-- Right Side: Text -->
             <div class="heritage-text">
-            <h2><span class="highlight-green">Our Heritage</span> and Cultural Legacy</h2>
+            <h2><span class="highlight-green">{{ __('Our Heritage') }}</span> {{ __('and Cultural Legacy') }}</h2>
             <p>
-                The Indigenous Peoples of Nueva Ecija proudly preserve their unique traditions,
-                ancestral wisdom, and deep connection to nature. Their heritage stands as a
-                testament to centuries of cultural resilience, craftsmanship, and communal harmony.
+                {{ __('The Indigenous Peoples of Nueva Ecija proudly preserve their unique traditions, ancestral wisdom, and deep connection to nature. Their heritage stands as a testament to centuries of cultural resilience, craftsmanship, and communal harmony.') }}
             </p>
 
             <div class="heritage-features">
                 <div class="heritage-card">
                 <i class="fa-solid fa-palette"></i>
-                <h3>Traditional Arts & Crafts</h3>
-                <p>Handwoven fabrics, beadwork, and pottery reflect the identity and creativity of each tribe.</p>
+                <h3>{{ __('Traditional Arts & Crafts') }}</h3>
+                <p>{{ __('Handwoven fabrics, beadwork, and pottery reflect the identity and creativity of each tribe.') }}</p>
                 </div>
 
                 <div class="heritage-card">
                 <i class="fa-solid fa-drum"></i>
-                <h3>Music & Dance</h3>
-                <p>Indigenous dances and songs celebrate harvests, community unity, and ancestral stories.</p>
+                <h3>{{ __('Music & Dance') }}</h3>
+                <p>{{ __('Indigenous dances and songs celebrate harvests, community unity, and ancestral stories.') }}</p>
                 </div>
 
             </div>
@@ -297,9 +384,9 @@
         <div class="section-wrapper">
             <div class="section-header">
             <h2 class="section-title">
-                <span class="highlight-green">Stay Informed</span>
-                About NCIP Nueva Ecija Through
-                <span class="highlight-green">Our News</span>
+                <span class="highlight-green">{{ __('Stay Informed') }}</span>
+                {{ __('About NCIP Nueva Ecija Through') }}
+                <span class="highlight-green">{{ __('Our News') }}</span>
             </h2>
             </div>
 
@@ -320,14 +407,14 @@
                 <p class="news-excerpt">
                     {{ \Illuminate\Support\Str::limit($news->description, 200, '...') }}
                 </p>
-                <a href="{{ route('news.show', $news->id) }}" class="read-more-btn">Read More</a>
+                <a href="{{ route('news.show', $news->id) }}" class="read-more-btn">{{ __('Read More') }}</a>
                 </div>
             </article>
             @endforeach
             </div>
 
             <div class="view-more-wrapper">
-            <a href="{{ url('news') }}" class="view-more-btn">View More</a>
+            <a href="{{ url('news') }}" class="view-more-btn">{{ __('View More') }}</a>
             </div>
         </div>
         </section>
@@ -338,24 +425,24 @@
         <div class="footer-content">
             <!-- Quick Links -->
             <div class="footer-links">
-            <h3>Quick Links</h3>
+            <h3>{{ __('Quick Links') }}</h3>
             <ul>
-                <li><a href="{{ route('landingpage') }}">Home</a></li>
-                <li><a href="{{ url('about-us') }}">About Us</a></li>
-                <li><a href="{{ url('iccs-ips-rights') }}">ICCs/IPs Rights</a></li>
-                <li><a href="{{ url('programs-pps') }}">Programs, Projects & Services</a></li>
-                <li><a href="{{ url('accomplishments') }}">Accomplishments</a></li>
-                <li><a href="{{ url('partnership') }}">Partnership</a></li>
-                <li><a href="{{ url('contacts') }}">Contact Us</a></li>
-                <li><a href="{{ url('news') }}">News</a></li>
+                <li><a href="{{ route('landingpage') }}">{{ __('Home') }}</a></li>
+                <li><a href="{{ url('about-us') }}">{{ __('About Us') }}</a></li>
+                <li><a href="{{ url('iccs-ips-rights') }}">{{ __('ICCs/IPs Rights') }}</a></li>
+                <li><a href="{{ url('programs-pps') }}">{{ __('Programs, Projects & Services') }}</a></li>
+                <li><a href="{{ url('accomplishments') }}">{{ __('Accomplishments') }}</a></li>
+                <li><a href="{{ url('partnership') }}">{{ __('Partnership') }}</a></li>
+                <li><a href="{{ url('contacts') }}">{{ __('Contact Us') }}</a></li>
+                <li><a href="{{ url('news') }}">{{ __('News') }}</a></li>
 
             </ul>
             </div>
 
             <!-- Social Media -->
             <div class="footer-social">
-            <h3>Connect With Us</h3>
-            <p>Stay updated with our latest news and activities:</p>
+            <h3>{{ __('Connect With Us') }}</h3>
+            <p>{{ __('Stay updated with our latest news and activities:') }}</p>
             <div class="social-icons">
                 <a href="https://facebook.com/NCIPNuevaEcija" target="_blank"><i class="fab fa-facebook-f"></i></a>
                 <a href="viber://chat?number=+639176543210" target="_blank"><i class="fab fa-viber"></i></a>
@@ -373,7 +460,7 @@
         </div>
 
         <div class="footer-bottom">
-            <p>&copy; 2025 National Commission on Indigenous Peoples - Nueva Ecija. All Rights Reserved.</p>
+            <p>&copy; 2025 {{ __('National Commission on Indigenous Peoples - Nueva Ecija. All Rights Reserved.') }}</p>
         </div>
         </footer>
 
@@ -381,7 +468,13 @@
 </div>
 
 <script>
-    
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.lang-switcher-nav')) {
+            document.getElementById('navLangDropdownDesktop')?.classList.remove('show');
+            document.getElementById('navLangDropdownMobile')?.classList.remove('show');
+        }
+    });
+
     let slideIndex = 1;
     showSlides(slideIndex);
 

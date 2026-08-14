@@ -33,6 +33,61 @@
             min-height: 100vh;
         }
         /* Navigation */
+        .lang-switcher-nav {
+            position: relative;
+            margin-left: 12px;
+        }
+        .lang-switcher-nav button {
+            background: none;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            cursor: pointer;
+        }
+        .lang-switcher-nav button:hover {
+            border-color: #3E7B27;
+            color: #3E7B27;
+        }
+        .lang-switcher-nav .lang-dropdown-nav {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 6px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 130px;
+            z-index: 1100;
+        }
+        .lang-switcher-nav .lang-dropdown-nav.show {
+            display: block;
+        }
+        .lang-switcher-nav .lang-dropdown-nav a {
+            display: block;
+            padding: 10px 14px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+        }
+        .lang-switcher-nav .lang-dropdown-nav a:hover {
+            background: #f5f5f5;
+            color: #3E7B27;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        @media (max-width: 768px) {
+            .nav-actions {
+                display: none;
+            }
+        }
         .nav-bar {
             background: white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -911,32 +966,43 @@
                 <!-- <div class="page-indicator" id="pageIndicator">Home</div> -->
                     <ul class="nav-menu" id="navMenu">
                         <li>
-                            <a href="{{ route('landingpage') }}">Home</a>
+                            <a href="{{ route('landingpage') }}">{{ __('Home') }}</a>
                         </li>
                         <li class="dropdown-item">
-                            <a href="#about" onclick="toggleDropdown(event, this.parentNode)">About <i class="fa-solid fa-chevron-down arrow"></i></a>
+                            <a href="#about" onclick="toggleDropdown(event, this.parentNode)">{{ __('About') }} <i class="fa-solid fa-chevron-down arrow"></i></a>
                             <div class="dropdown">
-                                <a href="{{ url('about-us') }}">About Us</a>
-                                <a href="{{ url('iccs-ips-rights') }}">ICCs/IPs Rights</a>
+                                <a href="{{ url('about-us') }}">{{ __('About Us') }}</a>
+                                <a href="{{ url('iccs-ips-rights') }}">{{ __('ICCs/IPs Rights') }}</a>
                             </div>
                         </li>
                 
 
                         <li class="dropdown-item">
                             <a href="#program" onclick="toggleDropdown(event, this.parentNode)">
-                                Program <i class="fa-solid fa-chevron-down arrow"></i>
+                                {{ __('Program') }} <i class="fa-solid fa-chevron-down arrow"></i>
                             </a>
                             <div class="dropdown">
-                                <a href="{{ url('programs-pps') }}">Project, Programs & Services (PPS)</a>
-                                <a href="{{ url('accomplishments') }}">Accomplishments</a>
+                                <a href="{{ url('programs-pps') }}">{{ __('Project, Programs & Services (PPS)') }}</a>
+                                <a href="{{ url('accomplishments') }}">{{ __('Accomplishments') }}</a>
                             </div>
                         </li>
-                        <li>  <a href="#partnership"class="active">Partnership </a></li>
-                        <li><a href="{{ url('contacts') }}">Contact Us</a></li>
-                        <li><a href="{{ url('news') }}">News</a></li>
-                        <li class="mobile-login"><a href="{{ route('login') }}" class="login-btn">Login</a></li>
+                        <li>  <a href="#partnership"class="active">{{ __('Partnership') }} </a></li>
+                        <li><a href="{{ url('contacts') }}">{{ __('Contact Us') }}</a></li>
+                        <li><a href="{{ url('news') }}">{{ __('News') }}</a></li>
+                        <li class="mobile-login"><a href="{{ route('login') }}" class="login-btn">{{ __('Login') }}</a></li>
                     </ul>
-                        <a href="{{ route('login') }}" class="login-btn desktop-login">Login</a>
+                        <div class="nav-actions">
+                            <a href="{{ route('login') }}" class="login-btn desktop-login">{{ __('Login') }}</a>
+                            <div class="lang-switcher-nav lang-switcher-desktop">
+                                <button type="button" onclick="document.getElementById('navLangDropdownPartnership').classList.toggle('show')">
+                                    <i class="fas fa-globe"></i> {{ app()->getLocale() === 'tl' ? 'Filipino' : 'English' }}
+                                </button>
+                                <div id="navLangDropdownPartnership" class="lang-dropdown-nav">
+                                    <a href="{{ route('lang.switch', 'en') }}">English</a>
+                                    <a href="{{ route('lang.switch', 'tl') }}">Filipino</a>
+                                </div>
+                            </div>
+                        </div>
 
             </div>
         </nav>
@@ -946,8 +1012,8 @@
             <div class="header-container">
                 <div class="logo"></div>
                 <div class="org-title">
-                    <h1>NCIP Nueva Ecija Provincial Office</h1>
-                    <p>I'M PART Inter-Agency/Indigenous Multi-Stakeholders Partnership</p>
+                    <h1>{{ __('NCIP Nueva Ecija Provincial Office') }}</h1>
+                    <p>{{ __("I'M PART Inter-Agency/Indigenous Multi-Stakeholders Partnership") }}</p>
                 </div>
             </div>
         </header>
@@ -955,8 +1021,8 @@
         <!-- Page Title Section -->
             <div class="page-title">
                 <div class="overlay">
-                    <h2>PARTNERSHIP</h2>
-                    <p>A provincial whole of nation convergence in Nueva Ecija for Sustainable Development of ICCs/IPs</p>
+                    <h2>{{ __('PARTNERSHIP') }}</h2>
+                    <p>{{ __('A provincial whole of nation convergence in Nueva Ecija for Sustainable Development of ICCs/IPs') }}</p>
                 </div>
             </div>
 
@@ -967,10 +1033,8 @@
             <section class="info-section">
                 <div class="info-container">
                     <div class="info-text">
-                        <h2 class="section-title"> Inter-Agency/Indigenous Multi-Stakeholders Partnership <span>I'M PART</span></h2>
-                        <p>
-                            The I'M PART LOGO above simply showed in the center WILING TO BE PART (I'M PART) PEOPLE WORKING TOGETHER FROM THE THREE MAJOR MULTI-STAKEHOLDERS WITH ICCs/IPs (INDIGENOUS PEOPLES) as MAIN ACTORS OF THE PARTNERSHIP. This is because they are the very reason why I'M PART was organized because of their difficult and their poorest-of-the poor situations that needed to be responded urgently as a fulfillment of their four bundles of rights.
-                        </p>
+                        <h2 class="section-title">{{ __('Inter-Agency/Indigenous Multi-Stakeholders Partnership') }} <span>I'M PART</span></h2>
+                        <p>{{ __("The I'M PART LOGO above simply showed in the center WILING TO BE PART (I'M PART) PEOPLE WORKING TOGETHER FROM THE THREE MAJOR MULTI-STAKEHOLDERS WITH ICCs/IPs (INDIGENOUS PEOPLES) as MAIN ACTORS OF THE PARTNERSHIP. This is because they are the very reason why I'M PART was organized because of their difficult and their poorest-of-the poor situations that needed to be responded urgently as a fulfillment of their four bundles of rights.") }}</p>
                     </div>
                     <div class="info-logo">
                        <img src="{{ asset('content/impart-logo.png') }}" alt="I'M PART Logo">
@@ -983,29 +1047,10 @@
             <section class="info-section">
                 <div class="info-container">
                     <div class="info-text">
-                        <h2 class="section-title">Brief Profile of <span>I'M PART</span></h2>
-                        <p>
-                            The Inter-Agency/Indigenous Multi-Stakeholders Partnership (I'M PART) is a
-                            Provincial Whole-Of-Nation (WON) Council/Convergence in the Province of Nueva
-                            Ecija. It was in May–September 2017 when the Indigenous Multi-Stakeholders
-                            Partnership (I'M PART) of Nueva Ecija was conceptualized and operationalized by
-                            Provincial Officer Dr. Donato B. Bumacas.
-                        </p>
-                        <p>
-                            On October 29, 2021 was the formal launching of the Indigenous Multi-Stakeholders
-                            Partnership (I'M PART) during the PADIT-SUBKAL FESTIVAL of Nueva Ecija held at
-                            the NEUST Sumacab Campus, Cabanatuan City. This was attended by key officials
-                            including PCOO Usec. Atty. Anna Marie Banaag, NCIP Commissioner Atty. Basilio A.
-                            Wandag, NEUST President Engr. Feliciana P. Jacoba, and other provincial
-                            government officers.
-                        </p>
-                        <p>
-                            During the International Day of the World's Indigenous Peoples (August 9, 2021)
-                            with the theme <b>"Leaving no one behind: Indigenous peoples and the call for a new
-                            social contract"</b>, I'M PART was further enhanced to promote inclusivity. The
-                            re-launching was celebrated on October 29, 2021 during the National IP Day and the
-                            PADIT–SUBKAL FESTIVAL 2021 <b>"AMING TRIBO NOVO ECIJANO"</b>.
-                        </p>
+                        <h2 class="section-title">{{ __('Brief Profile of') }} <span>I'M PART</span></h2>
+                        <p>{{ __("The Inter-Agency/Indigenous Multi-Stakeholders Partnership (I'M PART) is a Provincial Whole-Of-Nation (WON) Council/Convergence in the Province of Nueva Ecija. It was in May-September 2017 when the Indigenous Multi-Stakeholders Partnership (I'M PART) of Nueva Ecija was conceptualized and operationalized by Provincial Officer Dr. Donato B. Bumacas.") }}</p>
+                        <p>{{ __("On October 29, 2021 was the formal launching of the Indigenous Multi-Stakeholders Partnership (I'M PART) during the PADIT-SUBKAL FESTIVAL of Nueva Ecija held at the NEUST Sumacab Campus, Cabanatuan City. This was attended by key officials including PCOO Usec. Atty. Anna Marie Banaag, NCIP Commissioner Atty. Basilio A. Wandag, NEUST President Engr. Feliciana P. Jacoba, and other provincial government officers.") }}</p>
+                        <p>{{ __("During the International Day of the World's Indigenous Peoples (August 9, 2021) with the theme :theme, I'M PART was further enhanced to promote inclusivity. The re-launching was celebrated on October 29, 2021 during the National IP Day and the PADIT-SUBKAL FESTIVAL 2021 :festival.", ['theme' => '"Leaving no one behind: Indigenous peoples and the call for a new social contract"', 'festival' => '"AMING TRIBO NOVO ECIJANO"']) }}</p>
                     </div>
                 </div>
             </section>
@@ -1013,7 +1058,7 @@
 
             {{-- Partners Section --}}
             <section class="partners-section">
-                <h2 class="section-title">Our <span class="highlight-green"> Government Sector Partners</span></h2>
+                <h2 class="section-title">{{ __('Our') }} <span class="highlight-green">{{ __('Government Sector Partners') }}</span></h2>
                 <div class="partners-grid">
                     @forelse($governmentPartners as $partner)
                         <div class="partner-card" title="{{ $partner->name }}">
@@ -1028,11 +1073,11 @@
                             @endif
                         </div>
                     @empty
-                        <p style="color:#777;font-size:14px;">No government partners yet.</p>
+                        <p style="color:#777;font-size:14px;">{{ __('No government partners yet.') }}</p>
                     @endforelse
                 </div>
 
-                <h2 class="section-title">Our <span class="highlight-green"> Private/Business and Civil Society Organization Sector </span></h2>
+                <h2 class="section-title">{{ __('Our') }} <span class="highlight-green">{{ __('Private/Business and Civil Society Organization Sector') }}</span></h2>
                 <div class="partners-grid">
                     @forelse($privatePartners as $partner)
                         <div class="partner-card" title="{{ $partner->name }}">
@@ -1047,7 +1092,7 @@
                             @endif
                         </div>
                     @empty
-                        <p style="color:#777;font-size:14px;">No private / CSO partners yet.</p>
+                        <p style="color:#777;font-size:14px;">{{ __('No private / CSO partners yet.') }}</p>
                     @endforelse
                 </div>
             </section>
@@ -1056,89 +1101,77 @@
              <div class="vgmo-container">
             <section class="vmgo-section">
                 <div class="vmgo-container">
-                    <h2 class="section-title">I'M PART <span>Vision, Mission, Goals & Objectives</span></h2>
-                    <p class="intro">
-                        The I'M PART vision, mission, goals and objectives (VMGO) are the following
-                        anchored on the principles of public service by all the multi-stakeholders:
-                    </p>
+                    <h2 class="section-title">I'M PART <span>{{ __('Vision, Mission, Goals & Objectives') }}</span></h2>
+                    <p class="intro">{{ __("The I'M PART vision, mission, goals and objectives (VMGO) are the following anchored on the principles of public service by all the multi-stakeholders:") }}</p>
 
                     <!-- Vision -->
                     <div class="vmgo-box">
-                        <h3>COMMON VISION</h3>
-                        <p>
-                            We aim for a resilient and sustainably developed ICCs/IPs in the Province of
-                            Nueva Ecija through convergence of technical and financial resources by all
-                            multi-stakeholders partners from the government sectors, private/business
-                            sectors and civil society organizations.
-                        </p>
+                        <h3>{{ __('COMMON VISION') }}</h3>
+                        <p>{{ __('We aim for a resilient and sustainably developed ICCs/IPs in the Province of Nueva Ecija through convergence of technical and financial resources by all multi-stakeholders partners from the government sectors, private/business sectors and civil society organizations.') }}</p>
                     </div>
 
                     <!-- Mission -->
                     <div class="vmgo-box">
-                        <h3>COMMON MISSION</h3>
-                        <p>
-                            Our passion is to be a catalyst for a resilient and sustainable development of
-                            ICCs/IPs in the Province of Nueva Ecija championing the principle of
-                            <b>"Malasakit Katutubong Paglilingkod".</b>
-                        </p>
+                        <h3>{{ __('COMMON MISSION') }}</h3>
+                        <p>{{ __('Our passion is to be a catalyst for a resilient and sustainable development of ICCs/IPs in the Province of Nueva Ecija championing the principle of "Malasakit Katutubong Paglilingkod".') }}</p>
                     </div>
 
                     <!-- Goals -->
                     <div class="vmgo-box">
-                        <h3>COMMON GOALS</h3>
+                        <h3>{{ __('COMMON GOALS') }}</h3>
                         <ul>
-                            <li><b>MEMBERSHIP:</b> Establish a broad membership from major multi-stakeholders from the government sectors, business/private sectors and civil society organizations;</li>
-                            <li><b>PROVINCIAL COUNCIL/NETWORK:</b> Make I'M PART as an operational, functional and sustainable strong formal provincial council/network for a resilient and sustainable development of ICCs/IPs in Nueva Ecija;</li>
-                            <li><b>PROGRAMS, PROJECTS AND SERVICES:</b> Each multi-stakeholders partners to implement programs, projects and services to ICCs/IPs in Nueva Ecija based on their legal mandates;</li>
-                            <li><b>MANAGEMENT:</b> Establish an adaptive partnership/network knowledge management approach actively participated/involved by all multi-stakeholders partners.</li>
+                            <li>{{ __('MEMBERSHIP: Establish a broad membership from major multi-stakeholders from the government sectors, business/private sectors and civil society organizations;') }}</li>
+                            <li>{{ __("PROVINCIAL COUNCIL/NETWORK: Make I'M PART as an operational, functional and sustainable strong formal provincial council/network for a resilient and sustainable development of ICCs/IPs in Nueva Ecija;") }}</li>
+                            <li>{{ __('PROGRAMS, PROJECTS AND SERVICES: Each multi-stakeholders partners to implement programs, projects and services to ICCs/IPs in Nueva Ecija based on their legal mandates;') }}</li>
+                            <li>{{ __('MANAGEMENT: Establish an adaptive partnership/network knowledge management approach actively participated/involved by all multi-stakeholders partners.') }}</li>
                         </ul>
                     </div>
 
                     <!-- Objectives -->
                     <div class="vmgo-box">
-                        <h3>COMMON OBJECTIVES</h3>
-                        <p>Specifically, the objectives are the following based on the above stated goals:</p>
+                        <h3>{{ __('COMMON OBJECTIVES') }}</h3>
+                        <p>{{ __('Specifically, the objectives are the following based on the above stated goals:') }}</p>
 
                         <div class="objective-group">
-                            <h4>1. MEMBERSHIP</h4>
+                            <h4>{{ __('1. MEMBERSHIP') }}</h4>
                             <ul>
-                                <li>Launch the Inter-Agency/Indigenous Multi-Stakeholders Partnership (I'M PART) on October 29, 2021;</li>
-                                <li>Encourage potential and willing partners from the government sector, business/private sectors, and CSOs to fill up Membership Form, sign Memorandum of Agreement (MOA);</li>
-                                <li>Award a Five Year Certificate of Partnership to partners who signed a MOA;</li>
-                                <li>Continuously increase membership; and</li>
-                                <li>Offer additional membership to willing and committed individuals.</li>
+                                <li>{{ __("Launch the Inter-Agency/Indigenous Multi-Stakeholders Partnership (I'M PART) on October 29, 2021;") }}</li>
+                                <li>{{ __('Encourage potential and willing partners from the government sector, business/private sectors, and CSOs to fill up Membership Form, sign Memorandum of Agreement (MOA);') }}</li>
+                                <li>{{ __('Award a Five Year Certificate of Partnership to partners who signed a MOA;') }}</li>
+                                <li>{{ __('Continuously increase membership; and') }}</li>
+                                <li>{{ __('Offer additional membership to willing and committed individuals.') }}</li>
                             </ul>
                         </div>
 
                         <div class="objective-group">
-                            <h4>2. PROVINCIAL COUNCIL/NETWORK</h4>
+                            <h4>{{ __('2. PROVINCIAL COUNCIL/NETWORK') }}</h4>
                             <ul>
-                                <li>Advocate for the accreditation or establishment of I'M PART to be part of the Provincial Council of Nueva Ecija;</li>
-                                <li>Advocate for the accreditation or establishment of I'M PART to be part of the City/Municipal Councils of each cities and municipalities of Nueva Ecija;</li>
-                                <li>Register I'M PART as a formal Provincial Network of Multi-Stakeholders in the Province of Nueva Ecija at the DOLE or SEC; and</li>
-                                <li>Establish an iVolunteer Network of individual members of I'M PART.</li>
+                                <li>{{ __("Advocate for the accreditation or establishment of I'M PART to be part of the Provincial Council of Nueva Ecija;") }}</li>
+                                <li>{{ __("Advocate for the accreditation or establishment of I'M PART to be part of the City/Municipal Councils of each cities and municipalities of Nueva Ecija;") }}</li>
+                                <li>{{ __("Register I'M PART as a formal Provincial Network of Multi-Stakeholders in the Province of Nueva Ecija at the DOLE or SEC; and") }}</li>
+                                <li>{{ __("Establish an iVolunteer Network of individual members of I'M PART.") }}</li>
                             </ul>
                         </div>
 
                         <div class="objective-group">
-                            <h4>3. PROGRAMS, PROJECTS AND SERVICES</h4>
+                            <h4>{{ __('3. PROGRAMS, PROJECTS AND SERVICES') }}</h4>
                             <ul>
-                                <li>Check their mandated programs, projects and services as an agency or organization;</li>
-                                <li>Each member of I'M PART to fill up Membership Form where their possible programs, projects and services are listed for ICCs/IPs in the Province of Nueva Ecija;</li>
-                                <li>Commit programs, projects and services to I'M PART for specific ICCs/IPs in the Province of Nueva Ecija every year ready for implementation;</li>
-                                <li>Implement, manage, and direct programs, projects and services to specific ICCs/IPs in the Province of Nueva Ecija every year; and</li>
-                                <li>Conduct regular Monitoring, Learning, Evaluation and Reflection (MLER) every year.</li>
+                                <li>{{ __('Check their mandated programs, projects and services as an agency or organization;') }}</li>
+                                <li>{{ __("Each member of I'M PART to fill up Membership Form where their possible programs, projects and services are listed for ICCs/IPs in the Province of Nueva Ecija;") }}</li>
+                                <li>{{ __("Commit programs, projects and services to I'M PART for specific ICCs/IPs in the Province of Nueva Ecija every year ready for implementation;") }}</li>
+                                <li>{{ __('Implement, manage, and direct programs, projects and services to specific ICCs/IPs in the Province of Nueva Ecija every year; and') }}</li>
+                                <li>{{ __('Conduct regular Monitoring, Learning, Evaluation and Reflection (MLER) every year.') }}</li>
                             </ul>
                         </div>
 
                         <div class="objective-group">
-                            <h4>4. MANAGEMENT</h4>
+                            <h4>{{ __('4. MANAGEMENT') }}</h4>
                             <ul>
-                                <li>Design an adaptive partnership/network knowledge management approach framework and operations within 2021-2022;</li>
-                                <li>Conduct Strategic Planning Workshop and come up with a 27-year I'M PART STRATEGIC PLAN which will become the basis of annual plan within 2022;</li>
-                                <li>Conduct Annual Planning every 2nd Quarter (June) of each year for the finalization of plans for the upcoming fiscal year;</li>
-                                <li>Implement the four functions of management every year: Planning, organizing/staffing, leading/directing, controlling e.g. regular MLER; and</li>
-                                <li>Manage risks and sustainability plan.</li>
+                                <li>{{ __('Design an adaptive partnership/network knowledge management approach framework and operations within 2021-2022;') }}</li>
+                                <li>{{ __("Conduct Strategic Planning Workshop and come up with a 27-year I'M PART STRATEGIC PLAN which will become the basis of annual plan within 2022;") }}</li>
+                                <li>{{ __('Conduct Annual Planning every 2nd Quarter (June) of each year for the finalization of plans for the upcoming fiscal year;') }}</li>
+                                <li>{{ __('Implement the four functions of management every year: Planning, organizing/staffing, leading/directing, controlling e.g. regular MLER; and') }}</li>
+                                <li>{{ __('Manage risks and sustainability plan.') }}</li>
                             </ul>
                         </div>
                     </div>
@@ -1148,41 +1181,29 @@
 
        <!-- Invitation Section -->
             <div class="invitation-wrapper">
-                <h2 class="section-title">Be a <span class="highlight-green">Partner</span></h2>
-                <p class="section-subtitle">
-                    Partnering with NCIP NEPO means contributing to sustainable development, preserving cultural heritage, 
-                    and creating more opportunities for Indigenous Peoples. Together, we can build a stronger, more inclusive future.
-                </p>
+                <h2 class="section-title">{{ __('Be a') }} <span class="highlight-green">{{ __('Partner') }}</span></h2>
+                <p class="section-subtitle">{{ __('Partnering with NCIP NEPO means contributing to sustainable development, preserving cultural heritage, and creating more opportunities for Indigenous Peoples. Together, we can build a stronger, more inclusive future.') }}</p>
 
                 <div class="invitation-grid">
                     <!-- Box 1 -->
                     <div class="invitation-box">
                         <i class="fa-solid fa-people-group"></i>
-                        <h2>Empower Indigenous Communities</h2>
-                        <p>
-                            By partnering with NCIP NEPO, you help strengthen the voices of Indigenous Peoples, ensuring they 
-                            have access to resources, education, and opportunities for a brighter future.
-                        </p>
+                        <h2>{{ __('Empower Indigenous Communities') }}</h2>
+                        <p>{{ __('By partnering with NCIP NEPO, you help strengthen the voices of Indigenous Peoples, ensuring they have access to resources, education, and opportunities for a brighter future.') }}</p>
                     </div>
 
                     <!-- Box 2 -->
                     <div class="invitation-box">
                         <i class="fa-solid fa-landmark"></i>
-                        <h2>Preserve Culture and Heritage</h2>
-                        <p>
-                            Collaborating with us means playing a vital role in protecting traditions, practices, and cultural 
-                            heritage of Indigenous Peoples, keeping their identity alive for generations to come.
-                        </p>
+                        <h2>{{ __('Preserve Culture and Heritage') }}</h2>
+                        <p>{{ __('Collaborating with us means playing a vital role in protecting traditions, practices, and cultural heritage of Indigenous Peoples, keeping their identity alive for generations to come.') }}</p>
                     </div>
 
                     <!-- Box 3 -->
                     <div class="invitation-box">
                         <i class="fa-solid fa-handshake-angle"></i>
-                        <h2>Promote Inclusive Growth</h2>
-                        <p>
-                            Your partnership creates pathways for inclusive development, where Indigenous communities thrive 
-                            alongside others, fostering equality, resilience, and shared progress.
-                        </p>
+                        <h2>{{ __('Promote Inclusive Growth') }}</h2>
+                        <p>{{ __('Your partnership creates pathways for inclusive development, where Indigenous communities thrive alongside others, fostering equality, resilience, and shared progress.') }}</p>
                     </div>
                 </div>
             </div>
@@ -1192,24 +1213,24 @@
             <div class="footer-content">
                 <!-- Quick Links -->
                 <div class="footer-links">
-                    <h3>Quick Links</h3>
+                    <h3>{{ __('Quick Links') }}</h3>
                     <ul>
-                <li><a href="{{ route('landingpage') }}">Home</a></li>
-                <li><a href="{{ url('about-us') }}">About Us</a></li>
-                <li><a href="{{ url('iccs-ips-rights') }}">ICCs/IPs Rights</a></li>
-                <li><a href="{{ url('programs-pps') }}">Programs, Projects & Services</a></li>
-                <li><a href="{{ url('accomplishments') }}">Accomplishments</a></li>
-                <li><a href="{{ url('partnership') }}">Partnership</a></li>
-                <li><a href="{{ url('contacts') }}">Contact Us</a></li>
-                <li><a href="{{ url('news') }}">News</a></li>
+                <li><a href="{{ route('landingpage') }}">{{ __('Home') }}</a></li>
+                <li><a href="{{ url('about-us') }}">{{ __('About Us') }}</a></li>
+                <li><a href="{{ url('iccs-ips-rights') }}">{{ __('ICCs/IPs Rights') }}</a></li>
+                <li><a href="{{ url('programs-pps') }}">{{ __('Programs, Projects & Services') }}</a></li>
+                <li><a href="{{ url('accomplishments') }}">{{ __('Accomplishments') }}</a></li>
+                <li><a href="{{ url('partnership') }}">{{ __('Partnership') }}</a></li>
+                <li><a href="{{ url('contacts') }}">{{ __('Contact Us') }}</a></li>
+                <li><a href="{{ url('news') }}">{{ __('News') }}</a></li>
 
                     </ul>
                 </div>
 
                 <!-- Social Media -->
                 <div class="footer-social">
-                    <h3>Connect With Us</h3>
-                    <p>Stay updated with our latest news and activities:</p>
+                    <h3>{{ __('Connect With Us') }}</h3>
+                    <p>{{ __('Stay updated with our latest news and activities:') }}</p>
                     <div class="social-icons">
                         <a href="https://facebook.com/NCIPNuevaEcija" target="_blank"><i class="fab fa-facebook-f"></i></a>
                         <a href="viber://chat?number=+639176543210" target="_blank"><i class="fab fa-viber"></i></a>
@@ -1227,7 +1248,7 @@
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2025 National Commission on Indigenous Peoples - Nueva Ecija. All Rights Reserved.</p>
+                <p>&copy; 2025 {{ __('National Commission on Indigenous Peoples - Nueva Ecija. All Rights Reserved.') }}</p>
             </div>
         </footer>
 
@@ -1261,6 +1282,12 @@
                 arrow.style.transform = dropdown.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
             }
         }
+
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.lang-switcher-nav')) {
+                document.getElementById('navLangDropdownPartnership')?.classList.remove('show');
+            }
+        });
 
         // Close menu when clicking outside
         document.addEventListener('click', function(event) {

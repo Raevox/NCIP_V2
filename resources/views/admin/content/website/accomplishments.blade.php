@@ -32,6 +32,61 @@
             min-height: 100vh;
         }
         /* Navigation */
+        .lang-switcher-nav {
+            position: relative;
+            margin-left: 12px;
+        }
+        .lang-switcher-nav button {
+            background: none;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            cursor: pointer;
+        }
+        .lang-switcher-nav button:hover {
+            border-color: #3E7B27;
+            color: #3E7B27;
+        }
+        .lang-switcher-nav .lang-dropdown-nav {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 6px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 130px;
+            z-index: 1100;
+        }
+        .lang-switcher-nav .lang-dropdown-nav.show {
+            display: block;
+        }
+        .lang-switcher-nav .lang-dropdown-nav a {
+            display: block;
+            padding: 10px 14px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+        }
+        .lang-switcher-nav .lang-dropdown-nav a:hover {
+            background: #f5f5f5;
+            color: #3E7B27;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        @media (max-width: 768px) {
+            .nav-actions {
+                display: none;
+            }
+        }
         .nav-bar {
             background: white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -1073,13 +1128,13 @@ background-size: cover;
                 <!-- <div class="page-indicator" id="pageIndicator">Home</div> -->
                     <ul class="nav-menu" id="navMenu">
                         <li>
-                            <a href="{{ route('landingpage') }}">Home</a>
+                            <a href="{{ route('landingpage') }}">{{ __('Home') }}</a>
                         </li>
                         <li class="dropdown-item">
-                            <a href="#about" onclick="toggleDropdown(event, this.parentNode)">About <i class="fa-solid fa-chevron-down arrow"></i></a>
+                            <a href="#about" onclick="toggleDropdown(event, this.parentNode)">{{ __('About') }} <i class="fa-solid fa-chevron-down arrow"></i></a>
                             <div class="dropdown">
-                                <a href="{{ url('about-us') }}">About Us</a>
-                                <a href="{{ url('iccs-ips-rights') }}">ICCs/IPs Rights</a>
+                                <a href="{{ url('about-us') }}">{{ __('About Us') }}</a>
+                                <a href="{{ url('iccs-ips-rights') }}">{{ __('ICCs/IPs Rights') }}</a>
                             </div>
                         </li>
                 
@@ -1089,19 +1144,30 @@ background-size: cover;
                 href="#accomplishments"
                 class="active"
                 onclick="toggleDropdown(event, this.parentNode)"
-                >Program <i class="fa-solid fa-chevron-down arrow"></i
+                >{{ __('Program') }} <i class="fa-solid fa-chevron-down arrow"></i
               ></a>
                             <div class="dropdown">
-                                <a href="{{ url('programs-pps') }}">Project, Programs & Services (PPS)</a>
-                                <a href="{{ url('accomplishments') }}">Accomplishments</a>
+                                <a href="{{ url('programs-pps') }}">{{ __('Project, Programs & Services (PPS)') }}</a>
+                                <a href="{{ url('accomplishments') }}">{{ __('Accomplishments') }}</a>
                             </div>
                         </li>
-                        <li><a href="{{ url('partnership') }}">Partnership</a></li>
-                        <li><a href="{{ url('contacts') }}">Contact Us</a></li>
-                        <li><a href="{{ url('news') }}">News</a></li>
-                        <li class="mobile-login"><a href="{{ route('login') }}" class="login-btn">Login</a></li>
+                        <li><a href="{{ url('partnership') }}">{{ __('Partnership') }}</a></li>
+                        <li><a href="{{ url('contacts') }}">{{ __('Contact Us') }}</a></li>
+                        <li><a href="{{ url('news') }}">{{ __('News') }}</a></li>
+                        <li class="mobile-login"><a href="{{ route('login') }}" class="login-btn">{{ __('Login') }}</a></li>
                     </ul>
-                        <a href="{{ route('login') }}" class="login-btn desktop-login">Login</a>
+                        <div class="nav-actions">
+                            <a href="{{ route('login') }}" class="login-btn desktop-login">{{ __('Login') }}</a>
+                            <div class="lang-switcher-nav lang-switcher-desktop">
+                                <button type="button" onclick="document.getElementById('navLangDropdownAccomplishments').classList.toggle('show')">
+                                    <i class="fas fa-globe"></i> {{ app()->getLocale() === 'tl' ? 'Filipino' : 'English' }}
+                                </button>
+                                <div id="navLangDropdownAccomplishments" class="lang-dropdown-nav">
+                                    <a href="{{ route('lang.switch', 'en') }}">English</a>
+                                    <a href="{{ route('lang.switch', 'tl') }}">Filipino</a>
+                                </div>
+                            </div>
+                        </div>
 
             </div>
         </nav>
@@ -1111,8 +1177,8 @@ background-size: cover;
             <div class="header-container">
                 <div class="logo"></div>
                 <div class="org-title">
-                    <h1>NCIP Nueva Ecija Provincial Office</h1>
-                    <p>Accomplishments</p>
+                    <h1>{{ __('NCIP Nueva Ecija Provincial Office') }}</h1>
+                    <p>{{ __('Accomplishments') }}</p>
                 </div>
             </div>
         </header>
@@ -1120,8 +1186,8 @@ background-size: cover;
         <!-- Page Title Section -->
         <div class="page-title">
             <div class="overlay">
-                <h2>NCIP NEPO Accomplishments</h2>
-                <p>Celebrating our achievements in protecting Indigenous Peoples' rights, preserving cultural heritage, and fostering community empowerment across Nueva Ecija.</p>
+                <h2>{{ __('NCIP NEPO Accomplishments') }}</h2>
+                <p>{{ __("Celebrating our achievements in protecting Indigenous Peoples' rights, preserving cultural heritage, and fostering community empowerment across Nueva Ecija.") }}</p>
             </div>
         </div>
 
@@ -1228,16 +1294,16 @@ background-size: cover;
             @empty
                 <div style="text-align:center; padding: 4rem 2rem; color: #666;">
                     <i class="fas fa-trophy" style="font-size: 3rem; opacity: 0.2; display: block; margin-bottom: 1rem;"></i>
-                    <p>No accomplishments available at this time.</p>
+                    <p>{{ __('No accomplishments available at this time.') }}</p>
                 </div>
             @endforelse
 
             <!-- Section Quote: Malasakit sa Katutubo -->
             <section class="quote-title">
                 <div class="overlay">
-                    <h2>Malasakit sa Katutubo</h2>
+                    <h2>{{ __('Malasakit sa Katutubo') }}</h2>
                     <p>
-                        "If we take on responsibility, there's no reason for every indigenous peoples not to have a peaceful, healthy, developed, progressive, and empowered community where culture, rights, and heritage are respected and sustained for future generations."
+                        {{ __("\"If we take on responsibility, there's no reason for every indigenous peoples not to have a peaceful, healthy, developed, progressive, and empowered community where culture, rights, and heritage are respected and sustained for future generations.\"") }}
                     </p>
                     <p style="margin-top:1rem; font-weight:600; font-size:clamp(14px,2vw,18px); color:#ffd166;">
                         — NCIP NEPO
@@ -1251,24 +1317,24 @@ background-size: cover;
             <div class="footer-content">
                <!-- Quick Links -->
             <div class="footer-links">
-            <h3>Quick Links</h3>
+            <h3>{{ __('Quick Links') }}</h3>
             <ul>
-                 <li><a href="{{ route('landingpage') }}">Home</a></li>
-                <li><a href="{{ url('about-us') }}">About Us</a></li>
-                <li><a href="{{ url('iccs-ips-rights') }}">ICCs/IPs Rights</a></li>
-                <li><a href="{{ url('programs-pps') }}">Programs, Projects & Services</a></li>
-                <li><a href="{{ url('accomplishments') }}">Accomplishments</a></li>
-                <li><a href="{{ url('partnership') }}">Partnership</a></li>
-                <li><a href="{{ url('contacts') }}">Contact Us</a></li>
-                <li><a href="{{ url('news') }}">News</a></li>
+                <li><a href="{{ route('landingpage') }}">{{ __('Home') }}</a></li>
+                <li><a href="{{ url('about-us') }}">{{ __('About Us') }}</a></li>
+                <li><a href="{{ url('iccs-ips-rights') }}">{{ __('ICCs/IPs Rights') }}</a></li>
+                <li><a href="{{ url('programs-pps') }}">{{ __('Programs, Projects & Services') }}</a></li>
+                <li><a href="{{ url('accomplishments') }}">{{ __('Accomplishments') }}</a></li>
+                <li><a href="{{ url('partnership') }}">{{ __('Partnership') }}</a></li>
+                <li><a href="{{ url('contacts') }}">{{ __('Contact Us') }}</a></li>
+                <li><a href="{{ url('news') }}">{{ __('News') }}</a></li>
 
             </ul>
             </div>
 
                 <!-- Social Media -->
                 <div class="footer-social">
-                    <h3>Connect With Us</h3>
-                    <p>Stay updated with our latest news and activities:</p>
+                    <h3>{{ __('Connect With Us') }}</h3>
+                    <p>{{ __('Stay updated with our latest news and activities:') }}</p>
                     <div class="social-icons">
                         <a href="https://facebook.com/NCIPNuevaEcija" target="_blank"><i class="fab fa-facebook-f"></i></a>
                         <a href="viber://chat?number=+639176543210" target="_blank"><i class="fab fa-viber"></i></a>
@@ -1286,7 +1352,7 @@ background-size: cover;
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2025 National Commission on Indigenous Peoples - Nueva Ecija. All Rights Reserved.</p>
+                <p>&copy; 2025 {{ __('National Commission on Indigenous Peoples - Nueva Ecija. All Rights Reserved.') }}</p>
             </div>
         </footer>
     </div>
@@ -1302,9 +1368,9 @@ background-size: cover;
             
             if (navMenu.classList.contains('active')) {
                 icon.classList.remove('fa-bars');
-                icon.classList.add('fa-bars');
+                icon.classList.add('fa-times');
             } else {
-                icon.classList.remove('fa-bars');
+                icon.classList.remove('fa-times');
                 icon.classList.add('fa-bars');
             }
         }
@@ -1319,6 +1385,12 @@ background-size: cover;
                 arrow.style.transform = dropdown.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
             }
         }
+
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.lang-switcher-nav')) {
+                document.getElementById('navLangDropdownAccomplishments')?.classList.remove('show');
+            }
+        });
 
         // Close menu when clicking outside
         document.addEventListener('click', function(event) {

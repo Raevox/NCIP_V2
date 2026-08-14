@@ -31,6 +31,61 @@
             min-height: 100vh;
         }
         /* Navigation */
+        .lang-switcher-nav {
+            position: relative;
+            margin-left: 12px;
+        }
+        .lang-switcher-nav button {
+            background: none;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            cursor: pointer;
+        }
+        .lang-switcher-nav button:hover {
+            border-color: #3E7B27;
+            color: #3E7B27;
+        }
+        .lang-switcher-nav .lang-dropdown-nav {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 6px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 130px;
+            z-index: 1100;
+        }
+        .lang-switcher-nav .lang-dropdown-nav.show {
+            display: block;
+        }
+        .lang-switcher-nav .lang-dropdown-nav a {
+            display: block;
+            padding: 10px 14px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+        }
+        .lang-switcher-nav .lang-dropdown-nav a:hover {
+            background: #f5f5f5;
+            color: #3E7B27;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        @media (max-width: 768px) {
+            .nav-actions {
+                display: none;
+            }
+        }
         .nav-bar {
             background: white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -1144,32 +1199,43 @@
                 <!-- <div class="page-indicator" id="pageIndicator">Home</div> -->
                     <ul class="nav-menu" id="navMenu">
                         <li>
-                            <a href="{{ route('landingpage') }}">Home</a>
+                            <a href="{{ route('landingpage') }}">{{ __('Home') }}</a>
                         </li>
                         <li class="dropdown-item">
-                            <a href="#about" onclick="toggleDropdown(event, this.parentNode)">About <i class="fa-solid fa-chevron-down arrow"></i></a>
+                            <a href="#about" onclick="toggleDropdown(event, this.parentNode)">{{ __('About') }} <i class="fa-solid fa-chevron-down arrow"></i></a>
                             <div class="dropdown">
-                                <a href="{{ url('about-us') }}">About Us</a>
-                                <a href="{{ url('iccs-ips-rights') }}">ICCs/IPs Rights</a>
+                                <a href="{{ url('about-us') }}">{{ __('About Us') }}</a>
+                                <a href="{{ url('iccs-ips-rights') }}">{{ __('ICCs/IPs Rights') }}</a>
                             </div>
                         </li>
                 
 
                         <li class="dropdown-item">
                             <a href="#program" onclick="toggleDropdown(event, this.parentNode)">
-                                Program <i class="fa-solid fa-chevron-down arrow"></i>
+                                {{ __('Program') }} <i class="fa-solid fa-chevron-down arrow"></i>
                             </a>
                             <div class="dropdown">
-                                <a href="{{ url('programs-pps') }}">Project, Programs & Services (PPS)</a>
-                                <a href="{{ url('accomplishments') }}">Accomplishments</a>
+                                <a href="{{ url('programs-pps') }}">{{ __('Project, Programs & Services (PPS)') }}</a>
+                                <a href="{{ url('accomplishments') }}">{{ __('Accomplishments') }}</a>
                             </div>
                         </li>
-                        <li><a href="{{ url('partnership') }}">Partnership</a></li>
-                        <li><a href="#contacts"class="active">Contact Us </a></li>
-                        <li><a href="{{ url('news') }}">News</a></li>
-                        <li class="mobile-login"><a href="{{ route('login') }}" class="login-btn">Login</a></li>
+                        <li><a href="{{ url('partnership') }}">{{ __('Partnership') }}</a></li>
+                        <li><a href="#contacts"class="active">{{ __('Contact Us') }}</a></li>
+                        <li><a href="{{ url('news') }}">{{ __('News') }}</a></li>
+                        <li class="mobile-login"><a href="{{ route('login') }}" class="login-btn">{{ __('Login') }}</a></li>
                     </ul>
-                        <a href="{{ route('login') }}" class="login-btn desktop-login">Login</a>
+                        <div class="nav-actions">
+                            <a href="{{ route('login') }}" class="login-btn desktop-login">{{ __('Login') }}</a>
+                            <div class="lang-switcher-nav lang-switcher-desktop">
+                                <button type="button" onclick="document.getElementById('navLangDropdownContacts').classList.toggle('show')">
+                                    <i class="fas fa-globe"></i> {{ app()->getLocale() === 'tl' ? 'Filipino' : 'English' }}
+                                </button>
+                                <div id="navLangDropdownContacts" class="lang-dropdown-nav">
+                                    <a href="{{ route('lang.switch', 'en') }}">English</a>
+                                    <a href="{{ route('lang.switch', 'tl') }}">Filipino</a>
+                                </div>
+                            </div>
+                        </div>
 
             </div>
         </nav>
@@ -1179,8 +1245,8 @@
             <div class="header-container">
                 <div class="logo"></div>
                 <div class="org-title">
-                    <h1>NCIP Nueva Ecija Provincial Office</h1>
-                    <p>Contact Us</p>
+                    <h1>{{ __('NCIP Nueva Ecija Provincial Office') }}</h1>
+                    <p>{{ __('Contact Us') }}</p>
                 </div>
             </div>
         </header>
@@ -1188,8 +1254,8 @@
         <!-- Page Title Section -->
         <div class="page-title">
             <div class="overlay">
-                <h2>Get In Touch With Us</h2>
-                <p>We're here to serve and assist Indigenous Cultural Communities and Indigenous Peoples</p>
+                <h2>{{ __('Get In Touch With Us') }}</h2>
+                <p>{{ __('We\'re here to serve and assist Indigenous Cultural Communities and Indigenous Peoples') }}</p>
             </div>
         </div>
 
@@ -1199,8 +1265,8 @@
         <!-- Contact Form -->
         <div class="contact-wrapper">
             <div class="contact-container">
-                <h2>Get In Touch</h2>
-                <p>We welcome inquiries from individuals, organizations, and government agencies interested in supporting indigenous communities and cultural preservation efforts.</p>
+                <h2>{{ __('Get In Touch') }}</h2>
+                <p>{{ __('We welcome inquiries from individuals, organizations, and government agencies interested in supporting indigenous communities and cultural preservation efforts.') }}</p>
 
             @if(session('success'))
         <div class="alert alert-success">
@@ -1217,15 +1283,15 @@
     <form class="contact-form" action="{{ route('contact.submit') }}" method="POST">
         @csrf
         <div class="form-group">
-            <label for="name">Full Name</label>
+            <label for="name">{{ __('Full Name') }}</label>
             <div class="input-icon">
                 <i class="fas fa-user"></i>
-                <input type="text" id="name" name="name" placeholder="Full Name" required>
+                <input type="text" id="name" name="name" placeholder="{{ __('Full Name') }}" required>
             </div>
         </div>
 
         <div class="form-group">
-            <label for="email">Email</label>
+            <label for="email">{{ __('Email') }}</label>
             <div class="input-icon">
                 <i class="fas fa-envelope"></i>
                 <input type="email" id="email" name="email" placeholder="example@gmail.com" required>
@@ -1233,7 +1299,7 @@
         </div>
 
         <div class="form-group">
-            <label for="phone">Phone Number</label>
+            <label for="phone">{{ __('Phone Number') }}</label>
             <div class="input-icon">
                 <i class="fas fa-phone"></i>
                 <input type="tel" id="phone" name="phone" placeholder="+63 912 345 6789">
@@ -1241,20 +1307,20 @@
         </div>
         
         <div class="form-group">
-            <label for="subject">Subject</label>
+            <label for="subject">{{ __('Subject') }}</label>
             <div class="input-icon">
                 <i class="fas fa-file"></i>
-                <input type="text" id="subject" name="subject" placeholder="What's this about?">
+                <input type="text" id="subject" name="subject" placeholder="{{ __('What\'s this about?') }}">
             </div>
         </div>
 
         <div class="form-group full-width">
-            <label for="message">Message</label>
-            <textarea id="message" name="message" rows="6" placeholder="Write your message..." required></textarea>
+            <label for="message">{{ __('Message') }}</label>
+            <textarea id="message" name="message" rows="6" placeholder="{{ __('Write your message...') }}" required></textarea>
         </div>
 
         <button type="submit" class="submit-btn">
-            Send <i class="fas fa-paper-plane"></i>
+            {{ __('Send') }} <i class="fas fa-paper-plane"></i>
         </button>
     </form>
             </div>
@@ -1263,8 +1329,8 @@
             <!-- Office Information Section -->
             <div class="office-info-section">
                 <div class="section-header">
-                    <h3><i class="fas fa-building"></i>Office Information </i></h3>
-                    <p>Complete contact details and location information</p>
+                    <h3><i class="fas fa-building"></i>{{ __('Office Information') }}</h3>
+                    <p>{{ __('Complete contact details and location information') }}</p>
                 </div>
                 <div class="contact-items-grid">
                     <div class="contact-item">
@@ -1272,7 +1338,7 @@
                             <i class="fas fa-map-marker-alt"></i>
                         </div>
                         <div class="contact-details">
-                            <div class="contact-label">Physical Address</div>
+                            <div class="contact-label">{{ __('Physical Address') }}</div>
                             <div class="contact-value">
                                 NCIP Nueva Ecija Provincial Office<br>
                                 1st Floor, Old Capitol Building, Burgos Ave., Cabanatuan City, 3100 Nueva Ecija, Philippines
@@ -1285,7 +1351,7 @@
                             <i class="fas fa-phone"></i>
                         </div>
                         <div class="contact-details">
-                            <div class="contact-label">Telephone Numbers</div>
+                            <div class="contact-label">{{ __('Telephone Numbers') }}</div>
                             <div class="contact-value">
                                 <a href="tel:+63449792365">(044) 979-2365</a><br>
 
@@ -1298,7 +1364,7 @@
                             <i class="fas fa-mobile-alt"></i>
                         </div>
                         <div class="contact-details">
-                            <div class="contact-label">Mobile Numbers</div>
+                            <div class="contact-label">{{ __('Mobile Numbers') }}</div>
                             <div class="contact-value">
                                 <a href="tel:+639176543210">+63 9123456789</a><br>
                             </div>
@@ -1310,7 +1376,7 @@
                             <i class="fas fa-envelope"></i>
                         </div>
                         <div class="contact-details">
-                            <div class="contact-label">Email Address</div>
+                            <div class="contact-label">{{ __('Email Address') }}</div>
                             <div class="contact-value">
                                 <a href="mailto:ncip.nuevaecija@gmail.com">ncip.nuevaecija@gmail.com</a><br>
                                 <a href="mailto:info.ncipne@gov.ph">info.ncipne@gov.ph</a>
@@ -1323,15 +1389,15 @@
 
             <!-- Office Hours Section -->
             <div class="hours-section">
-                <h3><i class="fas fa-clock"></i> Office Hours & Services</h3>
+                <h3><i class="fas fa-clock"></i> {{ __('Office Hours & Services') }}</h3>
                 <div class="hours-content">
                     <div class="hours-item">
-                        <div class="hours-day">Monday - Friday</div>
+                        <div class="hours-day">{{ __('Monday - Friday') }}</div>
                         <div class="hours-time">8:00 AM - 5:00 PM</div>
                     </div>
                     
                     <div class="hours-item">
-                        <div class="hours-day">Saturday</div>
+                        <div class="hours-day">{{ __('Saturday') }}</div>
                         <div class="hours-time">8:00 AM - 12:00 PM<br></div>
                     </div>
                     
@@ -1341,8 +1407,8 @@
             <!-- Map Section -->
             <div class="map-section">
                 <div class="map-header">
-                    <h3><i class="fas fa-map"></i> Find Our Location</h3>
-                    <p>Visit us at our office in Burgos Avenue, Old Capitol, Cabanatuan City, Nueva Ecija</p>
+                    <h3><i class="fas fa-map"></i> {{ __('Find Our Location') }}</h3>
+                    <p>{{ __('Visit us at our office in Burgos Avenue, Old Capitol, Cabanatuan City, Nueva Ecija') }}</p>
                 </div>
                 <div class="map-content">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3844.896612714691!2d120.96425118147884!3d15.489992346712429!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33972921247092db%3A0xc8dc5a5d38a06429!2sBahay%20-%20Pamahalaan%20Lalawigan%20ng%20Nueva%20Ecija!5e0!3m2!1sen!2sph!4v1758167818131!5m2!1sen!2sph" 
@@ -1362,24 +1428,24 @@
     <div class="footer-content">
         <!-- Quick Links -->
         <div class="footer-links">
-        <h3>Quick Links</h3>
+        <h3>{{ __('Quick Links') }}</h3>
         <ul>
-                 <li><a href="{{ route('landingpage') }}">Home</a></li>
-                <li><a href="{{ url('about-us') }}">About Us</a></li>
-                <li><a href="{{ url('iccs-ips-rights') }}">ICCs/IPs Rights</a></li>
-                <li><a href="{{ url('programs-pps') }}">Programs, Projects & Services</a></li>
-                <li><a href="{{ url('accomplishments') }}">Accomplishments</a></li>
-                <li><a href="{{ url('partnership') }}">Partnership</a></li>
-                <li><a href="{{ url('contacts') }}">Contact Us</a></li>
-                <li><a href="{{ url('news') }}">News</a></li>
+                 <li><a href="{{ route('landingpage') }}">{{ __('Home') }}</a></li>
+                <li><a href="{{ url('about-us') }}">{{ __('About Us') }}</a></li>
+                <li><a href="{{ url('iccs-ips-rights') }}">{{ __('ICCs/IPs Rights') }}</a></li>
+                <li><a href="{{ url('programs-pps') }}">{{ __('Programs, Projects & Services') }}</a></li>
+                <li><a href="{{ url('accomplishments') }}">{{ __('Accomplishments') }}</a></li>
+                <li><a href="{{ url('partnership') }}">{{ __('Partnership') }}</a></li>
+                <li><a href="{{ url('contacts') }}">{{ __('Contact Us') }}</a></li>
+                <li><a href="{{ url('news') }}">{{ __('News') }}</a></li>
 
         </ul>
         </div>
 
         <!-- Social Media -->
         <div class="footer-social">
-        <h3>Connect With Us</h3>
-        <p>Stay updated with our latest news and activities:</p>
+        <h3>{{ __('Connect With Us') }}</h3>
+        <p>{{ __('Stay updated with our latest news and activities:') }}</p>
         <div class="social-icons">
             <a href="https://facebook.com/NCIPNuevaEcija" target="_blank"><i class="fab fa-facebook-f"></i></a>
             <a href="viber://chat?number=+639176543210" target="_blank"><i class="fab fa-viber"></i></a>
@@ -1397,7 +1463,7 @@
     </div>
 
     <div class="footer-bottom">
-        <p>&copy; 2025 National Commission on Indigenous Peoples - Nueva Ecija. All Rights Reserved.</p>
+        <p>&copy; 2025 {{ __('National Commission on Indigenous Peoples - Nueva Ecija. All Rights Reserved.') }}</p>
     </div>
     </footer>
 
@@ -1422,6 +1488,12 @@
             arrow.style.transform = dropdown.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
         }
     }
+
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.lang-switcher-nav')) {
+            document.getElementById('navLangDropdownContacts')?.classList.remove('show');
+        }
+    });
 
     // Close menu when clicking outside
     document.addEventListener('click', function(event) {
