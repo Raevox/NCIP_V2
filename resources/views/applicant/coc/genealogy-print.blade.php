@@ -589,15 +589,15 @@ html, body { background: #f0f0f0; }
 
         <!-- Attested by -->
         <div class="f-attested">
-            <div class="f-title">Attested by:</div>
+            <div class="f-title">Attested by:</div><br>
             <div class="f-att">
+                <div class="f-att-line" style="margin-bottom:3px;"></div>
                 Tribal Elder/Leader/Punong Barangay<br>
-                <span style="font-size:7.5px;">(SIGNATURE OVER PRINTED NAME)</span>
-                <div class="f-att-line" style="margin:3px 0 5px;"></div>
-                Address: Council of Elders/IP Leader/Punong Barangay<br>
-                <span style="font-size:7.5px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(SIGNATURE OVER PRINTED NAME) &nbsp;—</span>
+                <span style="font-size:7.5px;">(SIGNATURE OVER PRINTED NAME)</span><br>
+                Address: <span style="font-size:7.5px;">__________________________________________ &nbsp;</span>
             </div>
             <div class="f-oath">
+                <br>
                 <div class="f-oath-line"></div>
                 Person Administering Oath<br>
                 <em style="font-size:7.5px;">Not Valid Without Seal</em>
@@ -634,13 +634,15 @@ html, body { background: #f0f0f0; }
    Drawn via JavaScript after DOM render
    ══════════════════════════════════════════════ */
 function boxGeom(id) {
-    const box  = document.querySelector('#' + id + ' .pu-box');
+    const pu   = document.getElementById(id);
+    const box  = pu.querySelector('.pu-box');
     const area = document.getElementById('treeArea');
-    const br   = box.getBoundingClientRect();
+    const br   = box.getBoundingClientRect(); // title box only — top edge + center-x
+    const pr   = pu.getBoundingClientRect();  // whole unit incl. fields — bottom edge
     const ar   = area.getBoundingClientRect();
     return {
-        top:  br.top    - ar.top,
-        bot:  br.bottom - ar.top,
+        top:  br.top    - ar.top,   // incoming lines land at top of title box
+        bot:  pr.bottom - ar.top,   // outgoing lines start below Place of Origin
         cx:   br.left   - ar.left + br.width / 2,
         left: br.left   - ar.left,
         right:br.right  - ar.left,

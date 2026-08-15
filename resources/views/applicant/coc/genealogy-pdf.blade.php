@@ -3,87 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <style>
+        @page {
+            margin: 12px 16px;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; font-size: 8px; color: #000; }
+        body { font-family: Arial, sans-serif; font-size: 13px; color: #000; }
 
-        .form-page { width: 100%; padding: 10px; }
+        /* Match the reference form's balanced placement on a legal page. */
+        .form-page { width: 100%; padding: 60px 0 6px; }
 
         .gen-header {
             width: 100%;
             margin-bottom: 10px;
+            table-layout: fixed;
         }
-        .gen-header td { vertical-align: top; }
+        .gen-header td { vertical-align: top; word-wrap: break-word; overflow-wrap: break-word; }
         .gen-title {
             border: 2px solid #000;
             padding: 6px 14px;
-            font-size: 15px;
+            font-size: 18px;
             font-weight: bold;
+            letter-spacing: 2px;
             text-align: center;
         }
         .form-code {
             border: 1px solid #000;
             padding: 2px 6px;
-            font-size: 8px;
+            font-size: 9px;
             font-weight: bold;
             display: inline-block;
             margin-bottom: 4px;
         }
-        .hdr-left-line { line-height: 1.9; font-size: 9px; }
+        .hdr-left-line { line-height: 1.9; font-size: 10px; }
         .hdr-left-line span {
             display: inline-block;
             border-bottom: 1px solid #000;
             min-width: 110px;
         }
-        .instructions { font-size: 7.5px; line-height: 1.5; text-align: right; }
+        .instructions { font-size: 10px; line-height: 1.5; text-align: right; }
 
-        table.tree { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        table.tree td { text-align: center; vertical-align: top; padding: 0; }
+        table.tree { width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed; }
+        table.tree td { text-align: center; vertical-align: top; padding: 0; word-wrap: break-word; overflow-wrap: break-word; }
 
+        /* ── person box (matches preview's .pu-box / .pu-fields) ── */
         .pbox {
             border: 1px solid #000;
             padding: 3px;
-            font-size: 7px;
+            height: 76px;
+            font-size: 9px;
             text-align: center;
             margin: 0 2px;
         }
-        .pbox .ptitle { font-weight: bold; font-size: 6.5px; }
+        .pbox .ptitle {
+            font-weight: bold;
+            font-size: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         .pbox .pname {
             border-bottom: 1px solid #777;
-            min-height: 10px;
-            font-size: 7px;
+            min-height: 11px;
+            font-size: 12px;
             margin-top: 2px;
             padding-bottom: 1px;
         }
-        .pbox .pfield {
+        .pfields { padding: 4px 0 0; }
+        .pfields .pfield {
             text-align: left;
-            font-size: 6.5px;
-            margin-top: 2px;
+            font-size: 10px;
+            margin-top: 3px;
+            white-space: nowrap;
+            overflow: hidden;
         }
-        .pbox .pfield span {
+        .pfields .pfield span {
             border-bottom: 1px solid #000;
             display: inline-block;
-            min-width: 60%;
+            width: 52%;
+            min-width: 0;
         }
 
-        .connector-h { padding-top: 4px; }
-        .connector-h .line {
-            border-top: 1px solid #000;
-            width: 50%;
-            margin: 0 auto;
-            height: 1px;
+        /* ── couple unit: box = box (matches preview's .couple / .couple-eq) ── */
+        table.couple { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        table.couple td { vertical-align: top; padding: 0; overflow: hidden; }
+        table.couple .eq-sign {
+            width: 12px;
+            min-width: 12px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            padding-top: 9px;
         }
-        .connector-v .tick {
+
+        /* Lines join two parents to their child without crossing other branches. */
+        .two-to-one-connector { height: 30px; position: relative; }
+        .two-to-one-connector .source-left,
+        .two-to-one-connector .source-right,
+        .two-to-one-connector .child-line {
+            position: absolute;
             border-left: 1px solid #000;
             width: 1px;
-            height: 10px;
-            margin: 0 auto;
         }
+        .two-to-one-connector .source-left { left: 24%; top: 0; height: 11px; }
+        .two-to-one-connector .source-right { left: 76%; top: 0; height: 11px; }
+        .two-to-one-connector .join-line {
+            position: absolute;
+            left: 24%; top: 10px; width: 52%;
+            border-top: 1px solid #000;
+            height: 1px;
+        }
+        .two-to-one-connector .child-line { left: 50%; top: 10px; height: 20px; }
 
         .gen-footer { width: 100%; margin-top: 16px; border-top: 1px solid #ccc; padding-top: 8px; }
-        .gen-footer td { vertical-align: top; font-size: 7.5px; padding: 0 6px; }
-        .f-title { font-weight: bold; font-size: 8px; margin-bottom: 6px; }
+        .gen-footer td { vertical-align: top; font-size: 10px; padding: 0 6px; }
+        .f-title { font-weight: bold; font-size: 13px; margin-bottom: 6px; }
         .f-sig-line { border-bottom: 1px solid #000; width: 150px; margin: 16px auto 2px; }
-        .f-sig-label { font-size: 6.5px; text-align: center; font-style: italic; }
+        .f-attested-line { border-bottom: 1px solid #000; width: 100%; margin: 20px 0 6px; }
+        .f-sig-label { font-size: 10px; text-align: center; font-style: italic; }
     </style>
 </head>
 <body>
@@ -94,11 +130,34 @@
         $ip = $data[$ipKey] ?? '';
         $origin = $data[$originKey] ?? '';
         return '
-        <div class="pbox">
-            <div class="ptitle">' . e($title) . '</div>
-            <div class="pname">' . e($name ?: '&nbsp;') . '</div>
-            <div class="pfield">IPs/ICCs: <span>' . e($ip) . '</span></div>
-            <div class="pfield">Origin: <span>' . e($origin) . '</span></div>
+        <div class="person-unit">
+            <div class="pbox">
+                <div class="ptitle">' . e($title) . '</div>
+                <div class="pname">' . e($name ?: '&nbsp;') . '</div>
+                <div class="pfields">
+                    <div class="pfield">IPs/ICCs: <span>' . e($ip) . '</span></div>
+                    <div class="pfield">Place of Origin: <span>' . e($origin) . '</span></div>
+                </div>
+            </div>
+        </div>';
+    }
+
+    // Wraps two person boxes into a "box = box" couple unit, matching the preview's married-pair styling.
+    function coupleUnit($left, $right) {
+        return '
+        <table class="couple">
+            <tr>
+                <td style="width:47%;">' . $left . '</td>
+                <td class="eq-sign">=</td>
+                <td style="width:47%;">' . $right . '</td>
+            </tr>
+        </table>';
+    }
+
+    function twoToOneConnector() {
+        return '<div class="two-to-one-connector">
+            <i class="source-left"></i><i class="source-right"></i>
+            <i class="join-line"></i><i class="child-line"></i>
         </div>';
     }
 @endphp
@@ -133,68 +192,87 @@
 
     <!-- FAMILY TREE -->
     <table class="tree">
-        <!-- GG ROW -->
+        <!-- GG ROW: 4 married couples, each "great-grandfather = great-grandmother" -->
         <tr>
-            <td style="width:12.5%">{!! pbox($step3, 'great_grandfather_grandfather_first_name','great_grandfather_grandfather_last_name','great_grandfather_grandfather_ipgroup','great_grandfather_grandfather_origin','Great Grandfather') !!}</td>
-            <td style="width:12.5%">{!! pbox($step3, 'great_grandmother_grandfather_first_name','great_grandmother_grandfather_last_name','great_grandmother_grandfather_ipgroup','great_grandmother_grandfather_origin','Great Grandmother') !!}</td>
-            <td style="width:12.5%">{!! pbox($step3, 'great_grandfather_grandmother_first_name','great_grandfather_grandmother_last_name','great_grandfather_grandmother_ipgroup','great_grandfather_grandmother_origin','Great Grandfather') !!}</td>
-            <td style="width:12.5%">{!! pbox($step3, 'great_grandmother_grandmother_first_name','great_grandmother_grandmother_last_name','great_grandmother_grandmother_ipgroup','great_grandmother_grandmother_origin','Great Grandmother') !!}</td>
-            <td style="width:12.5%">{!! pbox($step4, 'great_grandfather_grandfather_mother_first_name','great_grandfather_grandfather_mother_last_name','great_grandfather_grandfather_mother_ipgroup','great_grandfather_grandfather_mother_origin','Great Grandfather') !!}</td>
-            <td style="width:12.5%">{!! pbox($step4, 'great_grandmother_grandfather_mother_first_name','great_grandmother_grandfather_mother_last_name','great_grandmother_grandfather_mother_ipgroup','great_grandmother_grandfather_mother_origin','Great Grandmother') !!}</td>
-            <td style="width:12.5%">{!! pbox($step4, 'great_grandfather_grandmother_mother_first_name','great_grandfather_grandmother_mother_last_name','great_grandfather_grandmother_mother_ipgroup','great_grandfather_grandmother_mother_origin','Great Grandfather') !!}</td>
-            <td style="width:12.5%">{!! pbox($step4, 'great_grandmother_grandmother_mother_first_name','great_grandmother_grandmother_mother_last_name','great_grandmother_grandmother_mother_ipgroup','great_grandmother_grandmother_mother_origin','Great Grandmother') !!}</td>
+            <td style="width:25%">
+                {!! coupleUnit(
+                    pbox($step3, 'great_grandfather_grandfather_first_name','great_grandfather_grandfather_last_name','great_grandfather_grandfather_ipgroup','great_grandfather_grandfather_origin','Great Grandfather'),
+                    pbox($step3, 'great_grandmother_grandfather_first_name','great_grandmother_grandfather_last_name','great_grandmother_grandfather_ipgroup','great_grandmother_grandfather_origin','Great Grandmother')
+                ) !!}
+            </td>
+            <td style="width:25%">
+                {!! coupleUnit(
+                    pbox($step3, 'great_grandfather_grandmother_first_name','great_grandfather_grandmother_last_name','great_grandfather_grandmother_ipgroup','great_grandfather_grandmother_origin','Great Grandfather'),
+                    pbox($step3, 'great_grandmother_grandmother_first_name','great_grandmother_grandmother_last_name','great_grandmother_grandmother_ipgroup','great_grandmother_grandmother_origin','Great Grandmother')
+                ) !!}
+            </td>
+            <td style="width:25%">
+                {!! coupleUnit(
+                    pbox($step4, 'great_grandfather_grandfather_mother_first_name','great_grandfather_grandfather_mother_last_name','great_grandfather_grandfather_mother_ipgroup','great_grandfather_grandfather_mother_origin','Great Grandfather'),
+                    pbox($step4, 'great_grandmother_grandfather_mother_first_name','great_grandmother_grandfather_mother_last_name','great_grandmother_grandfather_mother_ipgroup','great_grandmother_grandfather_mother_origin','Great Grandmother')
+                ) !!}
+            </td>
+            <td style="width:25%">
+                {!! coupleUnit(
+                    pbox($step4, 'great_grandfather_grandmother_mother_first_name','great_grandfather_grandmother_mother_last_name','great_grandfather_grandmother_mother_ipgroup','great_grandfather_grandmother_mother_origin','Great Grandfather'),
+                    pbox($step4, 'great_grandmother_grandmother_mother_first_name','great_grandmother_grandmother_mother_last_name','great_grandmother_grandmother_mother_ipgroup','great_grandmother_grandmother_mother_origin','Great Grandmother')
+                ) !!}
+            </td>
         </tr>
 
-        <!-- CONNECTOR: GG -> GP -->
-        <tr class="connector-h">
-            <td colspan="2"><div class="line"></div></td>
-            <td colspan="2"><div class="line"></div></td>
-            <td colspan="2"><div class="line"></div></td>
-            <td colspan="2"><div class="line"></div></td>
-        </tr>
-        <tr class="connector-v">
-            <td colspan="2"><div class="tick"></div></td>
-            <td colspan="2"><div class="tick"></div></td>
-            <td colspan="2"><div class="tick"></div></td>
-            <td colspan="2"><div class="tick"></div></td>
+        <!-- Each great-grandparent couple connects only to its matching grandparent. -->
+        <tr>
+            <td>{!! twoToOneConnector() !!}</td>
+            <td>{!! twoToOneConnector() !!}</td>
+            <td>{!! twoToOneConnector() !!}</td>
+            <td>{!! twoToOneConnector() !!}</td>
         </tr>
 
         <!-- GP ROW -->
         <tr>
-            <td colspan="2">{!! pbox($step3, 'paternal_grandfather_first_name','paternal_grandfather_last_name','paternal_grandfather_ipgroup','paternal_grandfather_origin','Grandfather') !!}</td>
-            <td colspan="2">{!! pbox($step3, 'paternal_grandmother_first_name','paternal_grandmother_last_name','paternal_grandmother_ipgroup','paternal_grandmother_origin','Grandmother') !!}</td>
-            <td colspan="2">{!! pbox($step4, 'maternal_grandfather_first_name','maternal_grandfather_last_name','maternal_grandfather_ipgroup','maternal_grandfather_origin','Grandfather') !!}</td>
-            <td colspan="2">{!! pbox($step4, 'maternal_grandmother_first_name','maternal_grandmother_last_name','maternal_grandmother_ipgroup','maternal_grandmother_origin','Grandmother') !!}</td>
+            <td colspan="2">
+                {!! coupleUnit(
+                    pbox($step3, 'paternal_grandfather_first_name','paternal_grandfather_last_name','paternal_grandfather_ipgroup','paternal_grandfather_origin','Grandfather'),
+                    pbox($step3, 'paternal_grandmother_first_name','paternal_grandmother_last_name','paternal_grandmother_ipgroup','paternal_grandmother_origin','Grandmother')
+                ) !!}
+            </td>
+            <td colspan="2">
+                {!! coupleUnit(
+                    pbox($step4, 'maternal_grandfather_first_name','maternal_grandfather_last_name','maternal_grandfather_ipgroup','maternal_grandfather_origin','Grandfather'),
+                    pbox($step4, 'maternal_grandmother_first_name','maternal_grandmother_last_name','maternal_grandmother_ipgroup','maternal_grandmother_origin','Grandmother')
+                ) !!}
+            </td>
         </tr>
 
-        <!-- CONNECTOR: GP -> Parents -->
-        <tr class="connector-h">
-            <td colspan="4"><div class="line"></div></td>
-            <td colspan="4"><div class="line"></div></td>
-        </tr>
-        <tr class="connector-v">
-            <td colspan="4"><div class="tick"></div></td>
-            <td colspan="4"><div class="tick"></div></td>
-        </tr>
-
-        <!-- PARENTS ROW -->
+        <!-- Each grandparent pair connects only to its corresponding parent. -->
         <tr>
-            <td colspan="4">{!! pbox($step3, 'father_first_name','father_last_name','father_ipgroup','father_origin',"Applicant's Father") !!}</td>
-            <td colspan="4">{!! pbox($step4, 'mother_first_name','mother_last_name','mother_ipgroup','mother_origin',"Applicant's Mother") !!}</td>
+            <td colspan="2">{!! twoToOneConnector() !!}</td>
+            <td colspan="2">{!! twoToOneConnector() !!}</td>
         </tr>
 
-        <!-- CONNECTOR: Parents -> Applicant -->
-        <tr class="connector-h">
-            <td colspan="8"><div class="line"></div></td>
+        <!-- PARENTS ROW (no equals sign, matches preview's par-row; width constrained like GP row) -->
+        <tr>
+            <td colspan="2">
+                <div style="width:42%; margin:0 auto;">
+                    {!! pbox($step3, 'father_first_name','father_last_name','father_ipgroup','father_origin',"Applicant's Father") !!}
+                </div>
+            </td>
+            <td colspan="2">
+                <div style="width:42%; margin:0 auto;">
+                    {!! pbox($step4, 'mother_first_name','mother_last_name','mother_ipgroup','mother_origin',"Applicant's Mother") !!}
+                </div>
+            </td>
         </tr>
-        <tr class="connector-v">
-            <td colspan="8"><div class="tick"></div></td>
+
+        <!-- Applicant's father and mother connect to the applicant. -->
+        <tr>
+            <td colspan="4">{!! twoToOneConnector() !!}</td>
         </tr>
 
         <!-- APPLICANT ROW -->
         <tr>
-            <td colspan="8" style="width:25%; margin:0 auto;">
-                <div style="width:25%; margin:0 auto;">
+            <td colspan="4">
+                <div style="width:20%; margin:0 auto;">
                     {!! pbox($step3, 'applicant_first_name','applicant_last_name','applicant_ipgroup','applicant_origin','Name of Applicant') !!}
                 </div>
             </td>
@@ -225,9 +303,10 @@
             </td>
             <td style="width:33%;">
                 <div class="f-title">Attested by:</div>
+                <div class="f-attested-line"></div>
                 <p>Tribal Elder/Leader/Punong Barangay</p>
-                <div class="f-sig-line"></div>
-                <p>Address: Council of Elders/IP Leader/Punong Barangay</p>
+                <p class="f-sig-label" style="text-align:left;">(SIGNATURE OVER PRINTED NAME)</p>
+                <p>Address: <span class="f-sig-label" style="font-style:normal;">_________________________________&nbsp;</span></p><br>
                 <div class="f-sig-line" style="margin-top:20px;"></div>
                 <p style="text-align:center;">Person Administering Oath</p>
                 <p style="text-align:center;"><em>Not Valid Without Seal</em></p>
