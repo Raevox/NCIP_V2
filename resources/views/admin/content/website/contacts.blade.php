@@ -95,7 +95,7 @@
         }
         
         .nav-container {
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;

@@ -105,7 +105,7 @@
       }
 
       .nav-container {
-        max-width: 1200px;
+        max-width: 100%;
         margin: 0 auto;
         display: flex;
         justify-content: space-between;
@@ -1588,7 +1588,8 @@
     
       </div>
 
-        <div class="faq-container          <div class="faq-item">
+        <div class="faq-container">
+          <div class="faq-item">
             <button class="faq-question">
               {{ __('What is the Certificate of Confirmation (COC)?') }}
               <i class="fa-solid fa-chevron-down arrow"></i>
@@ -1603,7 +1604,7 @@
           <!-- Q2 -->
           <div class="faq-item">
             <button class="faq-question">
-              </i>{{ __('How can I request a COC online?') }}
+              {{ __('How can I request a COC online?') }}
               <i class="fa-solid fa-chevron-down arrow"></i>
             </button>
             <div class="faq-answer">
@@ -1671,7 +1672,7 @@
                 {{ __('Currently, no fee is required for online submission. However, applicants may need to pay standard government processing fees upon approval (depending on NCIP regulations).') }}
               </p>
             </div>
-          </div>/div>
+          </div>
         </div>
     </section>
       
