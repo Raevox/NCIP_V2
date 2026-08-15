@@ -130,10 +130,12 @@
         color: #fff;
     }
 
-    /* Action Button */
+    /* Action Buttons */
     .coc-action {
         display: flex;
         justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
     }
     .coc-btn {
         background: #3e7b27;
@@ -151,6 +153,16 @@
     }
     .coc-btn:hover {
         background: #2e5e1c;
+    }
+    .coc-btn-reset {
+        background: transparent;
+        color: #b42318;
+        border: 1px solid #b42318;
+        cursor: pointer;
+    }
+    .coc-btn-reset:hover {
+        background: #b42318;
+        color: #fff;
     }
 
     /* Status badges */
@@ -189,6 +201,7 @@
         }
         .coc-action {
             justify-content: center;
+            flex-direction: column-reverse;
         }
         .coc-btn {
             width: 100%;
@@ -279,13 +292,26 @@
         </div>
         @endif
 
-        {{-- Only show the apply button if there's no pending app and no already-approved COC --}}
-        @if(!isset($application) 
-            || ($application->status !== 'Pending' 
+        {{-- Keep the reset action beside the primary continue action so it is visible but secondary. --}}
+        @if(!isset($application)
+            || ($application->status !== 'Pending'
                 && !($application->status === 'Approved' && $application->coc_status === 'Approved')))
         <div class="coc-action">
+            @if(isset($application) && $application->status === 'Draft')
+                <form method="POST"
+                      action="{{ route('applicant.coc.draft.reset', $application) }}"
+                      onsubmit="return confirm('{{ __('Clear all saved information and start over? This action cannot be undone.') }}');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="coc-btn coc-btn-reset">
+                        <i class="fas fa-rotate-left"></i> {{ __('Clear All / Reset') }}
+                    </button>
+                </form>
+            @endif
+
             <a href="{{ route('applicant.coc.step1') }}" class="coc-btn">
-                <i class="fas fa-paper-plane"></i> {{ __('Request COC') }}
+                <i class="fas fa-paper-plane"></i>
+                {{ isset($application) && $application->status === 'Draft' ? __('Continue Application') : __('Request COC') }}
             </a>
         </div>
         @endif

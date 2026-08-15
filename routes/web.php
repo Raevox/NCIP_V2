@@ -308,6 +308,9 @@ Route::middleware(['auth:applicant'])->prefix('applicant')->name('applicant.')->
     Route::prefix('coc')->name('coc.')->group(function () {
         Route::get('/', [ApplicantDashboardController::class, 'coc'])->name('index');
         Route::get('/application', [ApplicantDashboardController::class, 'coc'])->name('application');
+        Route::delete('/draft/{application}', [ApplicantDashboardController::class, 'resetDraft'])
+            ->whereNumber('application')
+            ->name('draft.reset');
         Route::get('/start-with-old-data', [ApplicantDashboardController::class, 'startNewApplicationWithOldData'])->name('start-new-with-old-data');
 
         // Step 1

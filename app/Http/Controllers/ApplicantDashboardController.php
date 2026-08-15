@@ -92,7 +92,33 @@ public function coc()
     return view('applicant.coc_application', compact('application'));
 }
 
+public function resetDraft(CocApplication $application)
+{
+    $user = Auth::guard('applicant')->user();
 
+    abort_unless(
+        (int) $application->user_id === (int) $user->id && $application->status === 'Draft',
+        404
+    );
+
+    foreach (['applicant_picture', 'tribal_certificate', 'birth_certificate', 'genealogy_form'] as $field) {
+        if (filled($application->{$field})) {
+            Storage::disk('public')->delete($application->{$field});
+        }
+    }
+
+    $application->delete();
+    session()->forget([
+        'coc_step1',
+        'coc_step2',
+        'coc_step3',
+        'coc_step4',
+        'last_approved_application',
+    ]);
+
+    return redirect()->route('applicant.coc.step1')
+        ->with('success', 'Your draft has been cleared. You can now start a fresh application.');
+}
 
 private function getBlockedMessage($application)
 {
