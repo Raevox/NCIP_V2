@@ -129,7 +129,7 @@
                                                class="form-control" 
                                                autocomplete="given-name"
                                                required
-                                               value="{{ old('first_name', $user->first_name ?? session('coc_step1.first_name', '')) }}">
+                                               value="{{ old('first_name', $step1['first_name'] ?? $user->first_name ?? '') }}">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -141,7 +141,7 @@
                                                class="form-control" 
                                                autocomplete="family-name"
                                                required
-                                               value="{{ old('last_name', $user->last_name ?? session('coc_step1.last_name', '')) }}">
+                                               value="{{ old('last_name', $step1['last_name'] ?? $user->last_name ?? '') }}">
                                     </div>
                                 </div>
                             </div>

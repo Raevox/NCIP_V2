@@ -22,6 +22,10 @@
                             @csrf
                             @php
                                 $ipGroups = \App\Models\Tribe::active()->orderBy('name')->pluck('name')->toArray();
+                                $applicantPledgeName = trim(
+                                    ($step1['first_name'] ?? $user->first_name ?? '') . ' ' .
+                                    ($step1['last_name'] ?? $user->last_name ?? '')
+                                );
                             @endphp
 
                             {{-- Educational Background --}}
@@ -415,7 +419,7 @@
                class="pledge-input"
                placeholder="{{ __('Enter your name') }}"
                autocomplete="name"
-               value="{{ old('applicant_name', $step2['applicant_name'] ?? ($user->first_name . ' ' . $user->last_name)) }}"
+               value="{{ old('applicant_name', $applicantPledgeName) }}"
                required> 
         {{ __('do solemnly swear that all data given in the above information are true and correct to the best of my knowledge and based on authentic records.') }} 
         {{ __('I understand that any false information is enough to cause the denial of my application and could subject me to CRIMINAL and/or ADMINISTRATIVE prosecution.') }}

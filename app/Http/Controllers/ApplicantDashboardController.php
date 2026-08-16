@@ -158,7 +158,6 @@ public function showCocFormStep1()
     $step1 = session('coc_step1', []);
 
     // Reload from DB if session is empty OR missing the origin fields specifically
-    // (handles stale sessions cached before origin fields were added to validation)
     $missingOriginData = empty($step1['origin_province_name'] ?? null);
 
     if (($empty = empty($step1)) || $missingOriginData) {
@@ -255,16 +254,33 @@ public function saveCocStep1(Request $request)
     public function showCocFormStep2()
     {
         $user = Auth::guard('applicant')->user();
-        $step2 = session('coc_step2', []);
-        $application = CocApplication::where('user_id', $user->id)->latest()->first();
-        $remarks = $application ? json_decode($application->remarks, true) : [];
-        $stepRemarks = $remarks['index_form'] ?? null; // adjust key kung needed
+        $application = CocApplication::where('user_id', $user->id)
+            ->whereIn('status', ['Draft', 'Returned'])
+            ->latest()
+            ->first();
 
-        if (!$this->canAccessStep($application, 2)) {
-        return redirect()->route('applicant.dashboard')->with('error', 'You can only access the returned step(s).');
+        $step2 = session('coc_step2', []);
+
+        if (empty($step2) && $application && $application->step2) {
+            $step2 = json_decode($application->step2, true) ?? [];
+            session(['coc_step2' => $step2]);
         }
 
-        return view('applicant.coc.step2', compact('user', 'step2', 'stepRemarks', 'application'));
+        $step1 = session('coc_step1', []);
+
+        if (empty($step1) && $application && $application->step1) {
+            $step1 = json_decode($application->step1, true) ?? [];
+            session(['coc_step1' => $step1]);
+        }
+
+        $remarks = $application ? json_decode($application->remarks, true) : [];
+        $stepRemarks = $remarks['index_form'] ?? null;
+
+        if (!$this->canAccessStep($application, 2)) {
+            return redirect()->route('applicant.dashboard')->with('error', 'You can only access the returned step(s).');
+        }
+
+        return view('applicant.coc.step2', compact('user', 'step1', 'step2', 'stepRemarks', 'application'));
     }
 
 
@@ -369,9 +385,29 @@ public function saveCocStep2(Request $request)
     public function showCocFormStep3()
 {
     $user  = Auth::guard('applicant')->user();
+
+    $application = CocApplication::where('user_id', $user->id)
+        ->whereIn('status', ['Draft', 'Returned'])
+        ->latest()
+        ->first();
+
     $step1 = session('coc_step1', []);
+    if (empty($step1) && $application && $application->step1) {
+        $step1 = json_decode($application->step1, true) ?? [];
+        session(['coc_step1' => $step1]);
+    }
+
     $step2 = session('coc_step2', []);
+    if (empty($step2) && $application && $application->step2) {
+        $step2 = json_decode($application->step2, true) ?? [];
+        session(['coc_step2' => $step2]);
+    }
+
     $step3 = session('coc_step3', []);
+    if (empty($step3) && $application && $application->step3) {
+        $step3 = json_decode($application->step3, true) ?? [];
+        session(['coc_step3' => $step3]);
+    }
 
     // Split fallback old values
     $fatherFirst = $step2['father_first_name'] ?? '';
@@ -420,7 +456,7 @@ public function saveCocStep2(Request $request)
 
     $step3 = array_merge($prefill, $step3);
 
-    $application = CocApplication::where('user_id', $user->id)->latest()->first();
+    // $application = CocApplication::where('user_id', $user->id)->latest()->first();
     $remarks = $application ? json_decode($application->remarks, true) : [];
     $stepRemarks = $remarks['genealogy_form'] ?? null; // adjust key kung needed
     
@@ -522,8 +558,23 @@ public function saveCocStep3(Request $request)
 public function showCocFormStep4()
 {
     $user  = Auth::guard('applicant')->user();
+
+    $application = CocApplication::where('user_id', $user->id)
+        ->whereIn('status', ['Draft', 'Returned'])
+        ->latest()
+        ->first();
+
     $step2 = session('coc_step2', []);
+    if (empty($step2) && $application && $application->step2) {
+        $step2 = json_decode($application->step2, true) ?? [];
+        session(['coc_step2' => $step2]);
+    }
+
     $step4 = session('coc_step4', []);
+    if (empty($step4) && $application && $application->step4) {
+        $step4 = json_decode($application->step4, true) ?? [];
+        session(['coc_step4' => $step4]);
+    }
 
     // Split mother name
     $motherFirst = $step2['mother_first_name'] ?? '';
@@ -561,7 +612,7 @@ public function showCocFormStep4()
     $step4 = array_merge($prefill, $step4);
 
     
-    $application = CocApplication::where('user_id', $user->id)->latest()->first();
+    // $application = CocApplication::where('user_id', $user->id)->latest()->first();
     $remarks = $application ? json_decode($application->remarks, true) : [];
     $stepRemarks = $remarks['genealogy_form'] ?? null; // adjust key kung needed
 
