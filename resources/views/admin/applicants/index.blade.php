@@ -1129,6 +1129,7 @@ body, .applicants-content {
 let currentApplicationId = null;
 let actionType = null;
 let searchTimeout = null;
+const approvalUrlTemplate = @json(route('admin.applicants.coc-approve', ['application' => '__APPLICATION_ID__']));
 
 // ── Show Applicant Profile Modal ─────────────────────────
 function showApplicantProfileModal(data) {
@@ -1403,7 +1404,9 @@ function submitApproval() {
     const fd = new FormData();
     fd.append('_token', token);
 
-    fetch(`/admin/applicants/${currentApplicationId}/coc-approve`, {
+    const approvalUrl = approvalUrlTemplate.replace('__APPLICATION_ID__', currentApplicationId);
+
+    fetch(approvalUrl, {
         method: 'POST', body: fd,
         headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
     })

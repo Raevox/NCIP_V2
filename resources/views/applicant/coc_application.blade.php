@@ -231,9 +231,19 @@
 <div class="coc-wrapper">
     <div class="coc-card">
         <h2 class="coc-title">{{ __('Apply for Certificate of Confirmation (COC)') }}</h2>
-        
+
+        @php
+            $hasPendingReview = isset($application) && (
+                in_array($application->status, ['Pending', 'Under Review', 'Admin Approval'], true) ||
+                in_array($application->coc_status, ['Pending', 'Under Review', 'Admin Approval'], true)
+            );
+            $hasApprovedApplication = isset($application) &&
+                $application->status === 'Approved' &&
+                $application->coc_status === 'Approved';
+        @endphp
+
         {{-- Show reapplication option if user has approved application --}}
-        @if(isset($application) && $application->status == 'Approved' && $application->coc_status === 'Approved')
+        @if($hasApprovedApplication && !$hasPendingReview)
         <div class="coc-info">
             <h5>
                 <i class="fas fa-redo-alt"></i> {{ __('Apply Again Using Previous Data') }}
@@ -278,9 +288,8 @@
             </p>
         </div>
         
-        {{-- Only show regular apply button if no approved application exists --}}
         {{-- Notice for pending application --}}
-        @if(isset($application) && $application->status === 'Under Review')
+        @if($hasPendingReview)
         <div class="coc-info">
             <h5>
                 <i class="fas fa-hourglass-half"></i> {{ __('Application Pending') }}
@@ -293,9 +302,9 @@
         @endif
 
         {{-- Keep the reset action beside the primary continue action so it is visible but secondary. --}}
-        @if(!isset($application)
-            || ($application->status !== 'Pending'
-                && !($application->status === 'Approved' && $application->coc_status === 'Approved')))
+        {{-- Request COC is unavailable while an application is pending review.
+             Approved applications use the reapplication action above instead. --}}
+        @if(!$hasPendingReview && !$hasApprovedApplication)
         <div class="coc-action">
             @if(isset($application) && $application->status === 'Draft')
                 <form method="POST"
