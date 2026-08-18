@@ -645,5 +645,6 @@
       icon.classList.toggle('fa-eye-slash',  isHidden);
     }
   </script>
+  @include('partials.website-chatbot')
 </body>
 </html>

@@ -393,5 +393,6 @@
     </script>
     <script src="{{ asset('js/origin-picker.js') }}"></script>
     @stack('scripts')
+    @include('partials.website-chatbot')
 </body>
 </html>

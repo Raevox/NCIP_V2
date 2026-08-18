@@ -1435,5 +1435,6 @@ background-size: cover;
         });
     </script>
 
+@include('partials.website-chatbot')
 </body>
 </html>

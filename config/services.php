@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'openrouter' => [
+        'key' => env('OPENAI_COMPATIBLE_API_KEY', env('OPENROUTER_API_KEY')),
+        'url' => env('OPENAI_COMPATIBLE_URL', env('OPENROUTER_URL', 'https://agentrouter.org/v1/chat/completions')),
+        'model' => env('OPENAI_COMPATIBLE_MODEL', env('OPENROUTER_MODEL', 'gpt-5.6-sol')),
+    ],
+
 ];

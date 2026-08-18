@@ -284,5 +284,6 @@
       </form>
     </div>
   </div>
+  @include('partials.website-chatbot')
 </body>
 </html>

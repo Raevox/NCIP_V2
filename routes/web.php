@@ -26,6 +26,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Middleware\AdminOrStaffOnly;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Api\NotificationController   as ApiNotificationController;
+use App\Http\Controllers\WebsiteChatbotController;
 
 
 // ═══════════════════════════════════════════════════════════
@@ -77,6 +78,9 @@ Route::get('/contacts', function () {
 
 // Contact Form
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+Route::post('/api/website-chat', [WebsiteChatbotController::class, 'respond'])
+    ->middleware('throttle:10,1')
+    ->name('website.chat');
 Route::get('/contact/success', function () {
     return view('admin.content.website.contact-success');
 })->name('contact.success');

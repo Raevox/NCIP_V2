@@ -1110,5 +1110,6 @@
     });
 
 </script>
+@include('partials.website-chatbot')
 </body>
 </html>
