@@ -300,6 +300,25 @@ class StaffController extends Controller
                 $application->approved_at = now();
                 $application->save();
 
+                // Reuse the model's own returned-section logic instead of duplicating the checks
+                $sectionLabels = [
+                    'index'      => 'Index Form',
+                    'genealogy'  => 'Genealogy Form',
+                    'documents'  => 'Documents',
+                ];
+                $issueList = collect($application->getReturnedSections())
+                    ->map(fn($section) => $sectionLabels[$section] ?? $section)
+                    ->implode(', ');
+
+                $applicant = $application->applicant;
+
+                if ($applicant && !empty($applicant->contact)) {
+                    \App\Jobs\SendSmsNotification::dispatch(
+                        $applicant->contact,
+                        "Hi {$applicant->first_name}, your NCIP COC application needs correction: {$issueList}. Please log in to your account to review the remarks and resubmit."
+                    );
+                }
+
                 if ($request->ajax() || $request->has('ajax') || $request->has('json')) {
                     return response()->json([
                         'success' => true,
@@ -310,7 +329,7 @@ class StaffController extends Controller
 
                 return redirect()->route('staff.review')->with('success', 'Application returned to applicant for correction.');
             }
-
+            
         } catch (\Exception $e) {
             if ($request->ajax() || $request->has('ajax') || $request->has('json')) {
                 return response()->json([

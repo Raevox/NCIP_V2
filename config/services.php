@@ -41,4 +41,10 @@ return [
         'model' => env('OPENAI_COMPATIBLE_MODEL', env('OPENROUTER_MODEL', 'gpt-5.6-sol')),
     ],
 
+    'textbee' => [
+        'api_key' => env('TEXTBEE_API_KEY'),
+        'api_url' => env('TEXTBEE_API_URL', 'https://api.textbee.dev/api/v1/gateway/send-sms'),
+    ],
+
+
 ];

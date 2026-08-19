@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 use App\Services\NotificationService;
+use App\Jobs\SendSmsNotification;
 
 class AdminController extends Controller
 {
@@ -238,14 +239,10 @@ public function search(Request $request)
 
                 // 6. Send SMS Notification
                 if (!empty($account->contact)) {
-                    try {
-                        Http::post('https://sms-provider-api/send', [
-                            'to' => $account->contact,
-                            'message' => "Hi {$account->first_name}, your COC application has been approved by the Admin. Your Certificate of Confirmation has been issued.",
-                        ]);
-                    } catch (\Exception $e) {
-                        \Log::error('SMS sending failed: '.$e->getMessage());
-                    }
+                    \App\Jobs\SendSmsNotification::dispatch(
+                        $account->contact,
+                        "Hi {$account->first_name}, your COC application has been approved by the Admin. Your Certificate of Confirmation has been issued."
+                    );
                 }
             });
 
@@ -299,6 +296,14 @@ public function search(Request $request)
                     $message->to($applicant->email)
                             ->subject('COC Application Declined');
                 });
+            }
+
+            // Send SMS notification
+            if (!empty($applicant->contact)) {
+                \App\Jobs\SendSmsNotification::dispatch(
+                    $applicant->contact,
+                    "Hi {$applicant->first_name}, your COC application was declined. Reason: {$reason}. You may contact our office for more information."
+                );
             }
 
             // Return JSON response for AJAX requests
