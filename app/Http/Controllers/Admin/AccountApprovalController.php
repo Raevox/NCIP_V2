@@ -21,6 +21,11 @@ class AccountApprovalController extends Controller
      */
     public function index(Request $request)
     {
+        // When admin visits the Applicants page, automatically mark all notifications as read
+        if (\Illuminate\Support\Facades\Auth::check()) {
+            \App\Services\ApplicantBadgeService::markAllNotificationsAsRead(\Illuminate\Support\Facades\Auth::user());
+        }
+
         $status = $request->get('status', 'all');
 
         $query = CocApplication::with('applicant')

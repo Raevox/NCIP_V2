@@ -63,5 +63,11 @@ class CocApplicationObserver
             Log::info('✅ COC status changed to "Admin Approval" - staff forwarded for approval');
             NotificationService::notifyApplicationForwarded($application);
         }
+
+        // Check if status was changed to "Approved" (admin approved)
+        if ($application->wasChanged('coc_status') && $application->coc_status === 'Approved') {
+            Log::info('✅ COC status changed to "Approved" - notifying staff and admins');
+            NotificationService::notifyCocApproved($application);
+        }
     }
 }

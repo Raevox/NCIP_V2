@@ -5,12 +5,14 @@
                 <a class="tab-link active" data-tab="underReview">
                     <i class="fas fa-hourglass-half"></i> Under Review
                     <span class="tab-badge" id="underReviewCount">{{ $underReview->total() }}</span>
+                    <span class="tab-dot {{ (!empty($applicantBadge['has_under_review'])) ? 'show' : '' }}" id="dotStaffUnderReview" title="Applications under review"></span>
                 </a>
             </div>
             <div class="tab-item">
                 <a class="tab-link" data-tab="approved">
                     <i class="fas fa-check-circle"></i> Approved
                     <span class="tab-badge" id="approvedCount">{{ $approved->total() }}</span>
+                    <span class="tab-dot {{ (!empty($applicantBadge['has_unread_approved'])) ? 'show' : '' }}" id="dotStaffApproved" title="New approved applications"></span>
                 </a>
             </div>
             <div class="tab-item">

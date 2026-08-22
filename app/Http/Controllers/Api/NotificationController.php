@@ -70,17 +70,56 @@ class NotificationController extends Controller
                 ->where('is_read', false)
                 ->count();
 
+            $badgeStatus = \App\Services\ApplicantBadgeService::getBadgeStatus();
+
             return response()->json([
-                'success' => true,
-                'unreadCount' => $count
+                'success'        => true,
+                'unreadCount'    => $count,
+                'applicantBadge' => $badgeStatus,
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
-                'success' => false,
-                'unreadCount' => 0
+                'success'        => false,
+                'unreadCount'    => 0,
+                'applicantBadge' => [
+                    'main_dot'            => false,
+                    'under_review_count'  => 0,
+                    'has_under_review'    => false,
+                    'has_unread_returned' => false,
+                    'has_unread_approved' => false,
+                    'has_new_applicants'  => false,
+                    'returned_count'      => 0,
+                    'approved_count'      => 0,
+                ],
             ]);
         }
+    }
+
+    public function getApplicantBadgeStatus()
+    {
+        return response()->json([
+            'success'     => true,
+            'badgeStatus' => \App\Services\ApplicantBadgeService::getBadgeStatus()
+        ]);
+    }
+
+    public function markReturnedAsViewed()
+    {
+        $status = \App\Services\ApplicantBadgeService::markReturnedAsViewed();
+        return response()->json([
+            'success'     => true,
+            'badgeStatus' => $status
+        ]);
+    }
+
+    public function markApprovedAsViewed()
+    {
+        $status = \App\Services\ApplicantBadgeService::markApprovedAsViewed();
+        return response()->json([
+            'success'     => true,
+            'badgeStatus' => $status
+        ]);
     }
 
     public function markAsRead($id)
@@ -107,14 +146,12 @@ class NotificationController extends Controller
     public function markAllAsRead()
     {
         try {
-            AdminNotification::where('user_id', Auth::id())
-                ->where('is_read', false)
-                ->update([
-                    'is_read' => true,
-                    'read_at' => now()
-                ]);
+            $status = \App\Services\ApplicantBadgeService::markAllNotificationsAsRead(Auth::user());
 
-            return response()->json(['success' => true]);
+            return response()->json([
+                'success'     => true,
+                'badgeStatus' => $status
+            ]);
 
         } catch (\Exception $e) {
             return response()->json([

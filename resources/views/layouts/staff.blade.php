@@ -16,6 +16,35 @@
 
     {{-- All layout + component styles live here --}}
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <style>
+        .sb-nav-dot {
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            margin-left: auto;
+            flex-shrink: 0;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
+            animation: pulse-red-dot 2s infinite ease-in-out;
+            display: none;
+        }
+        .sb-nav-dot.show {
+            display: inline-block !important;
+        }
+        .sidebar.collapsed .sb-nav-link {
+            position: relative;
+        }
+        .sidebar.collapsed .sb-nav-dot {
+            position: absolute;
+            top: 6px;
+            right: 14px;
+            margin: 0;
+        }
+        @keyframes pulse-red-dot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.25); opacity: 0.8; }
+        }
+    </style>
 </head>
 <body>
 
@@ -62,9 +91,11 @@
             </li>
             <li>
                 <a href="{{ route('staff.review') }}"
-                   class="sb-nav-link {{ request()->routeIs('staff.review*') ? 'active' : '' }}">
+                   class="sb-nav-link {{ request()->routeIs('staff.review*') ? 'active' : '' }}"
+                   id="staffReviewNavLink">
                     <i class="sb-nav-icon fas fa-tasks"></i>
                     <span class="sb-nav-label">Review Applications</span>
+                    <span class="sb-nav-dot {{ (!empty($applicantBadge['main_dot'])) ? 'show' : '' }}" id="staffReviewNavDot" title="New or pending applicant updates"></span>
                 </a>
             </li>
            
@@ -184,7 +215,44 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('topbar').classList.add('expanded');
         document.getElementById('mainContent').classList.add('expanded');
     }
+
+    refreshStaffBadges();
+    setInterval(refreshStaffBadges, 30000);
 });
+
+async function refreshStaffBadges() {
+    try {
+        const res = await fetch('/api/admin/notifications/badge-status', {
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin'
+        });
+        const data = await res.json();
+        const dot = document.getElementById('staffReviewNavDot');
+        if (dot && data.badgeStatus) {
+            if (data.badgeStatus.main_dot) {
+                dot.classList.add('show');
+            } else {
+                dot.classList.remove('show');
+            }
+        }
+        const appDot = document.getElementById('dotStaffApproved');
+        if (appDot && data.badgeStatus) {
+            if (data.badgeStatus.has_unread_approved) {
+                appDot.classList.add('show');
+            } else {
+                appDot.classList.remove('show');
+            }
+        }
+        const revDot = document.getElementById('dotStaffUnderReview');
+        if (revDot && data.badgeStatus) {
+            if (data.badgeStatus.has_under_review) {
+                revDot.classList.add('show');
+            } else {
+                revDot.classList.remove('show');
+            }
+        }
+    } catch {}
+}
 </script>
 
 @stack('scripts')

@@ -102,6 +102,28 @@ class NotificationService
                     ]
                 );
             }
+
+            $staffMembers = User::where('role', 'staff')->where('status', 'active')->get();
+            $staffUrl = self::safeRoute('staff.review.show', $application->id)
+                ?? url('/staff/review/' . $application->id);
+
+            foreach ($staffMembers as $staff) {
+                AdminNotification::updateOrCreate(
+                    [
+                        'user_id'      => $staff->id,
+                        'related_id'   => $application->id,
+                        'related_type' => 'CocApplication',
+                    ],
+                    [
+                        'type'       => 'account_approved',
+                        'title'      => 'Forwarded Application Approved',
+                        'message'    => "Forwarded COC application from {$name} has been approved by Admin.",
+                        'action_url' => $staffUrl,
+                        'priority'   => 'normal',
+                        'is_read'    => false,
+                    ]
+                );
+            }
         } catch (\Exception $e) {
             Log::error('notifyCocApproved error: ' . $e->getMessage());
         }

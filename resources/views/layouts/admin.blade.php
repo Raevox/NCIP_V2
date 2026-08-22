@@ -193,6 +193,43 @@
     }
     .sb-badge.show { display: inline-block; }
 
+    /* Sidebar red dot badge for Applicant menu */
+    .sb-nav-dot {
+        width: 8px;
+        height: 8px;
+        background: #ef4444;
+        border-radius: 50%;
+        margin-left: auto;
+        flex-shrink: 0;
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
+        animation: pulse-red-dot 2s infinite ease-in-out;
+        display: none;
+    }
+    .sb-nav-dot.show {
+        display: inline-block !important;
+    }
+
+    .sidebar.collapsed .sb-nav-link {
+        position: relative;
+    }
+    .sidebar.collapsed .sb-nav-dot {
+        position: absolute;
+        top: 6px;
+        right: 14px;
+        margin: 0;
+    }
+
+    @keyframes pulse-red-dot {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.25);
+            opacity: 0.8;
+        }
+    }
+
     /* Divider */
     .sb-divider {
         height: 1px;
@@ -568,9 +605,11 @@
             </li>
             <li>
                 <a href="{{ route('admin.applicants.index') }}"
-                   class="sb-nav-link {{ request()->routeIs('admin.applicants.*') ? 'active' : '' }}">
+                   class="sb-nav-link {{ request()->routeIs('admin.applicants.*') ? 'active' : '' }}"
+                   id="adminApplicantsNavLink">
                     <i class="sb-nav-icon fas fa-user-check"></i>
                     <span class="sb-nav-label">Applicants</span>
+                    <span class="sb-nav-dot {{ (!empty($applicantBadge['main_dot'])) ? 'show' : '' }}" id="applicantsNavDot" title="New or pending applicant updates"></span>
                 </a>
             </li>
             <li>
@@ -883,6 +922,16 @@ async function refreshBadges() {
         } else {
             sbBadge.classList.remove('show');
         }
+
+        // Refresh Applicants menu red dot
+        const appDot = document.getElementById('applicantsNavDot');
+        if (appDot && data.applicantBadge) {
+            if (data.applicantBadge.main_dot) {
+                appDot.classList.add('show');
+            } else {
+                appDot.classList.remove('show');
+            }
+        }
     } catch {}
 }
 
@@ -936,6 +985,33 @@ function esc(t) {
 document.addEventListener('DOMContentLoaded', () => {
     refreshBadges();
     setInterval(refreshBadges, 30_000);
+
+    const appNavLink = document.getElementById('adminApplicantsNavLink');
+    if (appNavLink) {
+        appNavLink.addEventListener('click', () => {
+            const tbBadge = document.getElementById('tbNotifBadge');
+            const tbBell  = document.getElementById('tbBellBtn');
+            if (tbBadge) tbBadge.classList.remove('show');
+            if (tbBell) tbBell.classList.remove('has-notif');
+
+            const sbBadge = document.getElementById('sbNotifBadge');
+            if (sbBadge) sbBadge.classList.remove('show');
+
+            const appDot = document.getElementById('applicantsNavDot');
+            if (appDot) appDot.classList.remove('show');
+
+            const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            fetch('/api/admin/notifications/mark-all-read', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                keepalive: true
+            }).catch(() => {});
+        });
+    }
 });
 </script>
 

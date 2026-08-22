@@ -233,6 +233,29 @@ body, .main {
 .tab-link.active .tab-badge { background: var(--green-100); color: var(--green-700); }
 .tab-link:not(.active) .tab-badge { background: var(--sand-200); color: var(--text-soft); }
 
+.tab-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    margin-left: 6px;
+    display: inline-block;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+    animation: pulse-tab-dot 2s infinite ease-in-out;
+}
+.tab-link.active .tab-dot {
+    box-shadow: 0 0 0 2px rgba(45, 106, 31, 0.2);
+}
+.tab-dot:not(.show) {
+    display: none !important;
+}
+
+@keyframes pulse-tab-dot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.25); opacity: 0.85; }
+}
+
 .tab-content-wrapper {
     padding: 24px;
 }
@@ -506,6 +529,33 @@ document.addEventListener('DOMContentLoaded', function() {
         link.classList.add('active');
         const pane = document.getElementById(currentTab);
         if (pane) pane.classList.add('active');
+
+        // Dismiss approved dot when staff views approved tab
+        if (currentTab === 'approved') {
+            const appDot = document.getElementById('dotStaffApproved');
+            if (appDot) appDot.classList.remove('show');
+
+            const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            fetch('/api/admin/notifications/mark-approved-viewed', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.badgeStatus) {
+                    const navDot = document.getElementById('staffReviewNavDot');
+                    if (navDot) {
+                        if (data.badgeStatus.main_dot) navDot.classList.add('show');
+                        else navDot.classList.remove('show');
+                    }
+                }
+            })
+            .catch(console.error);
+        }
     });
 
     // ----- AJAX filter (realtime) -----

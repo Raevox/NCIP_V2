@@ -240,6 +240,30 @@ body, .applicants-content {
     color: var(--text-soft);
 }
 
+.tab-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    margin-left: 4px;
+    display: inline-block;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+    animation: pulse-tab-dot 2s infinite ease-in-out;
+}
+.tab-btn.active .tab-dot {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.6);
+    background-color: #ff4d4f;
+}
+.tab-dot:not(.show) {
+    display: none !important;
+}
+
+@keyframes pulse-tab-dot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.25); opacity: 0.85; }
+}
+
 .stats-pill {
     display: inline-flex;
     align-items: center;
@@ -704,12 +728,16 @@ body, .applicants-content {
                 <i class="fas fa-check-circle" style="font-size:11px;"></i> Approved
             </a>
             <a class="tab-btn {{ $status === 'Admin Approval' ? 'active' : '' }}"
-               href="{{ route('admin.applicants.index', ['status' => 'Admin Approval']) }}">
+               href="{{ route('admin.applicants.index', ['status' => 'Admin Approval']) }}"
+               id="tabAdminApproval">
                 <i class="fas fa-user-shield" style="font-size:11px;"></i> Admin Approval
+                <span class="tab-dot {{ (!empty($applicantBadge['has_under_review'])) ? 'show' : '' }}" id="dotAdminApproval" title="Pending applications awaiting action"></span>
             </a>
             <a class="tab-btn {{ $status === 'Returned' ? 'active' : '' }}"
-               href="{{ route('admin.applicants.index', ['status' => 'Returned']) }}">
+               href="{{ route('admin.applicants.index', ['status' => 'Returned']) }}"
+               id="tabReturned">
                 <i class="fas fa-rotate-left" style="font-size:11px;"></i> Returned
+                <span class="tab-dot {{ (!empty($applicantBadge['has_unread_returned'])) ? 'show' : '' }}" id="dotReturned" title="New returned items"></span>
             </a>
         </div>
 
@@ -1236,6 +1264,45 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    // ── Handle Returned Tab Click ──
+    const tabReturned = document.getElementById('tabReturned');
+    if (tabReturned) {
+        tabReturned.addEventListener('click', function () {
+            const dotReturned = document.getElementById('dotReturned');
+            if (dotReturned) {
+                dotReturned.classList.remove('show');
+            }
+            const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            fetch('/api/admin/notifications/mark-returned-viewed', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.badgeStatus) {
+                    const appDot = document.getElementById('applicantsNavDot');
+                    if (appDot) {
+                        if (data.badgeStatus.main_dot) {
+                            appDot.classList.add('show');
+                        } else {
+                            appDot.classList.remove('show');
+                        }
+                    }
+                }
+            })
+            .catch(console.error);
+        });
+    }
+
+    @if($status === 'Returned')
+        const dotRet = document.getElementById('dotReturned');
+        if (dotRet) dotRet.classList.remove('show');
+    @endif
 });
 
 function performSearch(searchTerm) {
