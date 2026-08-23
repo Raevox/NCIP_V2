@@ -70,7 +70,7 @@
 
                     @if($underReview->hasPages())
                         <div class="pagination-wrapper">
-                            {{ $underReview->appends(request()->query())->links() }}
+                            {{ $underReview->appends(request()->query())->links('pagination::bootstrap-5') }}
                         </div>
                     @endif
                 @else
@@ -126,7 +126,7 @@
 
                     @if($approved->hasPages())
                         <div class="pagination-wrapper">
-                            {{ $approved->appends(request()->query())->links() }}
+                            {{ $approved->appends(request()->query())->links('pagination::bootstrap-5') }}
                         </div>
                     @endif
                 @else
@@ -182,7 +182,7 @@
 
                     @if($returned->hasPages())
                         <div class="pagination-wrapper">
-                            {{ $returned->appends(request()->query())->links() }}
+                            {{ $returned->appends(request()->query())->links('pagination::bootstrap-5') }}
                         </div>
                     @endif
                 @else
