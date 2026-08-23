@@ -22,54 +22,33 @@
                             <h4 class="section-title">{{ __('Region Information') }}</h4>
 
                             <div class="form-group">
-                                <label class="form-label required" for="provinceSearch">{{ __('Province') }}</label>
-                                <div class="searchable-select">
-                                    <input type="text" 
-                                           id="provinceSearch" 
-                                           class="form-control search-input" 
-                                           placeholder="{{ __('Search province') }}" 
-                                           autocomplete="address-level1"
-                                           required
-                                           value="{{ old('province_name', session('coc_step1.province_name') ?? '') }}">
-                                    <i class="fas fa-chevron-down dropdown-icon"></i>
-                                    <input type="hidden" name="province" id="province" required value="{{ old('province', session('coc_step1.province') ?? '') }}" aria-hidden="true">
-                                    <input type="hidden" name="province_name" id="province_name" required value="{{ old('province_name', session('coc_step1.province_name') ?? '') }}" aria-hidden="true">
-                                    <ul id="provinceList" class="dropdown-list" role="listbox" aria-label="Province options"></ul>
+                                <label class="form-label required" for="province">{{ __('Province') }}</label>
+                                <div class="input-group">
+                                    <select id="province" name="province" class="form-control" required>
+                                        <option value="" disabled selected>{{ __('Loading...') }}</option>
+                                    </select>
                                 </div>
+                                <input type="hidden" name="province_name" id="province_name" value="{{ old('province_name', session('coc_step1.province_name') ?? '') }}">
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label required" for="municipalitySearch">{{ __('Municipality') }}</label>
-                                <div class="searchable-select">
-                                    <input type="text" 
-                                           id="municipalitySearch" 
-                                           class="form-control search-input" 
-                                           placeholder="{{ __('Search municipality') }}" 
-                                           autocomplete="address-level2"
-                                           required
-                                           value="{{ old('municipality_name', session('coc_step1.municipality_name') ?? '') }}">
-                                    <i class="fas fa-chevron-down dropdown-icon"></i>
-                                    <input type="hidden" name="municipality" id="municipality" required value="{{ old('municipality', session('coc_step1.municipality') ?? '') }}" aria-hidden="true">
-                                    <input type="hidden" name="municipality_name" id="municipality_name" required value="{{ old('municipality_name', session('coc_step1.municipality_name') ?? '') }}" aria-hidden="true">
-                                    <ul id="municipalityList" class="dropdown-list" role="listbox" aria-label="Municipality options"></ul>
+                                <label class="form-label required" for="municipality">{{ __('Municipality') }}</label>
+                                <div class="input-group">
+                                    <select id="municipality" name="municipality" class="form-control" required disabled>
+                                        <option value="" disabled selected>{{ __('Select Province first') }}</option>
+                                    </select>
                                 </div>
+                                <input type="hidden" name="municipality_name" id="municipality_name" value="{{ old('municipality_name', session('coc_step1.municipality_name') ?? '') }}">
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label required" for="barangaySearch">{{ __('Barangay') }}</label>
-                                <div class="searchable-select">
-                                    <input type="text" 
-                                           id="barangaySearch" 
-                                           class="form-control search-input" 
-                                           placeholder="{{ __('Search barangay') }}" 
-                                           autocomplete="address-level3"
-                                           required
-                                           value="{{ old('barangay_name', session('coc_step1.barangay_name') ?? '') }}">
-                                    <i class="fas fa-chevron-down dropdown-icon"></i>
-                                    <input type="hidden" name="barangay" id="barangay" required value="{{ old('barangay', session('coc_step1.barangay') ?? '') }}" aria-hidden="true">
-                                    <input type="hidden" name="barangay_name" id="barangay_name" required value="{{ old('barangay_name', session('coc_step1.barangay_name') ?? '') }}" aria-hidden="true">
-                                    <ul id="barangayList" class="dropdown-list" role="listbox" aria-label="Barangay options"></ul>
+                                <label class="form-label required" for="barangay">{{ __('Barangay') }}</label>
+                                <div class="input-group">
+                                    <select id="barangay" name="barangay" class="form-control" required disabled>
+                                        <option value="" disabled selected>{{ __('Select Municipality first') }}</option>
+                                    </select>
                                 </div>
+                                <input type="hidden" name="barangay_name" id="barangay_name" value="{{ old('barangay_name', session('coc_step1.barangay_name') ?? '') }}">
                             </div>
                         </div>
 
@@ -177,49 +156,22 @@
                                 <label class="form-label required">{{ __('Place of Origin') }}</label>
                                 <div class="row g-3">
                                     <div class="col-md-4">
-                                        <div class="searchable-select">
-                                            <input type="text"
-                                                id="originProvinceSearch"
-                                                class="form-control search-input"
-                                                placeholder="{{ __('Search province') }}"
-                                                autocomplete="off"
-                                                required
-                                                value="{{ old('origin_province_name', session('coc_step1.origin_province_name') ?? '') }}">
-                                            <i class="fas fa-chevron-down dropdown-icon"></i>
-                                            <input type="hidden" name="origin_province" id="origin_province" required value="{{ old('origin_province', session('coc_step1.origin_province') ?? '') }}">
-                                            <input type="hidden" name="origin_province_name" id="origin_province_name" required value="{{ old('origin_province_name', session('coc_step1.origin_province_name') ?? '') }}">
-                                            <ul id="originProvinceList" class="dropdown-list" role="listbox" aria-label="Origin province options"></ul>
-                                        </div>
+                                        <select id="origin_province" name="origin_province" class="form-control" required>
+                                            <option value="" disabled selected>{{ __('Loading...') }}</option>
+                                        </select>
+                                        <input type="hidden" name="origin_province_name" id="origin_province_name" value="{{ old('origin_province_name', session('coc_step1.origin_province_name') ?? '') }}">
                                     </div>
                                     <div class="col-md-4">
-                                        <div class="searchable-select">
-                                            <input type="text"
-                                                id="originMunicipalitySearch"
-                                                class="form-control search-input"
-                                                placeholder="{{ __('Search municipality') }}"
-                                                autocomplete="off"
-                                                required
-                                                value="{{ old('origin_municipality_name', session('coc_step1.origin_municipality_name') ?? '') }}">
-                                            <i class="fas fa-chevron-down dropdown-icon"></i>
-                                            <input type="hidden" name="origin_municipality" id="origin_municipality" required value="{{ old('origin_municipality', session('coc_step1.origin_municipality') ?? '') }}">
-                                            <input type="hidden" name="origin_municipality_name" id="origin_municipality_name" required value="{{ old('origin_municipality_name', session('coc_step1.origin_municipality_name') ?? '') }}">
-                                            <ul id="originMunicipalityList" class="dropdown-list" role="listbox" aria-label="Origin municipality options"></ul>
-                                        </div>
+                                        <select id="origin_municipality" name="origin_municipality" class="form-control" required disabled>
+                                            <option value="" disabled selected>{{ __('Select Province first') }}</option>
+                                        </select>
+                                        <input type="hidden" name="origin_municipality_name" id="origin_municipality_name" value="{{ old('origin_municipality_name', session('coc_step1.origin_municipality_name') ?? '') }}">
                                     </div>
                                     <div class="col-md-4">
-                                        <div class="searchable-select">
-                                            <input type="text"
-                                                id="originBarangaySearch"
-                                                class="form-control search-input"
-                                                placeholder="{{ __('Search barangay') }}"
-                                                autocomplete="off"
-                                                required
-                                                value="{{ old('origin_barangay_name', session('coc_step1.origin_barangay_name') ?? '') }}">
-                                            <i class="fas fa-chevron-down dropdown-icon"></i>
-                                            <input type="hidden" name="origin_barangay" id="origin_barangay" required value="{{ old('origin_barangay', session('coc_step1.origin_barangay') ?? '') }}">
-                                            <input type="hidden" name="origin_barangay_name" id="origin_barangay_name" required value="{{ old('origin_barangay_name', session('coc_step1.origin_barangay_name') ?? '') }}">
-                                            <ul id="originBarangayList" class="dropdown-list" role="listbox" aria-label="Origin barangay options"></ul>
-                                        </div>
+                                        <select id="origin_barangay" name="origin_barangay" class="form-control" required disabled>
+                                            <option value="" disabled selected>{{ __('Select Municipality first') }}</option>
+                                        </select>
+                                        <input type="hidden" name="origin_barangay_name" id="origin_barangay_name" value="{{ old('origin_barangay_name', session('coc_step1.origin_barangay_name') ?? '') }}">
                                     </div>
                                 </div>
 
@@ -623,11 +575,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const spouseFirstName = document.getElementById("spouse_first_name");
     const spouseLastName = document.getElementById("spouse_last_name");
 
-    // Handle spouse fields based on civil status
     function toggleSpouseFields() {
         const status = civilStatusSelect.value;
         const isNotMarried = ['Single', 'Widowed', 'Separated'].includes(status);
-        
+
         if (isNotMarried) {
             spouseFirstName.value = 'N/A';
             spouseLastName.value = 'N/A';
@@ -641,202 +592,144 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Initialize on load
     toggleSpouseFields();
     civilStatusSelect.addEventListener('change', toggleSpouseFields);
 
-    // Load location data
     try {
         const [provincesRes, municipalitiesRes, barangaysRes] = await Promise.all([
             fetch('{{ asset("data/provinces.json") }}'),
             fetch('{{ asset("data/mun.json") }}'),
             fetch('{{ asset("data/brgy.json") }}')
         ]);
-        
+
         if (!provincesRes.ok || !municipalitiesRes.ok || !barangaysRes.ok) {
             throw new Error('Failed to fetch location data');
         }
-        
+
         const provinces = (await provincesRes.json()).RECORDS;
         const municipalities = (await municipalitiesRes.json()).RECORDS;
         const barangays = (await barangaysRes.json()).RECORDS;
 
-        function setupSearch(inputId, listId, hiddenId, hiddenNameId, dataset, filterKey, labelKey, parentFilterKey = null, parentInputId = null) {
-            const input = document.getElementById(inputId);
-            const list = document.getElementById(listId);
-            const hidden = document.getElementById(hiddenId);
-            const hiddenName = document.getElementById(hiddenNameId);
-            let debounceTimer;
+        provinces.sort((a, b) => a.provDesc.localeCompare(b.provDesc));
 
-            input.addEventListener("input", () => {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => {
-                    const query = input.value.toLowerCase().trim();
-                    let filtered = dataset;
-
-                    if (parentFilterKey && parentInputId) {
-                        const parentVal = document.getElementById(parentInputId).value;
-                        if (parentVal) {
-                            filtered = filtered.filter(item => item[parentFilterKey] === parentVal);
-                        }
-                    }
-
-                    if (query) {
-                        filtered = filtered.filter(item => 
-                            item[labelKey].toLowerCase().includes(query)
-                        ).slice(0, 50);
-                    } else {
-                        filtered = filtered.slice(0, 50);
-                    }
-
-                    if (input.value !== hiddenName.value) {
-                        hidden.value = "";
-                        hiddenName.value = "";
-                    }
-
-                    renderDropdown(filtered);
-                }, 300);
-            });
-
-            input.addEventListener("focus", () => {
-                if (input.value && !hidden.value) {
-                    input.dispatchEvent(new Event('input'));
-                }
-            });
-
-            input.addEventListener("blur", () => {
-                setTimeout(() => {
-                    list.style.display = "none";
-                }, 200);
-            });
-
-            input.addEventListener('keydown', function(e) {
-                if (list.style.display === 'none') return;
-                
-                const items = Array.from(list.querySelectorAll('li'));
-                let currentIndex = items.findIndex(item => item.classList.contains('highlighted'));
-
-                switch(e.key) {
-                    case 'ArrowDown':
-                        e.preventDefault();
-                        currentIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
-                        highlightItem(items, currentIndex);
-                        break;
-                    case 'ArrowUp':
-                        e.preventDefault();
-                        currentIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
-                        highlightItem(items, currentIndex);
-                        break;
-                    case 'Enter':
-                        e.preventDefault();
-                        if (currentIndex >= 0 && items[currentIndex]) {
-                            items[currentIndex].click();
-                        }
-                        break;
-                    case 'Escape':
-                        list.style.display = 'none';
-                        break;
-                }
-            });
-
-            function renderDropdown(items) {
-                list.innerHTML = "";
-                
-                if (items.length === 0) {
-                    const li = document.createElement("li");
-                    li.textContent = "{{ __('No results found') }}";
-                    li.style.color = "#6c757d";
-                    li.style.fontStyle = "italic";
-                    li.setAttribute('role', 'option');
-                    list.appendChild(li);
-                } else {
-                    items.forEach(item => {
-                        const li = document.createElement("li");
-                        li.textContent = item[labelKey];
-                        li.setAttribute('data-value', item[filterKey]);
-                        li.setAttribute('role', 'option');
-                        
-                        li.addEventListener('mousedown', (e) => {
-                            e.preventDefault();
-
-                            input.value = item[labelKey];
-                            hidden.value = item[filterKey];
-                            hiddenName.value = item[labelKey];
-                            list.style.display = "none";
-                            
-                            input.dispatchEvent(new Event('change'));
-                            clearDependentDropdowns(inputId);
-                        });
-                        
-                        list.appendChild(li);
-                    });
-                }
-
-                list.style.display = items.length ? "block" : "none";
-            }
-
-            function highlightItem(items, index) {
-                items.forEach(item => item.classList.remove('highlighted'));
-                if (items[index]) {
-                    items[index].classList.add('highlighted');
-                    items[index].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-                }
-            }
+        function setLoading(sel, msg) {
+            sel.innerHTML = `<option value="" disabled selected>${msg}</option>`;
+            sel.disabled = true;
         }
 
-        function clearDependentDropdowns(parentInputId) {
-            const dependencyMap = {
-                'provinceSearch': ['municipalitySearch', 'barangaySearch'],
-                'municipalitySearch': ['barangaySearch'],
-                'originProvinceSearch': ['originMunicipalitySearch', 'originBarangaySearch'],
-                'originMunicipalitySearch': ['originBarangaySearch']
-            };
-
-            if (dependencyMap[parentInputId]) {
-                dependencyMap[parentInputId].forEach(id => {
-                    const input = document.getElementById(id);
-                    const hidden = document.getElementById(id.replace('Search', ''));
-                    const hiddenName = document.getElementById(id.replace('Search', '_name'));
-                    
-                    if (input) {
-                        input.value = '';
-                        if (hidden) hidden.value = '';
-                        if (hiddenName) hiddenName.value = '';
-                    }
-                });
-            }
+        function populateSelect(sel, items, valueKey, labelKey, placeholder) {
+            sel.innerHTML = `<option value="" disabled selected>${placeholder}</option>`;
+            items.forEach(item => {
+                const o = document.createElement('option');
+                o.value = item[valueKey];
+                o.textContent = item[labelKey];
+                sel.appendChild(o);
+            });
+            sel.disabled = false;
         }
 
-        setupSearch("provinceSearch", "provinceList", "province", "province_name", provinces, "provCode", "provDesc");
-        setupSearch("municipalitySearch", "municipalityList", "municipality", "municipality_name", municipalities, "citymunCode", "citymunDesc", "provCode", "province");
-        setupSearch("barangaySearch", "barangayList", "barangay", "barangay_name", barangays, "brgyCode", "brgyDesc", "citymunCode", "municipality");
+        // Sets up a Province -> Municipality -> Barangay cascade for one group of selects
+        function setupCascade({ provSelId, munSelId, brgySelId, provNameId, munNameId, brgyNameId, onBarangayChange }) {
+            const provSel = document.getElementById(provSelId);
+            const munSel = document.getElementById(munSelId);
+            const brgySel = document.getElementById(brgySelId);
+            const provNameInput = document.getElementById(provNameId);
+            const munNameInput = document.getElementById(munNameId);
+            const brgyNameInput = document.getElementById(brgyNameId);
 
-        setupSearch("originProvinceSearch", "originProvinceList", "origin_province", "origin_province_name", provinces, "provCode", "provDesc");
-        setupSearch("originMunicipalitySearch", "originMunicipalityList", "origin_municipality", "origin_municipality_name", municipalities, "citymunCode", "citymunDesc", "provCode", "origin_province");
-        setupSearch("originBarangaySearch", "originBarangayList", "origin_barangay", "origin_barangay_name", barangays, "brgyCode", "brgyDesc", "citymunCode", "origin_municipality");
+            populateSelect(provSel, provinces, 'provCode', 'provDesc', "{{ __('Select Province') }}");
 
+            provSel.addEventListener('change', function () {
+                provNameInput.value = this.options[this.selectedIndex]?.text || '';
+                setLoading(munSel, "{{ __('Loading...') }}");
+                setLoading(brgySel, "{{ __('Select Municipality first') }}");
+                munNameInput.value = '';
+                brgyNameInput.value = '';
+
+                const list = municipalities
+                    .filter(m => m.provCode === this.value)
+                    .sort((a, b) => a.citymunDesc.localeCompare(b.citymunDesc));
+                populateSelect(munSel, list, 'citymunCode', 'citymunDesc', "{{ __('Select Municipality') }}");
+
+                if (onBarangayChange) onBarangayChange();
+            });
+
+            munSel.addEventListener('change', function () {
+                munNameInput.value = this.options[this.selectedIndex]?.text || '';
+                setLoading(brgySel, "{{ __('Loading...') }}");
+                brgyNameInput.value = '';
+
+                const list = barangays
+                    .filter(b => b.citymunCode === this.value)
+                    .sort((a, b) => a.brgyDesc.localeCompare(b.brgyDesc));
+                populateSelect(brgySel, list, 'brgyCode', 'brgyDesc', "{{ __('Select Barangay') }}");
+
+                if (onBarangayChange) onBarangayChange();
+            });
+
+            brgySel.addEventListener('change', function () {
+                brgyNameInput.value = this.options[this.selectedIndex]?.text || '';
+                if (onBarangayChange) onBarangayChange();
+            });
+
+            return { provSel, munSel, brgySel };
+        }
+
+        // Re-selects a saved Province/Municipality/Barangay when returning to a saved/old form
+        function restoreSelection(refs, storedProv, storedMun, storedBrgy) {
+            if (!storedProv) return;
+            refs.provSel.value = storedProv;
+            refs.provSel.dispatchEvent(new Event('change'));
+
+            setTimeout(() => {
+                if (storedMun) {
+                    refs.munSel.value = storedMun;
+                    refs.munSel.dispatchEvent(new Event('change'));
+
+                    setTimeout(() => {
+                        if (storedBrgy) {
+                            refs.brgySel.value = storedBrgy;
+                            refs.brgySel.dispatchEvent(new Event('change'));
+                        }
+                    }, 0);
+                }
+            }, 0);
+        }
+
+        // ----- Region Information -----
+        const regionRefs = setupCascade({
+            provSelId: 'province', munSelId: 'municipality', brgySelId: 'barangay',
+            provNameId: 'province_name', munNameId: 'municipality_name', brgyNameId: 'barangay_name'
+        });
+        restoreSelection(
+            regionRefs,
+            @json(old('province', session('coc_step1.province') ?? '')),
+            @json(old('municipality', session('coc_step1.municipality') ?? '')),
+            @json(old('barangay', session('coc_step1.barangay') ?? ''))
+        );
+
+        // ----- Place of Origin -----
         function updatePlaceOrigin() {
             const barangay = document.getElementById('origin_barangay_name').value;
             const municipality = document.getElementById('origin_municipality_name').value;
             const province = document.getElementById('origin_province_name').value;
-
             const parts = [barangay, municipality, province].filter(p => p && p.trim().length > 0);
             document.getElementById('place_origin').value = parts.join(', ');
         }
 
-        ['originBarangaySearch', 'originMunicipalitySearch', 'originProvinceSearch'].forEach(id => {
-            document.getElementById(id).addEventListener('change', updatePlaceOrigin);
+        const originRefs = setupCascade({
+            provSelId: 'origin_province', munSelId: 'origin_municipality', brgySelId: 'origin_barangay',
+            provNameId: 'origin_province_name', munNameId: 'origin_municipality_name', brgyNameId: 'origin_barangay_name',
+            onBarangayChange: updatePlaceOrigin
         });
+        restoreSelection(
+            originRefs,
+            @json(old('origin_province', session('coc_step1.origin_province') ?? '')),
+            @json(old('origin_municipality', session('coc_step1.origin_municipality') ?? '')),
+            @json(old('origin_barangay', session('coc_step1.origin_barangay') ?? ''))
+        );
 
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.searchable-select')) {
-                document.querySelectorAll('.dropdown-list').forEach(list => {
-                    list.style.display = 'none';
-                });
-            }
-        });
-
-        form.addEventListener("submit", function(e) {
+        form.addEventListener("submit", function (e) {
             const province = document.getElementById("province").value;
             const municipality = document.getElementById("municipality").value;
             const barangay = document.getElementById("barangay").value;
@@ -865,19 +758,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } catch (error) {
         console.error('Error loading location data:', error);
-        alert('{{ __('Error loading location data. Please refresh the page.') }}');
+        alert('{{ __("Error loading location data. Please refresh the page.") }}');
     }
 
     if ('ontouchstart' in window) {
         document.querySelectorAll('.form-control').forEach(input => {
-            input.addEventListener('touchstart', function() {
+            input.addEventListener('touchstart', function () {
                 this.focus();
             }, { passive: true });
         });
     }
 
     let isSubmitting = false;
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', function (e) {
         if (isSubmitting) {
             e.preventDefault();
             return false;
@@ -886,7 +779,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         setTimeout(() => { isSubmitting = false; }, 3000);
     });
 
-    window.addEventListener('pageshow', function(e) {
+    window.addEventListener('pageshow', function (e) {
         if (e.persisted || (window.performance && window.performance.navigation.type === 2)) {
             submitBtn.classList.remove('loading');
             submitBtn.disabled = false;
