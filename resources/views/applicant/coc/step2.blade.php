@@ -43,16 +43,22 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group">
-                                    <label class="form-label" for="degree_obtained">{{ __('Degree Obtained:') }}</label>
-                                    <input type="text" 
-                                           name="degree_obtained" 
-                                           id="degree_obtained"
-                                           class="form-control"
-                                           placeholder="{{ __('Enter your degree (if any)') }}"
-                                           autocomplete="off"
-                                           value="{{ old('degree_obtained', $step2['degree_obtained'] ?? '') }}">
-                                </div>
+                            @php
+                                $eduValue = old('educational_attainment', $step2['educational_attainment'] ?? '');
+                                $showDegree = in_array($eduValue, ['College', 'Post Graduate']);
+                            @endphp
+                            <div class="form-group" id="degreeField" style="{{ $showDegree ? '' : 'display: none;' }}">
+                                <label class="form-label" for="degree_obtained">{{ __('Degree Obtained:') }}</label>
+                                <input type="text" 
+                                    name="degree_obtained" 
+                                    id="degree_obtained"
+                                    class="form-control"
+                                    placeholder="{{ __('Enter your degree (if any)') }}"
+                                    autocomplete="off"
+                                    value="{{ old('degree_obtained', $step2['degree_obtained'] ?? '') }}"
+                                    {{ $showDegree ? 'required' : '' }}
+                                    {{ $showDegree ? '' : 'disabled' }}>
+                            </div>
                             </div>
 
                             {{-- Parental Background --}}
@@ -409,6 +415,8 @@
                                 </div>
                             </div>
 {{-- Applicant Pledge --}}
+
+
 <div class="form-section">
     <h4 class="section-title">{{ __('IV. Applicant Pledge') }}</h4>
     <p class="pledge-text">
@@ -887,6 +895,22 @@
 
         // Add event listener
         landMatterCheck.addEventListener('change', toggleLandMatterFields);
+
+        const educationalAttainment = document.getElementById('educational_attainment');
+        const degreeField = document.getElementById('degreeField');
+        const degreeInput = document.getElementById('degree_obtained');
+
+        function toggleDegreeField() {
+            const show = educationalAttainment.value === 'College' || educationalAttainment.value === 'Post Graduate';
+            degreeField.style.display = show ? 'block' : 'none';
+            degreeInput.disabled = !show;
+            if (!show) {
+            degreeInput.value = '';
+            }
+        }
+
+                            toggleDegreeField();
+                            educationalAttainment.addEventListener('change', toggleDegreeField);
 
         // Form submission handling
         let isSubmitting = false;
