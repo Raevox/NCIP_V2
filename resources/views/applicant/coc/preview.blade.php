@@ -994,7 +994,11 @@ div[style*="display: flex"] {
             <tr><th>{{ __('Details') }}</th><th>{{ __('Father') }}</th><th>{{ __('Mother(Maiden name)') }}</th></tr>
         </thead>
         <tbody>
-            <tr><td>{{ __('Name') }}</td><td>{{ $step2['father_name'] ?? '' }}</td><td>{{ $step2['mother_name'] ?? '' }}</td></tr>
+            <tr>
+                <td>{{ __('Name') }}</td>
+                <td>{{ trim(($step2['father_first_name'] ?? '') . ' ' . ($step2['father_last_name'] ?? '')) ?: ($step2['father_name'] ?? '') }}</td>
+                <td>{{ trim(($step2['mother_first_name'] ?? '') . ' ' . ($step2['mother_last_name'] ?? '')) ?: ($step2['mother_name'] ?? '') }}</td>
+            </tr>
             <tr><td>{{ __('IP Group') }}</td><td>{{ $step2['father_ipgroup'] ?? '' }}</td><td>{{ $step2['mother_ipgroup'] ?? '' }}</td></tr>
             <tr><td>{{ __('Place Origin') }}</td><td>{{ $step2['father_origin'] ?? '' }}</td><td>{{ $step2['mother_origin'] ?? '' }}</td></tr>
             <tr><td>{{ __('Grandfather') }}</td><td>{{ ($step2['paternal_grandfather_first_name'] ?? '') . ' ' . ($step2['paternal_grandfather_last_name'] ?? '') }}</td><td>{{ ($step2['maternal_grandfather_first_name'] ?? '') . ' ' . ($step2['maternal_grandfather_last_name'] ?? '') }}</td></tr>
