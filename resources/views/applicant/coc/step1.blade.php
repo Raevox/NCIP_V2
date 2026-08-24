@@ -108,6 +108,8 @@
                                                class="form-control" 
                                                autocomplete="given-name"
                                                required
+                                               pattern="[A-Za-z]+(?:[ .-][A-Za-z]+)*"
+                                               title="Use letters, spaces, periods, or hyphens only."
                                                value="{{ old('first_name', $step1['first_name'] ?? $user->first_name ?? '') }}">
                                     </div>
                                 </div>
@@ -120,6 +122,8 @@
                                                class="form-control" 
                                                autocomplete="family-name"
                                                required
+                                               pattern="[A-Za-z]+(?:[ .-][A-Za-z]+)*"
+                                               title="Use letters, spaces, periods, or hyphens only."
                                                value="{{ old('last_name', $step1['last_name'] ?? $user->last_name ?? '') }}">
                                     </div>
                                 </div>
@@ -188,13 +192,14 @@
                                                name="date_of_birth" 
                                                class="form-control"
                                                autocomplete="bday"
+                                               required
                                                value="{{ old('date_of_birth', session('coc_step1.date_of_birth', '')) }}">
                                     </div>
                                 </div>
                                <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="ip_group">{{ __('IP Group') }}</label>
-                                    <select name="ip_group" id="ip_group" class="form-control" autocomplete="off">
+                                    <select name="ip_group" id="ip_group" class="form-control" autocomplete="off" required>
                                         <option value="">{{ __('Select') }}</option>
                                         @php
                                             $ipGroups = \App\Models\Tribe::active()->orderBy('name')->pluck('name')->toArray();
@@ -226,6 +231,8 @@
                                                class="form-control"
                                                placeholder="{{ __('First name') }}"
                                                autocomplete="off"
+                                               pattern="[A-Za-z]+(?:[ .-][A-Za-z]+)*"
+                                               title="Use letters, spaces, periods, or hyphens only."
                                                value="{{ old('spouse_first_name', $user->spouse_first_name ?? '') }}">
                                     </div>
                                 </div>
@@ -238,6 +245,8 @@
                                                class="form-control"
                                                placeholder="{{ __('Last name') }}"
                                                autocomplete="off"
+                                               pattern="[A-Za-z]+(?:[ .-][A-Za-z]+)*"
+                                               title="Use letters, spaces, periods, or hyphens only."
                                                value="{{ old('spouse_last_name', $user->spouse_last_name ?? '') }}">
                                     </div>
                                 </div>
@@ -366,6 +375,16 @@
 
 .form-control::placeholder {
     color: #adb5bd;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+.field-validation-message {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin: 0.35rem 0 0;
 }
 
 /* Searchable Select */
@@ -584,16 +603,83 @@ document.addEventListener("DOMContentLoaded", async () => {
             spouseLastName.value = 'N/A';
             spouseFirstName.disabled = true;
             spouseLastName.disabled = true;
+            spouseFirstName.required = false;
+            spouseLastName.required = false;
         } else {
             if (spouseFirstName.value === 'N/A') spouseFirstName.value = '';
             if (spouseLastName.value === 'N/A') spouseLastName.value = '';
             spouseFirstName.disabled = false;
             spouseLastName.disabled = false;
+            spouseFirstName.required = status === 'Married';
+            spouseLastName.required = status === 'Married';
         }
     }
 
+    const nameFields = [
+        document.getElementById('first_name'),
+        document.getElementById('last_name'),
+        spouseFirstName,
+        spouseLastName
+    ];
+    const namePattern = /^[A-Za-z]+(?:[ .-][A-Za-z]+)*$/;
+
+    function validateNameField(field) {
+        const value = field.value.trim();
+        const messageId = `${field.id}-validation-message`;
+        let message = '';
+
+        if (field.disabled) {
+            field.setCustomValidity('');
+            field.classList.remove('is-invalid');
+            document.getElementById(messageId)?.remove();
+            return true;
+        }
+
+        if (field.required && !value) {
+            message = 'This field is required.';
+        } else if (value && !namePattern.test(value)) {
+            message = 'Use letters, spaces, periods, or hyphens only. Numbers and other special characters are not allowed.';
+        }
+
+        field.setCustomValidity(message);
+        field.classList.toggle('is-invalid', Boolean(message));
+
+        let messageElement = document.getElementById(messageId);
+        if (message) {
+            if (!messageElement) {
+                messageElement = document.createElement('p');
+                messageElement.id = messageId;
+                messageElement.className = 'field-validation-message';
+                messageElement.setAttribute('role', 'alert');
+                field.insertAdjacentElement('afterend', messageElement);
+            }
+            messageElement.textContent = message;
+        } else if (messageElement) {
+            messageElement.remove();
+        }
+
+        return !message;
+    }
+
+    nameFields.forEach(field => {
+        field.addEventListener('input', () => validateNameField(field));
+        field.addEventListener('blur', () => validateNameField(field));
+    });
+
+    form.addEventListener('submit', function (e) {
+        const namesAreValid = nameFields.every(validateNameField);
+        if (!namesAreValid || !form.checkValidity()) {
+            e.preventDefault();
+            form.reportValidity();
+        }
+    });
+
     toggleSpouseFields();
-    civilStatusSelect.addEventListener('change', toggleSpouseFields);
+    civilStatusSelect.addEventListener('change', () => {
+        toggleSpouseFields();
+        validateNameField(spouseFirstName);
+        validateNameField(spouseLastName);
+    });
 
     try {
         const [provincesRes, municipalitiesRes, barangaysRes] = await Promise.all([
@@ -730,6 +816,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         );
 
         form.addEventListener("submit", function (e) {
+            if (e.defaultPrevented) return;
+
             const province = document.getElementById("province").value;
             const municipality = document.getElementById("municipality").value;
             const barangay = document.getElementById("barangay").value;

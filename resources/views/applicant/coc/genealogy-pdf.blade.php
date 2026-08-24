@@ -10,7 +10,12 @@
         body { font-family: Arial, sans-serif; font-size: 13px; color: #000; }
 
         /* Match the reference form's balanced placement on a legal page. */
-        .form-page { width: 100%; padding: 60px 0 6px; }
+        .form-page {
+            /* Use margins on an auto-width block so Dompdf reserves space on both sides. */
+            width: auto;
+            margin: 0 30px;
+            padding: 60px 0 6px;
+        }
 
         .gen-header {
             width: 100%;

@@ -213,8 +213,8 @@ public function saveCocStep1(Request $request)
     'ip_group'     => 'required|string|max:255',
     'date_of_birth' => 'required|date',
 
-    'spouse_first_name' => 'nullable|string|max:255|regex:/^[a-zA-Z\s\-\.]+$/',
-    'spouse_last_name'  => 'nullable|string|max:255|regex:/^[a-zA-Z\s\-\.]+$/',
+    'spouse_first_name' => 'required_if:civil_status,Married|nullable|string|max:255|regex:/^[a-zA-Z\s\-\.]+$/',
+    'spouse_last_name'  => 'required_if:civil_status,Married|nullable|string|max:255|regex:/^[a-zA-Z\s\-\.]+$/',
 ]);
     // Save data in session (optional)
     session(['coc_step1' => $data]);

@@ -906,12 +906,44 @@
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('step4Form');
         const submitBtn = form.querySelector('.btn-next');
+        const nameInputs = form.querySelectorAll('input[name$="_first_name"], input[name$="_last_name"]');
+        const namePattern = /^[A-Za-z]+(?:[ .-][A-Za-z]+)*$/;
+
+        function validateNameField(input) {
+            const value = input.value.trim();
+            const message = !value
+                ? 'This field is required.'
+                : !namePattern.test(value)
+                    ? 'Use letters, spaces, periods, or hyphens only. Numbers and other special characters are not allowed.'
+                    : '';
+
+            input.setCustomValidity(message);
+            input.classList.toggle('is-invalid', Boolean(message));
+            return !message;
+        }
+
+        nameInputs.forEach(input => {
+            input.required = true;
+            input.pattern = '[A-Za-z]+(?:[ .-][A-Za-z]+)*';
+            input.title = 'Use letters, spaces, periods, or hyphens only.';
+            input.addEventListener('input', () => validateNameField(input));
+            input.addEventListener('blur', () => validateNameField(input));
+        });
 
         // Form submission handling
         let isSubmitting = false;
         form.addEventListener('submit', function(e) {
             if (isSubmitting) {
                 e.preventDefault();
+                return false;
+            }
+
+            const invalidNameInput = [...nameInputs].find(input => !validateNameField(input));
+            if (invalidNameInput) {
+                e.preventDefault();
+                invalidNameInput.focus();
+                invalidNameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                invalidNameInput.reportValidity();
                 return false;
             }
 
