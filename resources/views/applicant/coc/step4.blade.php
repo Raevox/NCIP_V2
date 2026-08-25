@@ -1085,6 +1085,9 @@
         // added by renz buzia for autosave form in download and preview in coc application.
         function autosaveThenNavigate(url, openInNewTab) {
             const formData = new FormData(form);
+            // Open the tab during the click event so browsers do not block it after
+            // the asynchronous autosave finishes.
+            const targetWindow = openInNewTab ? window.open('', '_blank') : null;
 
             fetch('{{ route("applicant.coc.step4.autosave") }}', {
                 method: 'POST',
@@ -1094,22 +1097,29 @@
                 },
                 body: formData,
             })
-            .then(response => response.json())
-            .then(() => {
+            .then(async response => {
+                const result = await response.json().catch(() => ({}));
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || '{{ __('Unable to save the current Step 4 details.') }}');
+                }
+
                 if (openInNewTab) {
-                    window.open(url, '_blank');
+                    if (targetWindow) {
+                        targetWindow.location.href = url;
+                    } else {
+                        window.location.href = url;
+                    }
                 } else {
                     window.location.href = url;
                 }
             })
             .catch(error => {
                 console.error('Autosave before download failed:', error);
-                // Fallback - navigate anyway so the user isn't stuck, even if autosave failed
-                if (openInNewTab) {
-                    window.open(url, '_blank');
-                } else {
-                    window.location.href = url;
+                if (targetWindow) {
+                    targetWindow.close();
                 }
+                alert(error.message || '{{ __('Unable to save the current Step 4 details. Please try again.') }}');
             });
         }
 
