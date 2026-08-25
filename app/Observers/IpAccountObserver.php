@@ -3,8 +3,6 @@
 namespace App\Observers;
 
 use App\Models\IpAccount;
-use App\Models\CocApplication;
-use App\Services\NotificationService;
 use Illuminate\Support\Facades\Log;
 
 class IpAccountObserver
@@ -20,7 +18,5 @@ class IpAccountObserver
         Log::info('   Name: ' . $ipAccount->first_name . ' ' . $ipAccount->last_name);
         Log::info('═══════════════════════════════════════════');
         
-        // Send notification to admins when a new account is created
-        NotificationService::notifyPendingAccount($ipAccount);
     }
 }

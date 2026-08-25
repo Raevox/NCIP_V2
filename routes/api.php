@@ -36,7 +36,6 @@ Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead']);
 
-    Route::post('/notifications/{id}/approve', [NotificationController::class, 'approveAccount']);
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
 
 });

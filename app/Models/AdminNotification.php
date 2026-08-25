@@ -102,7 +102,7 @@ class AdminNotification extends Model
             'coc_approval'           => 'info',
             'coc_returned'           => 'danger',
             'application_forwarded'  => 'info',
-            'account_approved'       => 'success',
+            'coc_approved'           => 'success',
             default                  => 'secondary',
         };
     }
@@ -114,7 +114,7 @@ class AdminNotification extends Model
             'coc_approval'           => 'fa-file-alt',
             'coc_returned'           => 'fa-undo',
             'application_forwarded'  => 'fa-share',
-            'account_approved'       => 'fa-check-circle',
+            'coc_approved'           => 'fa-check-circle',
             default                  => 'fa-bell',
         };
     }

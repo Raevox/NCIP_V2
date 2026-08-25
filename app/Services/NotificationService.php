@@ -47,11 +47,11 @@ class NotificationService
     {
         try {
             $name = self::getApplicantName($application);
-            $url = self::safeRoute('admin.applicants.coc.view', $application->id)
-                ?? url('/admin/applicants/coc/' . $application->id . '/view');
+            $url = self::safeRoute('staff.review.show', $application->id)
+                ?? '/staff/review/' . $application->id;
 
             $reviewers = User::where('status', 'active')
-                ->whereIn('role', ['admin', 'staff'])
+                ->where('role', 'staff')
                 ->get();
 
             foreach ($reviewers as $user) {
@@ -93,7 +93,7 @@ class NotificationService
                         'related_type' => 'CocApplication',
                     ],
                     [
-                        'type'       => 'account_approved',
+                        'type'       => 'coc_approved',
                         'title'      => 'COC Application Approved',
                         'message'    => "COC application from {$name} has been approved.",
                         'action_url' => $url,
@@ -104,8 +104,8 @@ class NotificationService
             }
 
             $staffMembers = User::where('role', 'staff')->where('status', 'active')->get();
-            $staffUrl = self::safeRoute('staff.review.show', $application->id)
-                ?? url('/staff/review/' . $application->id);
+            $staffUrl = self::safeRoute('admin.applicants.coc.view', $application->id)
+                ?? '/admin/applicants/coc/' . $application->id . '/view';
 
             foreach ($staffMembers as $staff) {
                 AdminNotification::updateOrCreate(
@@ -115,7 +115,7 @@ class NotificationService
                         'related_type' => 'CocApplication',
                     ],
                     [
-                        'type'       => 'account_approved',
+                        'type'       => 'coc_approved',
                         'title'      => 'Forwarded Application Approved',
                         'message'    => "Forwarded COC application from {$name} has been approved by Admin.",
                         'action_url' => $staffUrl,
@@ -133,8 +133,8 @@ class NotificationService
     {
         try {
             $name = self::getApplicantName($application);
-            $url = self::safeRoute('admin.applicants.coc.view', $application->id)
-                ?? url('/admin/applicants/coc/' . $application->id . '/view');
+            $url = self::safeRoute('admin.applicants.transaction', $application->user_id)
+                ?? '/admin/applicants/' . $application->user_id . '/transaction';
 
             $msg = "COC application from {$name} has been returned for revision.";
             if ($reason) $msg .= " Reason: {$reason}";
@@ -167,8 +167,8 @@ class NotificationService
     {
         try {
             $name = self::getApplicantName($application);
-            $url = self::safeRoute('admin.applicants.coc.view', $application->id)
-                ?? url('/admin/applicants/coc/' . $application->id . '/view');
+            $url = self::safeRoute('admin.applicants.index', ['status' => 'Admin Approval'])
+                ?? '/admin/applicants?status=Admin%20Approval';
 
             $admins = User::where('role', 'admin')->where('status', 'active')->get();
 
@@ -214,7 +214,8 @@ class NotificationService
     private static function safeRoute(string $name, mixed ...$params): ?string
     {
         try {
-            return route($name, ...$params);
+            $parameters = count($params) === 1 && is_array($params[0]) ? $params[0] : $params;
+            return route($name, $parameters, false);
         } catch (\Exception $e) {
             Log::warning("safeRoute '{$name}' not found: " . $e->getMessage());
             return null;

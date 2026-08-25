@@ -429,14 +429,41 @@
 
     @else
         <!-- Alert for Non-Approved -->
+        @php
+            $cocStatus = $coc->coc_status ?: 'Under Review';
+            $waitingForStaff = in_array($cocStatus, ['Draft', 'Under Review', 'Submitted', 'Pending'], true);
+        @endphp
         <div class="alert-box">
-            <h4>
-                <i class="fas fa-exclamation-circle"></i> Notice
-            </h4>
-            <p>
-                This COC application is <strong>{{ ucfirst($coc->coc_status) }}</strong> and cannot be viewed as a certificate yet.
-            </p>
-            <p style="color: #666; font-size: 14px;">Only approved applications can generate certificates.</p>
+            @if($waitingForStaff)
+                <h4>
+                    <i class="fas fa-clock"></i> Waiting for Staff Review
+                </h4>
+                <p>
+                    This COC application has not yet been forwarded to the administrator.
+                </p>
+                <p style="color: #666; font-size: 14px;">
+                    Please wait for the staff to review and forward the application for admin approval.
+                </p>
+            @elseif($cocStatus === 'Admin Approval')
+                <h4>
+                    <i class="fas fa-user-shield"></i> Ready for Admin Review
+                </h4>
+                <p>The staff has reviewed and forwarded this COC application to the administrator.</p>
+                <p style="color: #666; font-size: 14px;">The certificate will become available after final approval.</p>
+            @elseif($cocStatus === 'Returned')
+                <h4>
+                    <i class="fas fa-undo"></i> Application Returned
+                </h4>
+                <p>This COC application was returned for revision and is not ready for approval.</p>
+            @else
+                <h4>
+                    <i class="fas fa-exclamation-circle"></i> Notice
+                </h4>
+                <p>
+                    This COC application is <strong>{{ $cocStatus }}</strong> and cannot be viewed as a certificate yet.
+                </p>
+                <p style="color: #666; font-size: 14px;">Only approved applications can generate certificates.</p>
+            @endif
             
             <div style="margin-top: 30px;">
                 <a href="{{ route('admin.applicants.transaction', $coc->applicant->id) }}" class="btn-action btn-back">

@@ -274,7 +274,7 @@ body, .account-content {
                             <span class="fw-medium" style="color: var(--primary-green);">{{ $account->role ?? 'Staff' }}</span>
                         </td>
                         <td class="text-center">
-                            @if($account->isOnline())
+                            @if(strtolower($account->status ?? '') === 'active')
                                 <span class="status-badge status-active">Active</span>
                             @else
                                 <span class="status-badge status-inactive">Inactive</span>

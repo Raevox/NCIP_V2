@@ -232,12 +232,8 @@
             <button class="np-tab active" onclick="switchTab(this,'all')">
                 <i class="fas fa-inbox"></i> All
             </button>
-            <button class="np-tab" onclick="switchTab(this,'pending_account')">
-    <i class="fas fa-user-clock"></i> Pending Account
-</button>
-
-<button class="np-tab" onclick="switchTab(this,'account_approved')">
-    <i class="fas fa-check-circle"></i> Account Approved
+<button class="np-tab" onclick="switchTab(this,'coc_approved')">
+    <i class="fas fa-check-circle"></i> COC Approved
 </button>
 
 <button class="np-tab" onclick="switchTab(this,'coc_approval')">
@@ -297,15 +293,23 @@
 
 <script>
 /* ── CSRF (from layout meta tag) ─────────────────────── */
-const CSRF = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+const CSRF = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+/* Let Laravel build URLs so this page also works when the app is hosted in a subdirectory. */
+const NOTIFICATION_URLS = {
+    index:       @json(route('api.admin.notifications.index')),
+    unreadCount: @json(route('api.admin.notifications.unread-count')),
+    markAllRead: @json(route('api.admin.notifications.mark-all-read')),
+};
+
+function notificationUrl(id, action='') {
+    return `${NOTIFICATION_URLS.index}/${encodeURIComponent(id)}${action ? '/' + action : ''}`;
+}
 
 /* ── Type config ─────────────────────────────────────── */
 const TYPE_CFG = {
-    pending_account: {
-        color:'#3E7B27', bg:'#f0fae8', icon:'user-clock', label:'Pending Account'
-    },
-    account_approved: {
-        color:'#0ea371', bg:'#ecfdf5', icon:'check-circle', label:'Approved Account'
+    coc_approved: {
+        color:'#0ea371', bg:'#ecfdf5', icon:'check-circle', label:'COC Approved'
     },
     coc_approval: {
         color:'#0284c7', bg:'#f0f9ff', icon:'file-alt', label:'COC Review'
@@ -332,21 +336,26 @@ let filter='all', page=1, _pending=null;
    3. Always includes X-CSRF-TOKEN → POST/DELETE never get 419.
    4. Parses error responses as JSON so the message bubbles up.
 ───────────────────────────────────────────────────────────────── */
-function api(url, opts={}) {
+async function api(url, opts={}) {
     const headers = {
         'Accept':            'application/json',
         'X-Requested-With':  'XMLHttpRequest',
         'X-CSRF-TOKEN':      CSRF,
         ...(opts.headers||{}),
     };
-    return fetch(url, { credentials:'same-origin', ...opts, headers })
-        .then(r => {
-            /* even on 4xx/5xx, try to parse JSON so we get the message */
-            return r.json().then(d => {
-                if (!r.ok) throw new Error(d.message || ('HTTP ' + r.status));
-                return d;
-            });
-        });
+    const response = await fetch(url, { credentials:'same-origin', ...opts, headers });
+    const contentType = response.headers.get('content-type') || '';
+
+    if (!contentType.includes('application/json')) {
+        throw new Error(`Server returned ${response.status} ${response.statusText} instead of JSON.`);
+    }
+
+    const data = await response.json();
+    if (!response.ok || data.success === false) {
+        throw new Error(data.message || (`HTTP ${response.status}`));
+    }
+
+    return data;
 }
 
 /* ── Tab ─────────────────────────────────────────────── */
@@ -363,7 +372,12 @@ function load(p=1) {
     prog(true);
     document.getElementById('npPager').innerHTML = '';
 
-    api(`/api/admin/notifications?type=${filter}&page=${p}&per_page=15`)
+    const url = new URL(NOTIFICATION_URLS.index, window.location.origin);
+    url.searchParams.set('type', filter);
+    url.searchParams.set('page', p);
+    url.searchParams.set('per_page', 15);
+
+    api(url.toString())
     .then(data => { prog(false); render(data); syncHeader(data.total); })
     .catch(err  => {
         prog(false);
@@ -493,7 +507,7 @@ function renderPager(data) {
 
 /* ── Header sync ─────────────────────────────────────── */
 function syncHeader(knownTotal) {
-    api('/api/admin/notifications/unread-count')
+    api(NOTIFICATION_URLS.unreadCount)
     .then(data => {
         const n   = data.unreadCount || 0;
         const bdg = document.getElementById('hdBadge');
@@ -553,18 +567,8 @@ function deleteNotif(event, btn) {
 
     if (!confirm("Delete this notification?")) return;
 
-    fetch(`/api/admin/notifications/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': CSRF,
-            'Accept': 'application/json'
-        },
-        credentials: 'same-origin'
-    })
-    .then(res => res.json())
+    api(notificationUrl(id), {method:'DELETE'})
     .then(data => {
-        if (!data.success) throw new Error(data.message);
-
         // remove sa UI agad (smooth UX)
         const card = document.getElementById('nc-' + id);
         if (card) card.remove();
@@ -579,7 +583,7 @@ function deleteNotif(event, btn) {
 }
 /* ── Mark single as read ─────────────────────────────── */
 function doMarkRead(id, cb) {
-    api(`/api/admin/notifications/${id}/read`, {method:'POST'})
+    api(notificationUrl(id, 'read'), {method:'POST'})
     .then(() => {
         const card = document.getElementById('nc-'+id);
         if (card) {
@@ -596,7 +600,7 @@ function doMarkRead(id, cb) {
 
 /* ── Mark all read ───────────────────────────────────── */
 function markAllRead() {
-    api('/api/admin/notifications/mark-all-read', {method:'POST'})
+    api(NOTIFICATION_URLS.markAllRead, {method:'POST'})
     .then(() => { load(page); syncHeader(); toast('All notifications marked as read','ok'); })
     .catch(err => toast('Error: '+err.message,'err'));
 }

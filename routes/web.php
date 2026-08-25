@@ -241,7 +241,6 @@ Route::middleware(['auth:web', 'verified'])
         Route::post('/mark-approved-viewed', [ApiNotificationController::class, 'markApprovedAsViewed'])->name('mark-approved-viewed');
         Route::post('/mark-all-read',        [ApiNotificationController::class, 'markAllAsRead'])->name('mark-all-read');
         Route::post('/{id}/read',            [ApiNotificationController::class, 'markAsRead'])->name('mark-read');
-        Route::post('/{id}/approve',         [ApiNotificationController::class, 'approveAccount'])->name('approve');
         Route::delete('/{id}',               [ApiNotificationController::class, 'destroy'])->name('destroy');
         Route::get('/admin/notifications',   [AdminNotificationController::class, 'index'])
             ->middleware(AdminOrStaffOnly::class)

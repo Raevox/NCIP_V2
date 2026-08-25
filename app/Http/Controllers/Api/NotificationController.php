@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdminNotification;
+use App\Models\CocApplication;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +21,7 @@ class NotificationController extends Controller
             $perPage = min(50, max(1, (int) $request->query('per_page', 15)));
 
             $query = AdminNotification::where('user_id', Auth::id())
+                ->where('type', '!=', 'pending_account')
                 ->where(function ($q) {
                     $q->where('related_type', '!=', 'IpAccount')
                       ->orWhereExists(function ($sub) {
@@ -29,12 +31,40 @@ class NotificationController extends Controller
                       });
                 });
 
+            // Staff handles initial COC review. Admin only enters the flow after forwarding.
+            if (Auth::user()?->role === 'admin') {
+                $query->where('type', '!=', 'coc_approval');
+            }
+
             if ($type !== 'all') {
                 $query->where('type', $type);
             }
 
             $pager = $query->orderBy('created_at', 'desc')
                            ->paginate($perPage, ['*'], 'page', $page);
+
+            // Rebuild internal links using the current request host and workflow state.
+            $applicationIds = collect($pager->items())
+                ->where('related_type', 'CocApplication')
+                ->pluck('related_id')
+                ->filter()
+                ->unique();
+            $applications = CocApplication::whereIn('id', $applicationIds)->get()->keyBy('id');
+
+            foreach ($pager->items() as $notification) {
+                if ($notification->related_type === 'CocApplication' && $notification->related_id) {
+                    $application = $applications->get($notification->related_id);
+                    $notification->action_url = match ($notification->type) {
+                        'coc_approval' => route('staff.review.show', $notification->related_id),
+                        'application_forwarded' => route('admin.applicants.index', ['status' => 'Admin Approval']),
+                        'coc_approved' => route('admin.applicants.coc.view', $notification->related_id),
+                        'coc_returned' => $application
+                            ? route('admin.applicants.transaction', $application->user_id)
+                            : null,
+                        default => $notification->action_url,
+                    };
+                }
+            }
 
             return response()->json([
                 'success'        => true,
@@ -66,9 +96,15 @@ class NotificationController extends Controller
     public function getUnreadCount()
     {
         try {
-            $count = AdminNotification::where('user_id', Auth::id())
-                ->where('is_read', false)
-                ->count();
+            $countQuery = AdminNotification::where('user_id', Auth::id())
+                ->where('type', '!=', 'pending_account')
+                ->where('is_read', false);
+
+            if (Auth::user()?->role === 'admin') {
+                $countQuery->where('type', '!=', 'coc_approval');
+            }
+
+            $count = $countQuery->count();
 
             $badgeStatus = \App\Services\ApplicantBadgeService::getBadgeStatus();
 

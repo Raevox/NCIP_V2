@@ -77,7 +77,7 @@ class ApplicantBadgeService
             if ($isStaff && $totalApproved > 0) {
                 // Check if user has unread approved notifications
                 $hasUnreadApprovedNotif = AdminNotification::where('user_id', $user->id)
-                    ->whereIn('type', ['account_approved', 'coc_approved'])
+                    ->where('type', 'coc_approved')
                     ->where('is_read', false)
                     ->exists();
 
@@ -94,16 +94,10 @@ class ApplicantBadgeService
                 }
             }
 
-            // 4. New Applicants (Account Registrations) - mainly for Admin
+            // Account approval notifications are no longer part of this workflow.
             $hasNewApplicants = false;
-            if (!$isStaff) {
-                $hasNewApplicants = AdminNotification::where('user_id', $user->id)
-                    ->where('type', 'pending_account')
-                    ->where('is_read', false)
-                    ->exists();
-            }
 
-            // 5. Main Applicants Menu dot
+            // 4. Main Applicants Menu dot
             // Visible if ANY active 'Under Review' items, new applications, unviewed 'Returned' items (admin), or unviewed 'Approved' items (staff) exist
             $mainDot = $hasUnderReview || $hasUnreadReturned || $hasNewApplicants || $hasUnreadApproved;
 
@@ -219,9 +213,9 @@ class ApplicantBadgeService
         try {
             $now = now();
 
-            // Mark account_approved / coc_approved notifications as read
+            // Mark approved COC notifications as read
             AdminNotification::where('user_id', $user->id)
-                ->whereIn('type', ['account_approved', 'coc_approved'])
+                ->where('type', 'coc_approved')
                 ->where('is_read', false)
                 ->update([
                     'is_read' => true,

@@ -759,11 +759,8 @@
                     <strong>{{ Auth::user()->name }}</strong>
                     <span>{{ ucfirst(Auth::user()->role) }}</span>
                 </div>
-                <a href="{{ route('profile.edit') }}" class="tb-user-menu-item">
+                <a href="{{ route('admin.accounts.show', Auth::id()) }}" class="tb-user-menu-item">
                     <i class="fas fa-user"></i> Profile
-                </a>
-                <a href="#" class="tb-user-menu-item">
-                    <i class="fas fa-cog"></i> Settings
                 </a>
                 <button class="tb-user-menu-item danger"
                         onclick="document.getElementById('logout-form-topbar').submit()">
@@ -792,6 +789,13 @@
 <script>
 const csrf  = () => document.querySelector('meta[name="csrf-token"]').content;
 const isMob = () => window.innerWidth <= 768;
+const ADMIN_NOTIFICATION_URLS = {
+    index:       @json(route('api.admin.notifications.index')),
+    unreadCount: @json(route('api.admin.notifications.unread-count')),
+    markAllRead: @json(route('api.admin.notifications.mark-all-read')),
+};
+const adminNotificationUrl = (id, action='') =>
+    `${ADMIN_NOTIFICATION_URLS.index}/${encodeURIComponent(id)}${action ? '/' + action : ''}`;
 
 /* ── Sidebar toggle (hamburger — works desktop + mobile) ──── */
 let sbCollapsed = false;
@@ -843,12 +847,20 @@ async function loadDropdownNotifications() {
     const body = document.getElementById('tbNotifBody');
     body.innerHTML = `<div class="tb-notif-loading"><div class="tb-spinner"></div><p style="font-size:12px;margin:0;color:var(--ink-4);">Loading…</p></div>`;
     try {
-        const res  = await fetch('/api/admin/notifications?type=all&page=1&per_page=6', {
+        const url = new URL(ADMIN_NOTIFICATION_URLS.index, window.location.origin);
+        url.searchParams.set('type', 'all');
+        url.searchParams.set('page', 1);
+        url.searchParams.set('per_page', 6);
+        const res = await fetch(url.toString(), {
             headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             credentials: 'same-origin'
         });
+        if (!res.ok || !(res.headers.get('content-type') || '').includes('application/json')) {
+            throw new Error(`Notification request failed (${res.status})`);
+        }
         const data = await res.json();
-        if (!data.success || !data.data?.length) {
+        if (!data.success) throw new Error(data.message || 'Notification request failed');
+        if (!data.data?.length) {
             body.innerHTML = `<div class="tb-notif-empty"><i class="fas fa-inbox"></i><p>No notifications yet</p></div>`;
             return;
         }
@@ -857,7 +869,8 @@ async function loadDropdownNotifications() {
         if (markBtn) markBtn.style.display = hasUnread ? 'inline-block' : 'none';
         body.innerHTML = data.data.map(n => `
             <div class="tb-notif-item ${!n.is_read ? 'unread' : ''}"
-                 onclick="handleNotifClick(${n.id}, ${JSON.stringify(n.action_url || '')})">
+                 data-id="${n.id}" data-url="${esc(n.action_url || '')}"
+                 onclick="handleNotifClick(this)">
                 <div class="tb-notif-icon" style="background:${notifColor(n.type)};">
                     <i class="fas fa-${notifIcon(n.type)}"></i>
                 </div>
@@ -872,10 +885,13 @@ async function loadDropdownNotifications() {
     }
 }
 
-function handleNotifClick(id, url) {
-    fetch(`/api/admin/notifications/${id}/read`, {
+function handleNotifClick(item) {
+    const id = item.dataset.id;
+    const url = item.dataset.url || '';
+    fetch(adminNotificationUrl(id, 'read'), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf() }
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf() },
+        credentials: 'same-origin'
     })
     .then(() => {
         refreshBadges();
@@ -886,9 +902,10 @@ function handleNotifClick(id, url) {
 }
 
 function markAllReadFromDropdown() {
-    fetch('/api/admin/notifications/mark-all-read', {
+    fetch(ADMIN_NOTIFICATION_URLS.markAllRead, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf() }
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf() },
+        credentials: 'same-origin'
     })
     .then(() => { refreshBadges(); loadDropdownNotifications(); })
     .catch(console.error);
@@ -897,7 +914,7 @@ function markAllReadFromDropdown() {
 /* ── Badge refresh ─────────────────────────────────────────── */
 async function refreshBadges() {
     try {
-        const res  = await fetch('/api/admin/notifications/unread-count', {
+        const res  = await fetch(ADMIN_NOTIFICATION_URLS.unreadCount, {
             headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             credentials: 'same-origin'
         });
@@ -953,11 +970,11 @@ document.addEventListener('click', e => {
 
 /* ── Notification helpers ──────────────────────────────────── */
 const NOTIF_COLORS = {
-    pending_account: '#3E7B27', account_approved: '#10b981',
+    coc_approved: '#10b981',
     coc_approval: '#0284c7', coc_returned: '#d97706', application_forwarded: '#7c3aed',
 };
 const NOTIF_ICONS = {
-    pending_account: 'user-clock', account_approved: 'check-circle',
+    coc_approved: 'check-circle',
     coc_approval: 'file-alt', coc_returned: 'undo', application_forwarded: 'share',
 };
 function notifColor(t) { return NOTIF_COLORS[t] || '#6b7280'; }
@@ -1001,7 +1018,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (appDot) appDot.classList.remove('show');
 
             const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-            fetch('/api/admin/notifications/mark-all-read', {
+            fetch(ADMIN_NOTIFICATION_URLS.markAllRead, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
