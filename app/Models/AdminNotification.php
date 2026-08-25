@@ -99,6 +99,7 @@ class AdminNotification extends Model
     {
         return match ($this->type) {
             'pending_account'        => 'warning',
+            'new_account'            => 'info',
             'coc_approval'           => 'info',
             'coc_returned'           => 'danger',
             'application_forwarded'  => 'info',
@@ -111,6 +112,7 @@ class AdminNotification extends Model
     {
         return match ($this->type) {
             'pending_account'        => 'fa-user-clock',
+            'new_account'            => 'fa-user-plus',
             'coc_approval'           => 'fa-file-alt',
             'coc_returned'           => 'fa-undo',
             'application_forwarded'  => 'fa-share',

@@ -198,6 +198,13 @@
 </style>
 
 <div class="container py-4">
+    @php
+        // A returned subsection must be visible immediately even if a legacy
+        // workflow did not synchronize the two main status columns yet.
+        $dashboardStatus = $application && count($application->getReturnedSections()) > 0
+            ? 'Returned'
+            : ($application?->coc_status ?: $application?->status);
+    @endphp
     <div class="dashboard-wrapper">
         {{-- Left Card --}}
         <div class="container-card text-center">
@@ -222,11 +229,11 @@
                         <td>
                             <span class="badge
                                 @if(!$application) bg-secondary
-                                @elseif(in_array($application->coc_status, ['Under Review', 'Admin Approval'])) bg-warning
-                                @elseif($application->coc_status === 'Returned') bg-danger
-                                @elseif($application->coc_status === 'Approved') bg-success
+                                @elseif(in_array($dashboardStatus, ['Under Review', 'Admin Approval'])) bg-warning
+                                @elseif($dashboardStatus === 'Returned') bg-danger
+                                @elseif($dashboardStatus === 'Approved') bg-success
                                 @else bg-secondary @endif">
-                                {{ $application ? __($application->coc_status) : __('No Application Submitted') }}
+                                {{ $application ? __($dashboardStatus) : __('No Application Submitted') }}
                             </span>
                         </td>
                     </tr>
@@ -245,10 +252,10 @@
                 <span class="fw-semibold">{{ __('Current Status') }}:</span>
                 <span class="badge
                     @if(!$application) bg-secondary
-                    @elseif($application->status === 'Approved') bg-success
-                    @elseif($application->status === 'Rejected') bg-danger
+                    @elseif($dashboardStatus === 'Approved') bg-success
+                    @elseif(in_array($dashboardStatus, ['Returned', 'Rejected'])) bg-danger
                     @else bg-warning @endif">
-                    {{ $application ? __($application->status) : __('No Application Submitted') }}
+                    {{ $application ? __($dashboardStatus) : __('No Application Submitted') }}
                 </span>
             </div>
 

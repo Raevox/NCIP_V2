@@ -256,9 +256,12 @@
                 <a href="{{ route('applicant.coc.start-new-with-old-data') }}" class="btn btn-primary">
                     <i class="fas fa-copy"></i> {{ __('Apply Again Using Previous Data') }}
                 </a>
-                <a href="{{ route('applicant.coc.step1') }}" class="btn btn-outline">
-                    <i class="fas fa-plus"></i> {{ __('Start Fresh Application') }}
-                </a>
+                <form method="POST" action="{{ route('applicant.coc.start-fresh') }}" class="d-flex flex-grow-1">
+                    @csrf
+                    <button type="submit" class="btn btn-outline w-100">
+                        <i class="fas fa-plus"></i> {{ __('Start Fresh Application') }}
+                    </button>
+                </form>
             </div>
             <small class="text-muted mt-2 d-block">
                 <i class="fas fa-info-circle"></i> 

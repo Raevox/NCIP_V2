@@ -64,7 +64,7 @@ class StaffController extends Controller
         // Filters that live inside the step1 TEXT column - must be done in PHP
         $applyJsonFilters = function ($collection) use ($request) {
             return $collection->filter(function ($app) use ($request) {
-                $step1 = json_decode($app->step1, true) ?? [];
+                $step1 = $this->decodeArrayValue($app->step1);
 
                 if ($request->filled('municipality')) {
                     if (($step1['municipality_name'] ?? null) !== $request->municipality) {
@@ -124,7 +124,7 @@ class StaffController extends Controller
 
         $municipalities = CocApplication::whereNotNull('step1')
             ->pluck('step1')
-            ->map(fn($json) => json_decode($json, true)['municipality_name'] ?? null)
+            ->map(fn($value) => $this->decodeArrayValue($value)['municipality_name'] ?? null)
             ->filter()
             ->unique()
             ->sort()
@@ -201,10 +201,10 @@ class StaffController extends Controller
     {
         $application = CocApplication::with('applicantRegistration')->findOrFail($id);
 
-        $step1 = json_decode($application->step1, true) ?? [];
-        $step2 = json_decode($application->step2, true) ?? [];
-        $step3 = json_decode($application->step3, true) ?? [];
-        $step4 = json_decode($application->step4, true) ?? [];
+        $step1 = $this->decodeArrayValue($application->step1);
+        $step2 = $this->decodeArrayValue($application->step2);
+        $step3 = $this->decodeArrayValue($application->step3);
+        $step4 = $this->decodeArrayValue($application->step4);
 
         $ipAccount = $application->applicant ?? null;
 
@@ -418,5 +418,28 @@ class StaffController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Normalize JSON database values that may already be cast to arrays by Eloquent.
+     */
+    private function decodeArrayValue(mixed $value): array
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+
+        if (! is_string($value) || $value === '') {
+            return [];
+        }
+
+        $decoded = json_decode($value, true);
+
+        // Also tolerate legacy values that were accidentally JSON-encoded twice.
+        if (is_string($decoded)) {
+            $decoded = json_decode($decoded, true);
+        }
+
+        return is_array($decoded) ? $decoded : [];
     }
 }

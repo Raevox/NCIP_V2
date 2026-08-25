@@ -17,7 +17,7 @@
                     </div>
 
                     <div class="form-content">
-                        <form id="step3Form" action="{{ route('applicant.coc.step3.store', ['id' => $step3['id'] ?? null]) }}" method="POST">
+                        <form id="step3Form" action="{{ route('applicant.coc.step3.store', ['id' => $application->id]) }}" method="POST">
                             @csrf
                             @php
                                 $ipGroups = \App\Models\Tribe::active()->orderBy('name')->pluck('name')->toArray();
@@ -81,37 +81,42 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="form-label" for="province">{{ __('Province') }}</label>
-                                            <input type="text" 
-                                                   name="province" 
-                                                   id="province"
-                                                   class="form-control" 
-                                                   placeholder="{{ __('Province') }}"
-                                                   autocomplete="address-level1"
-                                                   value="{{ old('province', $step3['province'] ?? '') }}">
+                                            <select name="province"
+                                                    id="province"
+                                                    class="form-control"
+                                                    data-selected="{{ old('province', $step3['province'] ?? '') }}"
+                                                    autocomplete="address-level1"
+                                                    required>
+                                                <option value="" disabled selected>{{ __('Loading...') }}</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="form-label" for="municipality">{{ __('Municipality') }}</label>
-                                            <input type="text" 
-                                                   name="municipality" 
-                                                   id="municipality"
-                                                   class="form-control" 
-                                                   placeholder="{{ __('Municipality') }}"
-                                                   autocomplete="address-level2"
-                                                   value="{{ old('municipality', $step3['municipality'] ?? '') }}">
+                                            <select name="municipality"
+                                                    id="municipality"
+                                                    class="form-control"
+                                                    data-selected="{{ old('municipality', $step3['municipality'] ?? '') }}"
+                                                    autocomplete="address-level2"
+                                                    required
+                                                    disabled>
+                                                <option value="" disabled selected>{{ __('Select Province first') }}</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="form-label" for="barangay">{{ __('Barangay') }}</label>
-                                            <input type="text" 
-                                                   name="barangay" 
-                                                   id="barangay"
-                                                   class="form-control" 
-                                                   placeholder="{{ __('Barangay') }}"
-                                                   autocomplete="off"
-                                                   value="{{ old('barangay', $step3['barangay'] ?? '') }}">
+                                            <select name="barangay"
+                                                    id="barangay"
+                                                    class="form-control"
+                                                    data-selected="{{ old('barangay', $step3['barangay'] ?? '') }}"
+                                                    autocomplete="address-level3"
+                                                    required
+                                                    disabled>
+                                                <option value="" disabled selected>{{ __('Select Municipality first') }}</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -855,6 +860,101 @@
         const submitBtn = form.querySelector('.btn-next');
         const nameInputs = form.querySelectorAll('input[name$="_first_name"], input[name$="_last_name"]');
         const namePattern = /^[A-Za-z]+(?:[ .-][A-Za-z]+)*$/;
+
+        const provinceSelect = document.getElementById('province');
+        const municipalitySelect = document.getElementById('municipality');
+        const barangaySelect = document.getElementById('barangay');
+
+        function setAddressPlaceholder(select, message) {
+            select.innerHTML = '';
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = message;
+            option.disabled = true;
+            option.selected = true;
+            select.appendChild(option);
+            select.disabled = true;
+        }
+
+        function populateAddressSelect(select, items, labelKey, codeKey, placeholder) {
+            setAddressPlaceholder(select, placeholder);
+            items.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item[labelKey];
+                option.textContent = item[labelKey];
+                option.dataset.code = item[codeKey];
+                select.appendChild(option);
+            });
+            select.disabled = false;
+        }
+
+        function selectAddressByName(select, name) {
+            if (!name) return false;
+            const normalized = name.trim().toLocaleLowerCase();
+            const option = [...select.options].find(item =>
+                item.value.trim().toLocaleLowerCase() === normalized
+            );
+            if (!option) return false;
+            select.value = option.value;
+            return true;
+        }
+
+        async function initializePresentAddress() {
+            const savedProvince = provinceSelect.dataset.selected || '';
+            const savedMunicipality = municipalitySelect.dataset.selected || '';
+            const savedBarangay = barangaySelect.dataset.selected || '';
+
+            try {
+                const [provinceResponse, municipalityResponse, barangayResponse] = await Promise.all([
+                    fetch('{{ asset("data/provinces.json") }}'),
+                    fetch('{{ asset("data/mun.json") }}'),
+                    fetch('{{ asset("data/brgy.json") }}'),
+                ]);
+
+                if (!provinceResponse.ok || !municipalityResponse.ok || !barangayResponse.ok) {
+                    throw new Error('Failed to load address data.');
+                }
+
+                const provinces = (await provinceResponse.json()).RECORDS
+                    .sort((a, b) => a.provDesc.localeCompare(b.provDesc));
+                const municipalities = (await municipalityResponse.json()).RECORDS;
+                const barangays = (await barangayResponse.json()).RECORDS;
+
+                const loadMunicipalities = () => {
+                    const provinceCode = provinceSelect.selectedOptions[0]?.dataset.code;
+                    const matches = municipalities
+                        .filter(item => item.provCode === provinceCode)
+                        .sort((a, b) => a.citymunDesc.localeCompare(b.citymunDesc));
+                    populateAddressSelect(municipalitySelect, matches, 'citymunDesc', 'citymunCode', '{{ __('Select Municipality') }}');
+                    setAddressPlaceholder(barangaySelect, '{{ __('Select Municipality first') }}');
+                };
+
+                const loadBarangays = () => {
+                    const municipalityCode = municipalitySelect.selectedOptions[0]?.dataset.code;
+                    const matches = barangays
+                        .filter(item => item.citymunCode === municipalityCode)
+                        .sort((a, b) => a.brgyDesc.localeCompare(b.brgyDesc));
+                    populateAddressSelect(barangaySelect, matches, 'brgyDesc', 'brgyCode', '{{ __('Select Barangay') }}');
+                };
+
+                populateAddressSelect(provinceSelect, provinces, 'provDesc', 'provCode', '{{ __('Select Province') }}');
+                provinceSelect.addEventListener('change', loadMunicipalities);
+                municipalitySelect.addEventListener('change', loadBarangays);
+
+                if (selectAddressByName(provinceSelect, savedProvince)) {
+                    loadMunicipalities();
+                    if (selectAddressByName(municipalitySelect, savedMunicipality)) {
+                        loadBarangays();
+                        selectAddressByName(barangaySelect, savedBarangay);
+                    }
+                }
+            } catch (error) {
+                console.error('Present address dropdown error:', error);
+                setAddressPlaceholder(provinceSelect, '{{ __('Unable to load addresses — please refresh') }}');
+            }
+        }
+
+        initializePresentAddress();
 
         function validateNameField(input) {
             const value = input.value.trim();

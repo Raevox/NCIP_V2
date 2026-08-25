@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\IpAccount;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\Log;
 
 class IpAccountObserver
@@ -18,5 +19,6 @@ class IpAccountObserver
         Log::info('   Name: ' . $ipAccount->first_name . ' ' . $ipAccount->last_name);
         Log::info('═══════════════════════════════════════════');
         
+        NotificationService::notifyNewAccount($ipAccount);
     }
 }

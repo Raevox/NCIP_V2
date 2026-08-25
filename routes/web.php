@@ -318,6 +318,7 @@ Route::middleware(['auth:applicant'])->prefix('applicant')->name('applicant.')->
             ->whereNumber('application')
             ->name('draft.reset');
         Route::get('/start-with-old-data', [ApplicantDashboardController::class, 'startNewApplicationWithOldData'])->name('start-new-with-old-data');
+        Route::post('/start-fresh', [ApplicantDashboardController::class, 'startFreshApplication'])->name('start-fresh');
 
         // Step 1
         Route::get('/form/step1', [ApplicantDashboardController::class, 'showCocFormStep1'])->name('step1');

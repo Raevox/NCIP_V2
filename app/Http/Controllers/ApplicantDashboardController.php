@@ -27,7 +27,11 @@ class ApplicantDashboardController extends Controller
         $record = IpRecord::where('name', $fullName)->first();
         $application = CocApplication::where('user_id', $user->id)->latest()->first();
 
-        return view('applicant.dashboard', compact('user', 'record', 'application'));
+        return response()
+            ->view('applicant.dashboard', compact('user', 'record', 'application'))
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 
   public function profile()
@@ -75,7 +79,7 @@ public function coc()
     if ($application->status === 'Returned') {
         $returnedSteps = $application->getReturnedSteps();
         $firstStep = min($returnedSteps);
-        return redirect()->route("applicant.coc.step{$firstStep}")
+        return redirect()->route("applicant.coc.step{$firstStep}", ['id' => $application->id])
                          ->with('info', 'Please complete the returned sections.');
     }
 
@@ -162,13 +166,13 @@ public function showCocFormStep1()
 
     if (($empty = empty($step1)) || $missingOriginData) {
         if ($application && $application->step1) {
-            $dbStep1 = json_decode($application->step1, true);
+            $dbStep1 = $this->decodeArrayValue($application->step1);
             $step1 = $empty ? $dbStep1 : array_merge($dbStep1, $step1);
             session(['coc_step1' => $step1]);
         }
     }
 
-    $remarks = $application ? json_decode($application->remarks, true) : [];
+    $remarks = $application ? $this->decodeArrayValue($application->remarks) : [];
     $stepRemarks = $remarks['index_form'] ?? null;
 
     if (!$this->canAccessForms($application)) {
@@ -262,18 +266,18 @@ public function saveCocStep1(Request $request)
         $step2 = session('coc_step2', []);
 
         if (empty($step2) && $application && $application->step2) {
-            $step2 = json_decode($application->step2, true) ?? [];
+            $step2 = $this->decodeArrayValue($application->step2);
             session(['coc_step2' => $step2]);
         }
 
         $step1 = session('coc_step1', []);
 
         if (empty($step1) && $application && $application->step1) {
-            $step1 = json_decode($application->step1, true) ?? [];
+            $step1 = $this->decodeArrayValue($application->step1);
             session(['coc_step1' => $step1]);
         }
 
-        $remarks = $application ? json_decode($application->remarks, true) : [];
+        $remarks = $application ? $this->decodeArrayValue($application->remarks) : [];
         $stepRemarks = $remarks['index_form'] ?? null;
 
         if (!$this->canAccessStep($application, 2)) {
@@ -377,35 +381,44 @@ public function saveCocStep2(Request $request)
     }
 
     // Normal flow (fresh application, hindi returned)
-    return redirect()->route('applicant.coc.step3');
+    return redirect()->route('applicant.coc.step3', ['id' => $application->id]);
 }
 
 
 
-    public function showCocFormStep3()
+    public function showCocFormStep3($id = null)
 {
     $user  = Auth::guard('applicant')->user();
 
-    $application = CocApplication::where('user_id', $user->id)
-        ->whereIn('status', ['Draft', 'Returned'])
-        ->latest()
-        ->first();
+    $applicationQuery = CocApplication::where('user_id', $user->id)
+        ->whereIn('status', ['Draft', 'Returned']);
+
+    $application = $id
+        ? $applicationQuery->whereKey($id)->firstOrFail()
+        : $applicationQuery->latest('id')->first();
 
     $step1 = session('coc_step1', []);
     if (empty($step1) && $application && $application->step1) {
-        $step1 = json_decode($application->step1, true) ?? [];
+        $step1 = $this->decodeArrayValue($application->step1);
         session(['coc_step1' => $step1]);
     }
 
     $step2 = session('coc_step2', []);
     if (empty($step2) && $application && $application->step2) {
-        $step2 = json_decode($application->step2, true) ?? [];
+        $step2 = $this->decodeArrayValue($application->step2);
         session(['coc_step2' => $step2]);
     }
 
     $step3 = session('coc_step3', []);
-    if (empty($step3) && $application && $application->step3) {
-        $step3 = json_decode($application->step3, true) ?? [];
+    $storedStep3 = $application ? $this->decodeArrayValue($application->step3) : [];
+
+    // A returned form must reopen with the exact data that was reviewed.
+    // Session data may belong to a different/newer draft, so the DB is authoritative.
+    if ($application?->status === 'Returned') {
+        $step3 = $storedStep3;
+        session(['coc_step3' => $step3]);
+    } elseif (empty($step3) && ! empty($storedStep3)) {
+        $step3 = $storedStep3;
         session(['coc_step3' => $step3]);
     }
 
@@ -457,7 +470,7 @@ public function saveCocStep2(Request $request)
     $step3 = array_merge($prefill, $step3);
 
     // $application = CocApplication::where('user_id', $user->id)->latest()->first();
-    $remarks = $application ? json_decode($application->remarks, true) : [];
+    $remarks = $application ? $this->decodeArrayValue($application->remarks) : [];
     $stepRemarks = $remarks['genealogy_form'] ?? null; // adjust key kung needed
     
     if (!$this->canAccessStep($application, 3)) {
@@ -467,7 +480,7 @@ public function saveCocStep2(Request $request)
     return view('applicant.coc.step3', compact('user', 'step3', 'step1', 'stepRemarks', 'application'));
 }
 
-public function saveCocStep3(Request $request)
+public function saveCocStep3(Request $request, $id = null)
 {
     $step2 = session('coc_step2', []);
 
@@ -536,43 +549,46 @@ public function saveCocStep3(Request $request)
 
     session(['coc_step3' => $finalStep3]);
     $user = Auth::guard('applicant')->user();
-         $application = CocApplication::where('user_id', $user->id)
-        ->whereIn('status', ['Draft', 'Returned'])
-        ->orderBy('updated_at', 'desc')
-        ->first();
+        $applicationQuery = CocApplication::where('user_id', $user->id)
+            ->whereIn('status', ['Draft', 'Returned']);
 
-        if (!$application) {
-            $application = new CocApplication();
-            $application->user_id = $user->id;
-            $application->status  = 'Draft';
+        $application = $id
+            ? $applicationQuery->whereKey($id)->firstOrFail()
+            : $applicationQuery->latest('id')->first();
+
+        if (! $application) {
+            return redirect()->route('applicant.coc.step1')
+                ->with('error', 'The application being edited could not be found. Please continue from Step 1.');
         }
 
         $application->step3 = json_encode($finalStep3);
         $application->save();
-    return redirect()->route('applicant.coc.step4')
+    return redirect()->route('applicant.coc.step4', ['id' => $application->id])
         ->with('success', 'Step 3 saved successfully.');
 }
 
 
 
-public function showCocFormStep4()
+public function showCocFormStep4($id = null)
 {
     $user  = Auth::guard('applicant')->user();
 
-    $application = CocApplication::where('user_id', $user->id)
-        ->whereIn('status', ['Draft', 'Returned'])
-        ->latest()
-        ->first();
+    $applicationQuery = CocApplication::where('user_id', $user->id)
+        ->whereIn('status', ['Draft', 'Returned']);
+
+    $application = $id
+        ? $applicationQuery->whereKey($id)->firstOrFail()
+        : $applicationQuery->latest('id')->first();
 
     $step2 = session('coc_step2', []);
     if (empty($step2) && $application && $application->step2) {
-        $step2 = json_decode($application->step2, true) ?? [];
+        $step2 = $this->decodeArrayValue($application->step2);
         session(['coc_step2' => $step2]);
     }
 
     $step4 = session('coc_step4', []);
     if (empty($step4) && $application && $application->step4) {
-        $step4 = json_decode($application->step4, true) ?? [];
+        $step4 = $this->decodeArrayValue($application->step4);
         session(['coc_step4' => $step4]);
     }
 
@@ -613,7 +629,7 @@ public function showCocFormStep4()
 
     
     // $application = CocApplication::where('user_id', $user->id)->latest()->first();
-    $remarks = $application ? json_decode($application->remarks, true) : [];
+    $remarks = $application ? $this->decodeArrayValue($application->remarks) : [];
     $stepRemarks = $remarks['genealogy_form'] ?? null; // adjust key kung needed
 
         if (!$this->canAccessStep($application, 4)) {
@@ -625,7 +641,7 @@ public function showCocFormStep4()
 
 }
 
-public function saveCocStep4(Request $request)
+public function saveCocStep4(Request $request, $id = null)
 {
     $step2 = session('coc_step2', []);
 
@@ -685,15 +701,16 @@ public function saveCocStep4(Request $request)
     session(['coc_step4' => $finalStep4]);
 
     $user = Auth::guard('applicant')->user();
-    $application = CocApplication::where('user_id', $user->id)
-        ->whereIn('status', ['Draft', 'Returned'])
-        ->latest()
-        ->first();
+    $applicationQuery = CocApplication::where('user_id', $user->id)
+        ->whereIn('status', ['Draft', 'Returned']);
 
-    if (!$application) {
-        $application = new CocApplication();
-        $application->user_id = $user->id;
-        $application->status  = 'Draft';
+    $application = $id
+        ? $applicationQuery->whereKey($id)->firstOrFail()
+        : $applicationQuery->latest('id')->first();
+
+    if (! $application) {
+        return redirect()->route('applicant.coc.step1')
+            ->with('error', 'The application being edited could not be found. Please continue from Step 1.');
     }
 
     $application->step4 = json_encode($finalStep4);
@@ -738,7 +755,7 @@ if ($application->status === 'Returned' && in_array('genealogy', $application->g
         $allData = array_merge($step1, $step2, $step3, $step4);
         
         $application = CocApplication::where('user_id', $user->id)->latest()->first();
-        $remarks = $application ? json_decode($application->remarks, true) : [];
+        $remarks = $application ? $this->decodeArrayValue($application->remarks) : [];
         $stepRemarks = $remarks['documents'] ?? null;
         $stepRemarks = $remarks['genealogy_form'] ?? null; // adjust key kung needed
         if (!$this->canAccessStep($application, 5)) {
@@ -848,10 +865,10 @@ public function previewCoc($id)
             ->with('error', 'You cannot preview this application.');
     }
 
-    $step1 = json_decode($application->step1, true) ?? [];
-    $step2 = json_decode($application->step2, true) ?? [];
-    $step3 = json_decode($application->step3, true) ?? [];
-    $step4 = json_decode($application->step4, true) ?? [];
+    $step1 = $this->decodeArrayValue($application->step1);
+    $step2 = $this->decodeArrayValue($application->step2);
+    $step3 = $this->decodeArrayValue($application->step3);
+    $step4 = $this->decodeArrayValue($application->step4);
 
     $ipAccount = IpAccount::find($application->user_id);
 
@@ -934,10 +951,20 @@ public function resubmitToStep($step, $application)
 
     $app = CocApplication::where('id', $application)
         ->where('user_id', Auth::guard('applicant')->id())
+        ->where('status', 'Returned')
         ->firstOrFail();
 
-    // Imbes na normal route, punta sa resubmit form
-    return redirect()->route('applicant.coc.resubmit.show', ['application' => $app->id, 'step' => $step]);
+    $returnedSteps = $app->getReturnedSteps();
+    if (! in_array((int) $step, $returnedSteps, true)) {
+        $step = $app->getNextReturnedStep();
+    }
+
+    if (! $step) {
+        return redirect()->route('applicant.track-status')
+            ->with('error', 'No section is currently marked for correction.');
+    }
+
+    return redirect()->route("applicant.coc.step{$step}", ['id' => $app->id]);
 }
 public function showResubmit(CocApplication $application, $step = null)
 {
@@ -946,12 +973,6 @@ public function showResubmit(CocApplication $application, $step = null)
     if ($application->user_id !== $user->id) {
         abort(403);
     }
-
-    // Decode all steps
-    $application->step1 = json_decode($application->step1, true) ?? [];
-    $application->step2 = json_decode($application->step2, true) ?? [];
-    $application->step3 = json_decode($application->step3, true) ?? [];
-    $application->step4 = json_decode($application->step4, true) ?? [];
 
     // Determine which step to show first (default)
     if ($application->index_status === 'returned') {
@@ -969,11 +990,9 @@ public function showResubmit(CocApplication $application, $step = null)
         $returnedStep = $step;
     }
 
-    return view('applicant.coc.resubmit', [
-    'application'   => $application,
-    'returnedStep'  => $returnedStep,
-    'user'          => $user,   // <- idagdag ito
-]);
+    return redirect()->route("applicant.coc.step{$returnedStep}", [
+        'id' => $application->id,
+    ]);
 }
  // I-DELETE ang isang duplicate - panatilihin ito:
 private function canAccessStep($application, $step)
@@ -1169,7 +1188,7 @@ public function savePurpose(Request $request)
     ]);
 
     // Get existing step1 data
-    $step1Data = json_decode($application->step1, true);
+    $step1Data = $this->decodeArrayValue($application->step1);
     
     // Ensure we have valid step1 data
     if (!is_array($step1Data)) {
@@ -1227,7 +1246,7 @@ public function startNewApplicationWithOldData()
     $newApplication->coc_status = 'Draft';
     
     // Kopyahin ang data mula sa last application (maliban sa purpose)
-    $step1Data = json_decode($lastApplication->step1, true);
+    $step1Data = $this->decodeArrayValue($lastApplication->step1);
     
     // I-reset ang purpose field para palitan ng user
     $step1Data['purpose'] = [];
@@ -1243,9 +1262,9 @@ public function startNewApplicationWithOldData()
     // I-set ang session data para sa steps
     session([
         'coc_step1' => $step1Data,
-        'coc_step2' => json_decode($lastApplication->step2, true),
-        'coc_step3' => json_decode($lastApplication->step3, true),
-        'coc_step4' => json_decode($lastApplication->step4, true)
+        'coc_step2' => $this->decodeArrayValue($lastApplication->step2),
+        'coc_step3' => $this->decodeArrayValue($lastApplication->step3),
+        'coc_step4' => $this->decodeArrayValue($lastApplication->step4)
     ]);
 
     // Clear the session data
@@ -1253,6 +1272,41 @@ public function startNewApplicationWithOldData()
 
     return redirect()->route('applicant.coc.purpose-selection', ['id' => $newApplication->id])
                      ->with('success', 'Previous application data loaded. Please select your purpose for this application.');
+}
+
+public function startFreshApplication()
+{
+    $user = Auth::guard('applicant')->user();
+
+    $latestApplication = CocApplication::where('user_id', $user->id)
+        ->latest('id')
+        ->first();
+
+    if ($latestApplication && ! (
+        $latestApplication->status === 'Approved' &&
+        $latestApplication->coc_status === 'Approved'
+    )) {
+        return redirect()->route('applicant.coc.index')
+            ->with('error', 'Please complete your current application before starting a fresh one.');
+    }
+
+    session()->forget([
+        'coc_step1',
+        'coc_step2',
+        'coc_step3',
+        'coc_step4',
+        'last_approved_application',
+        'returned_step',
+    ]);
+
+    $application = CocApplication::create([
+        'user_id' => $user->id,
+        'status' => 'Draft',
+        'coc_status' => 'Draft',
+    ]);
+
+    return redirect()->route('applicant.coc.step1', ['id' => $application->id])
+        ->with('success', 'Fresh application started. Please complete Step 1.');
 }
 
 public function showGenealogyPrint($id = null)
@@ -1270,8 +1324,8 @@ public function showGenealogyPrint($id = null)
             ->firstOrFail();
     }
 
-    $step3 = json_decode($application->step3, true) ?? [];
-    $step4 = json_decode($application->step4, true) ?? [];
+    $step3 = $this->decodeArrayValue($application->step3);
+    $step4 = $this->decodeArrayValue($application->step4);
 
     return view('applicant.coc.genealogy-print', compact('step3', 'step4'));
 }
@@ -1293,8 +1347,8 @@ public function downloadGenealogyPdf($id = null)
             ->firstOrFail();
     }
 
-    $step3 = json_decode($application->step3, true) ?? [];
-    $step4 = json_decode($application->step4, true) ?? [];
+    $step3 = $this->decodeArrayValue($application->step3);
+    $step4 = $this->decodeArrayValue($application->step4);
 
     $pdf = Pdf::loadView('applicant.coc.genealogy-pdf', compact('step3', 'step4'))
         ->setPaper('legal', 'landscape');
@@ -1306,21 +1360,28 @@ public function autosaveStep4(Request $request)
 {
     $user = Auth::guard('applicant')->user();
 
-    // Lenient save - no strict validation, just capture whatever is currently filled
-    $data = $request->except(['_token']);
+    $request->validate([
+        'application_id' => ['required', 'integer'],
+    ]);
 
-    session(['coc_step4' => $data]);
-
-    $application = CocApplication::where('user_id', $user->id)
+    // Save only to the application whose Step 4 form is open. Never create a
+    // replacement Draft when a returned application has already been resubmitted.
+    $application = CocApplication::whereKey($request->integer('application_id'))
+        ->where('user_id', $user->id)
         ->whereIn('status', ['Draft', 'Returned'])
-        ->latest()
         ->first();
 
-    if (!$application) {
-        $application = new CocApplication();
-        $application->user_id = $user->id;
-        $application->status  = 'Draft';
+    if (! $application) {
+        return response()->json([
+            'success' => false,
+            'message' => 'This application is no longer editable.',
+        ], 409);
     }
+
+    // Lenient save - no strict validation, just capture whatever is currently filled.
+    $data = $request->except(['_token', 'application_id']);
+
+    session(['coc_step4' => $data]);
 
     $application->step4 = json_encode($data);
     $application->save();
@@ -1328,5 +1389,27 @@ public function autosaveStep4(Request $request)
     return response()->json(['success' => true]);
 }
 
+/**
+ * Normalize application JSON fields that Eloquent may already have cast to arrays.
+ */
+private function decodeArrayValue(mixed $value): array
+{
+    if (is_array($value)) {
+        return $value;
+    }
+
+    if (! is_string($value) || $value === '') {
+        return [];
+    }
+
+    $decoded = json_decode($value, true);
+
+    // Tolerate legacy values that were accidentally encoded twice.
+    if (is_string($decoded)) {
+        $decoded = json_decode($decoded, true);
+    }
+
+    return is_array($decoded) ? $decoded : [];
+}
 
 }

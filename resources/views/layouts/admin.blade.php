@@ -970,10 +970,12 @@ document.addEventListener('click', e => {
 
 /* ── Notification helpers ──────────────────────────────────── */
 const NOTIF_COLORS = {
+    new_account: '#0284c7',
     coc_approved: '#10b981',
     coc_approval: '#0284c7', coc_returned: '#d97706', application_forwarded: '#7c3aed',
 };
 const NOTIF_ICONS = {
+    new_account: 'user-plus',
     coc_approved: 'check-circle',
     coc_approval: 'file-alt', coc_returned: 'undo', application_forwarded: 'share',
 };

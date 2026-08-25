@@ -232,6 +232,10 @@
             <button class="np-tab active" onclick="switchTab(this,'all')">
                 <i class="fas fa-inbox"></i> All
             </button>
+<button class="np-tab" onclick="switchTab(this,'new_account')">
+    <i class="fas fa-user-plus"></i> New Accounts
+</button>
+
 <button class="np-tab" onclick="switchTab(this,'coc_approved')">
     <i class="fas fa-check-circle"></i> COC Approved
 </button>
@@ -308,6 +312,9 @@ function notificationUrl(id, action='') {
 
 /* ── Type config ─────────────────────────────────────── */
 const TYPE_CFG = {
+    new_account: {
+        color:'#0284c7', bg:'#f0f9ff', icon:'user-plus', label:'New Account'
+    },
     coc_approved: {
         color:'#0ea371', bg:'#ecfdf5', icon:'check-circle', label:'COC Approved'
     },

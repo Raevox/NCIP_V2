@@ -1,7 +1,7 @@
 @if($application && $application->status === 'Returned')
 @php
-    // Default to step1 if no returned_step in session
-    $step = session('returned_step', 1);
+    // Open the first step that staff actually returned for correction.
+    $step = $application->getNextReturnedStep();
 @endphp
 
 <style>
@@ -118,12 +118,14 @@
             Please review the remarks above, update the necessary information or documents, and resubmit your application.
         </div>
         
+        @if($step)
         <div class="resubmit-container">
             <a href="{{ route('applicant.coc.resubmit.step', ['step' => $step, 'application' => $application->id]) }}" 
                class="btn-resubmit">
                 Resubmit
             </a>
         </div>
+        @endif
     </div>
 </div>
 @endif

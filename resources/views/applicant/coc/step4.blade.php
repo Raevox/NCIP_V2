@@ -17,8 +17,9 @@
                     </div>
 
                     <div class="form-content">
-                        <form id="step4Form" action="{{ route('applicant.coc.step4.store', ['id' => $step4['id'] ?? null]) }}" method="POST">
+                        <form id="step4Form" action="{{ route('applicant.coc.step4.store', ['id' => $application->id]) }}" method="POST">
                             @csrf
+                            <input type="hidden" name="application_id" value="{{ $application->id }}">
 
                             @php
                                 $ipGroups = \App\Models\Tribe::active()->orderBy('name')->pluck('name')->toArray();
@@ -407,12 +408,12 @@
 
                             {{-- Download Button --}}
                             <div class="download-section">
-                                <a href="{{ route('applicant.coc.genealogy-print') }}" 
+                                <a href="{{ route('applicant.coc.genealogy-print', $application->id) }}"
                                 id="previewGenealogyBtn"
                                 class="btn btn-download">
                                     <i class="fas fa-eye"></i> {{ __('Preview Genealogy Form') }}
                                 </a>
-                                <a href="{{ route('applicant.coc.genealogy-download') }}" 
+                                <a href="{{ route('applicant.coc.genealogy-download', $application->id) }}"
                                 id="downloadGenealogyBtn"
                                 class="btn btn-download">
                                     <i class="fas fa-file-pdf"></i> {{ __('Download as PDF') }}
@@ -421,7 +422,7 @@
 
                             {{-- Form Actions --}}
                             <div class="form-actions">
-                                <a href="{{ route('applicant.coc.step3') }}" class="btn btn-back">← {{ __('Back') }}</a>
+                                <a href="{{ route('applicant.coc.step3', ['id' => $application->id]) }}" class="btn btn-back">← {{ __('Back') }}</a>
 
                                 @if(
                                     $application->status === 'Returned' && 

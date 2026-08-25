@@ -10,14 +10,11 @@ use Illuminate\Support\Facades\Log;
 
 class NotificationService
 {
-    public static function notifyPendingAccount(IpAccount $account): void
+    public static function notifyNewAccount(IpAccount $account): void
 {
     try {
         $name = trim(($account->first_name ?? '') . ' ' . ($account->last_name ?? ''))
             ?: ($account->name ?? "Account #{$account->id}");
-
-        $url = self::safeRoute('admin.applicants.view', $account->id)
-            ?? url('/admin/applicants/' . $account->id . '/view');
 
         $admins = User::where('role', 'admin')->where('status', 'active')->get();
 
@@ -27,19 +24,19 @@ class NotificationService
                     'user_id'      => $admin->id,
                     'related_id'   => $account->id,
                     'related_type' => 'IpAccount',
-                    'type' => 'pending_account',
+                    'type' => 'new_account',
                 ],
                 [
                    'title'   => 'New Registration',
                     'message' => "{$name} has registered.",
-                    'action_url' => $url,
-                    'priority'   => 'high',
+                    'action_url' => null,
+                    'priority'   => 'normal',
                     'is_read'    => false,
                 ]
             );
         }
     } catch (\Exception $e) {
-        Log::error('notifyPendingAccount error: ' . $e->getMessage());
+        Log::error('notifyNewAccount error: ' . $e->getMessage());
     }
 }
 
