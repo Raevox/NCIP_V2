@@ -2,287 +2,126 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Http\Client\Request;
-use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class WebsiteChatbotTest extends TestCase
 {
-    private const FALLBACK = "I'm sorry, but I couldn't find an answer to your question in our public information. Please reach out to our support team directly for further assistance.";
-
-    protected function setUp(): void
+    public function test_login_page_renders_with_chatbot()
     {
-        parent::setUp();
-
-        config([
-            'services.openrouter.key' => 'test-api-key',
-            'services.openrouter.url' => 'https://openrouter.test/api/v1/chat/completions',
-            'services.openrouter.model' => 'test-model',
-        ]);
+        $response = $this->get('/login');
+        $response->assertStatus(200);
+        $response->assertSee('ncipChatbot');
+        $response->assertSee('NCIP Support Assistant');
     }
 
-    public function test_question_outside_public_information_is_sent_with_strict_fallback_rule(): void
+    /* -------------------------------------------------------------
+     * ENGLISH TESTS
+     * ------------------------------------------------------------- */
+    public function test_english_greeting()
     {
-        Http::fake([
-            'openrouter.test/*' => Http::response([
-                'choices' => [
-                    ['message' => ['content' => self::FALLBACK]],
-                ],
-            ]),
-        ]);
-
-        $this->postJson(route('website.chat'), [
-            'message' => 'What is the weather tomorrow?',
-        ])->assertOk()
-            ->assertExactJson(['answer' => self::FALLBACK]);
-
-        Http::assertSentCount(1);
+        $response = $this->postJson('/api/website-chat', ['message' => 'Hello there']);
+        $response->assertStatus(200);
+        $this->assertStringContainsString('How can I help you today?', $response->json('answer'));
     }
 
-    public function test_faq_question_uses_faq_first_and_published_website_context(): void
+    public function test_english_whats_ncip()
     {
-        Http::fake([
-            'openrouter.test/*' => Http::response([
-                'choices' => [
-                    ['message' => ['content' => 'You need a birth certificate, applicant photo, and a certificate from the Tribal Chieftain.']],
-                ],
-            ]),
-        ]);
-
-        $this->postJson(route('website.chat'), [
-            'message' => 'What documents are required for a COC application?',
-        ])->assertOk()
-            ->assertExactJson([
-                'answer' => 'You need a birth certificate, applicant photo, and a certificate from the Tribal Chieftain.',
-            ]);
-
-        Http::assertSent(function (Request $request): bool {
-            $payload = $request->data();
-            $systemPrompt = $payload['messages'][0]['content'] ?? '';
-            $faqPosition = strpos($systemPrompt, '[FAQ]');
-            $websitePosition = strpos($systemPrompt, '[WEBSITE_CONTENT]');
-
-            return $request->url() === 'https://openrouter.test/api/v1/chat/completions'
-                && $request->hasHeader('Authorization', 'Bearer test-api-key')
-                && ($payload['model'] ?? null) === 'test-model'
-                && ($payload['temperature'] ?? null) === 0
-                && ($payload['messages'][1]['content'] ?? null) === 'What documents are required for a COC application?'
-                && substr_count($systemPrompt, 'Question: ') === 6
-                && $faqPosition !== false
-                && $websitePosition !== false
-                && $faqPosition < $websitePosition
-                && str_contains($systemPrompt, 'FAQ information has priority over WEBSITE_CONTENT')
-                && str_contains($systemPrompt, 'What is the Certificate of Confirmation (COC)?')
-                && str_contains($systemPrompt, 'Contact details and office hours')
-                && str_contains($systemPrompt, self::FALLBACK);
-        });
+        $response = $this->postJson('/api/website-chat', ['message' => 'whats ncip']);
+        $response->assertStatus(200);
+        $this->assertStringContainsString('The **NCIP** is the primary government agency', $response->json('answer'));
     }
 
-    public function test_public_website_question_can_use_website_content(): void
+    public function test_english_whats_coc()
     {
-        Http::fake([
-            'openrouter.test/*' => Http::response([
-                'choices' => [
-                    ['message' => ['content' => 'The office is located at 1st Floor, Old Capitol Building, Burgos Ave., Cabanatuan City, 3100 Nueva Ecija, Philippines.']],
-                ],
-            ]),
-        ]);
-
-        $this->postJson(route('website.chat'), [
-            'message' => 'Where is the provincial office?',
-        ])->assertOk()
-            ->assertJsonPath('answer', 'The office is located at 1st Floor, Old Capitol Building, Burgos Ave., Cabanatuan City, 3100 Nueva Ecija, Philippines.');
-
-        Http::assertSentCount(1);
+        $response = $this->postJson('/api/website-chat', ['message' => 'what is coc?']);
+        $response->assertStatus(200);
+        $this->assertStringContainsString('The **Certificate of Confirmation (COC)** is an official document', $response->json('answer'));
     }
 
-    public function test_informal_ncip_identity_question_uses_published_website_definition(): void
+    public function test_english_requirements()
     {
-        $answer = 'NCIP means National Commission on Indigenous Peoples. Its Nueva Ecija Provincial Office serves as the provincial center for programs and services dedicated to Indigenous Cultural Communities and Indigenous Peoples throughout the province.';
-
-        Http::fake([
-            'openrouter.test/*' => Http::response([
-                'choices' => [
-                    ['message' => ['content' => $answer]],
-                ],
-            ]),
-        ]);
-
-        $this->postJson(route('website.chat'), [
-            'message' => 'whats ncip',
-        ])->assertOk()
-            ->assertExactJson(['answer' => $answer]);
-
-        Http::assertSent(function (Request $request): bool {
-            $payload = $request->data();
-            $systemPrompt = $payload['messages'][0]['content'] ?? '';
-
-            return ($payload['messages'][1]['content'] ?? null) === 'whats ncip'
-                && str_contains($systemPrompt, 'NCIP identity and provincial office')
-                && str_contains($systemPrompt, 'NCIP means National Commission on Indigenous Peoples');
-        });
+        $response = $this->postJson('/api/website-chat', ['message' => 'what are the requirements for coc?']);
+        $response->assertStatus(200);
+        $this->assertStringContainsString('Required Documents for COC Application', $response->json('answer'));
     }
 
-    public function test_prompt_contains_the_main_website_question_families(): void
+    public function test_english_how_to_apply()
     {
-        Http::fake([
-            'openrouter.test/*' => Http::response([
-                'choices' => [
-                    ['message' => ['content' => 'The requested public information is available on the website.']],
-                ],
-            ]),
-        ]);
-
-        $this->postJson(route('website.chat'), [
-            'message' => 'how do i apply and where can i contact you?',
-        ])->assertOk();
-
-        Http::assertSent(function (Request $request): bool {
-            $payload = $request->data();
-            $systemPrompt = $payload['messages'][0]['content'] ?? '';
-
-            foreach ([
-                'RA 8371 and NCIP mandate',
-                'ICCs/IPs rights framework',
-                'Programs, projects, and services',
-                'Contact details and office hours',
-                'Certificate of Confirmation purpose and application',
-                'COC uploads and genealogy form',
-                'COC drafts, reuse, status, and resubmission',
-                'Applicant registration and password recovery',
-                'Public website navigation',
-            ] as $topic) {
-                if (! str_contains($systemPrompt, $topic)) {
-                    return false;
-                }
-            }
-
-            return str_contains($systemPrompt, 'Interpret common contractions, misspellings, informal grammar, short keyword searches, and paraphrases')
-                && str_contains($systemPrompt, 'public navigation questions')
-                && str_contains($systemPrompt, self::FALLBACK);
-        });
+        $response = $this->postJson('/api/website-chat', ['message' => 'how to apply for coc online?']);
+        $response->assertStatus(200);
+        $this->assertStringContainsString('How to Apply for a Certificate of Confirmation', $response->json('answer'));
     }
 
-    public function test_prompt_preserves_dynamic_record_boundaries(): void
+    public function test_english_office_location()
     {
-        Http::fake([
-            'openrouter.test/*' => Http::response([
-                'choices' => [
-                    ['message' => ['content' => self::FALLBACK]],
-                ],
-            ]),
-        ]);
-
-        $this->postJson(route('website.chat'), [
-            'message' => 'which tribe was added today?',
-        ])->assertOk()
-            ->assertExactJson(['answer' => self::FALLBACK]);
-
-        Http::assertSent(function (Request $request): bool {
-            $payload = $request->data();
-            $systemPrompt = $payload['messages'][0]['content'] ?? '';
-
-            return str_contains($systemPrompt, 'Dynamic public records')
-                && str_contains($systemPrompt, 'current recognized tribes, accomplishments, partners, or news records')
-                && str_contains($systemPrompt, 'these records can change');
-        });
+        $response = $this->postJson('/api/website-chat', ['message' => 'where is your office located?']);
+        $response->assertStatus(200);
+        $this->assertStringContainsString('NCIP Nueva Ecija Provincial Office Address', $response->json('answer'));
     }
 
-    public function test_provider_failure_returns_fallback(): void
+    public function test_english_fees()
     {
-        Http::fake([
-            'openrouter.test/*' => Http::response(['error' => 'Unavailable'], 503),
-        ]);
-
-        $this->postJson(route('website.chat'), [
-            'message' => 'How long does COC processing take?',
-        ])->assertStatus(503)
-            ->assertExactJson(['answer' => self::FALLBACK]);
+        $response = $this->postJson('/api/website-chat', ['message' => 'is there a fee for applying?']);
+        $response->assertStatus(200);
+        $this->assertStringContainsString('Fees & Payment Information', $response->json('answer'));
     }
 
-    public function test_empty_provider_answer_is_replaced_with_fallback(): void
+    /* -------------------------------------------------------------
+     * TAGALOG TESTS
+     * ------------------------------------------------------------- */
+    public function test_tagalog_greeting()
     {
-        Http::fake([
-            'openrouter.test/*' => Http::response([
-                'choices' => [
-                    ['message' => ['content' => '   ']],
-                ],
-            ]),
-        ]);
-
-        $this->postJson(route('website.chat'), [
-            'message' => 'How can I track my COC application status?',
-        ])->assertOk()
-            ->assertExactJson(['answer' => self::FALLBACK]);
+        $response = $this->postJson('/api/website-chat', ['message' => 'Magandang araw po']);
+        $response->assertStatus(200);
+        $this->assertStringContainsString('Paano kita matutulungan ngayon?', $response->json('answer'));
     }
 
-    public function test_disallowed_source_phrase_is_replaced_with_fallback(): void
+    public function test_tagalog_whats_ncip()
     {
-        Http::fake([
-            'openrouter.test/*' => Http::response([
-                'choices' => [
-                    ['message' => ['content' => 'According to the FAQ, processing takes a few working days.']],
-                ],
-            ]),
-        ]);
-
-        $this->postJson(route('website.chat'), [
-            'message' => 'How long does processing take?',
-        ])->assertOk()
-            ->assertExactJson(['answer' => self::FALLBACK]);
+        $response = $this->postJson('/api/website-chat', ['message' => 'ano ang ncip?']);
+        $response->assertStatus(200);
+        $this->assertStringContainsString('Pambansang Komisyon sa mga Katutubong Pamayanan', $response->json('answer'));
     }
 
-    public function test_message_must_not_exceed_500_characters(): void
+    public function test_tagalog_whats_coc()
     {
-        Http::fake();
-
-        $this->postJson(route('website.chat'), [
-            'message' => str_repeat('a', 501),
-        ])->assertUnprocessable()
-            ->assertJsonValidationErrors('message');
-
-        Http::assertNothingSent();
+        $response = $this->postJson('/api/website-chat', ['message' => 'ano po ang coc?']);
+        $response->assertStatus(200);
+        $this->assertStringContainsString('ay isang opisyal na dokumentong inilalabas ng National Commission on Indigenous Peoples', $response->json('answer'));
     }
 
-    public function test_prompt_instructs_chatbot_to_respond_in_users_language(): void
+    public function test_tagalog_requirements()
     {
-        $answerInTagalog = 'Kailangan mo ng birth certificate, 2x2 ID photo ng aplikante, at sertipiko mula sa Tribal Chieftain.';
-
-        Http::fake([
-            'openrouter.test/*' => Http::response([
-                'choices' => [
-                    ['message' => ['content' => $answerInTagalog]],
-                ],
-            ]),
-        ]);
-
-        $this->postJson(route('website.chat'), [
-            'message' => 'Ano ang mga kailangan para sa COC?',
-        ])->assertOk()
-            ->assertExactJson(['answer' => $answerInTagalog]);
-
-        Http::assertSent(function (Request $request): bool {
-            $payload = $request->data();
-            $systemPrompt = $payload['messages'][0]['content'] ?? '';
-
-            return ($payload['messages'][1]['content'] ?? null) === 'Ano ang mga kailangan para sa COC?'
-                && str_contains($systemPrompt, 'Respond in the same language or dialect used by the user in their message');
-        });
+        $response = $this->postJson('/api/website-chat', ['message' => 'ano-ano ang mga kailangang dalhin para sa coc?']);
+        $response->assertStatus(200);
+        $this->assertStringContainsString('Mga Kailangang Dokumento sa Pag-apply ng COC', $response->json('answer'));
     }
 
-    public function test_localized_disallowed_source_phrase_is_replaced_with_fallback(): void
+    public function test_tagalog_how_to_apply()
     {
-        Http::fake([
-            'openrouter.test/*' => Http::response([
-                'choices' => [
-                    ['message' => ['content' => 'Ayon sa FAQ, ang pagproseso ay tumatagal ng ilang araw.']],
-                ],
-            ]),
-        ]);
+        $response = $this->postJson('/api/website-chat', ['message' => 'paano mag apply ng coc online?']);
+        $response->assertStatus(200);
+        $this->assertStringContainsString('Paraan ng Pag-apply ng COC Online', $response->json('answer'));
+    }
 
-        $this->postJson(route('website.chat'), [
-            'message' => 'Gaano katagal ang pagproseso?',
-        ])->assertOk()
-            ->assertExactJson(['answer' => self::FALLBACK]);
+    public function test_tagalog_office_location()
+    {
+        $response = $this->postJson('/api/website-chat', ['message' => 'saan ang opisina ninyo sa nueva ecija?']);
+        $response->assertStatus(200);
+        $this->assertStringContainsString('Lokasyon ng NCIP Nueva Ecija Provincial Office', $response->json('answer'));
+    }
+
+    public function test_tagalog_fees()
+    {
+        $response = $this->postJson('/api/website-chat', ['message' => 'may bayad ba ang pagkuha ng coc?']);
+        $response->assertStatus(200);
+        $this->assertStringContainsString('LIBRE / WALANG BAYAD', $response->json('answer'));
+    }
+
+    public function test_tagalog_gratitude()
+    {
+        $response = $this->postJson('/api/website-chat', ['message' => 'Maraming salamat po!']);
+        $response->assertStatus(200);
+        $this->assertStringContainsString('Walang anuman po!', $response->json('answer'));
     }
 }
