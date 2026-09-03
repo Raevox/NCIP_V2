@@ -207,6 +207,51 @@
         </div>
     </div>
 
+    @php
+        $versionGroups = $application->documentVersions->groupBy('document_type');
+        $versionLabels = [
+            'applicant_picture' => 'Applicant Photo',
+            'tribal_certificate' => 'Tribal Certificate',
+            'genealogy_form' => 'Genealogy Form',
+        ];
+    @endphp
+    @if($versionGroups->isNotEmpty())
+        <div class="revision-history">
+            <h6 class="revision-title"><i class="fas fa-clock-rotate-left"></i>Document Revision History</h6>
+            <p class="revision-subtitle">Previous uploads are retained for comparison.</p>
+
+            @foreach($versionGroups as $type => $versions)
+                <div class="revision-group">
+                    <strong class="revision-group-title">{{ $versionLabels[$type] ?? Str::headline($type) }} <small>{{ $versions->count() }} {{ Str::plural('version', $versions->count()) }}</small></strong>
+                    <div class="revision-list">
+                        @foreach($versions as $version)
+                            <div class="revision-item {{ $loop->first ? 'current' : '' }}">
+                                <div>
+                                    <span class="badge {{ $loop->first ? 'bg-success' : 'bg-secondary' }} me-2">
+                                        Revision {{ $version->revision }}{{ $loop->first ? ' · Current' : '' }}
+                                    </span>
+                                    <span>{{ $version->original_name ?: basename($version->path) }}</span>
+                                    <small class="text-muted d-block mt-1">
+                                        {{ $version->created_at->format('M d, Y g:i A') }}
+                                        @if($version->file_size) · {{ number_format($version->file_size / 1024, 1) }} KB @endif
+                                    </small>
+                                </div>
+                                <div class="revision-actions">
+                                    <a class="revision-button view" href="{{ asset('storage/'.$version->path) }}" target="_blank">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    <a class="revision-button download" href="{{ asset('storage/'.$version->path) }}" download>
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
+
     {{-- Document Status Summary --}}
     @if(isset($application) && in_array($application->status, ['Under Review', 'Returned']))
     <div class="status-summary">
@@ -276,6 +321,7 @@
 </div>
 
 <style>
+.revision-history{margin:0 30px 30px;padding:24px;background:#fff;border:1px solid #dfe8da;border-radius:14px;box-shadow:0 3px 12px rgba(43,78,31,.07);position:relative}.revision-history:before{content:'';position:absolute;top:0;left:24px;right:24px;height:3px;background:#3e7b27;border-radius:0 0 3px 3px}.revision-title{display:flex;align-items:center;gap:10px;margin:0 0 4px!important;color:#222!important;font-size:1.08rem!important;font-weight:700}.revision-title i{width:38px;height:38px;border-radius:10px;background:#3e7b27;color:#fff;display:grid;place-items:center;font-size:15px}.revision-subtitle{margin:0 0 20px 48px;color:#718096;font-size:.82rem}.revision-group{margin-top:18px}.revision-group-title{display:flex;justify-content:space-between;align-items:center;color:#3e7b27;font-size:.88rem;margin-bottom:8px}.revision-group-title small{color:#7b8477;background:#f2f5f0;padding:4px 9px;border-radius:20px;font-size:.68rem}.revision-list{border:1px solid #e4e9e1;border-radius:10px;overflow:hidden}.revision-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;background:#fff;border-bottom:1px solid #edf0eb}.revision-item:last-child{border-bottom:0}.revision-item.current{background:#f5faf2;border-left:3px solid #3e7b27}.revision-item .badge{border-radius:20px!important;font-size:.65rem!important;padding:5px 9px!important}.revision-item>div:first-child>span:not(.badge){color:#30362d;font-size:.83rem;font-weight:600}.revision-item small{color:#8a9186!important;font-size:.7rem}.revision-actions{display:flex;gap:7px}.revision-button{display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:7px;text-decoration:none;font-size:.72rem;font-weight:600;transition:.2s}.revision-button.view{background:#3e7b27;color:#fff}.revision-button.view:hover{background:#245524;color:#fff}.revision-button.download{border:1px solid #cbd5c7;color:#586452;background:#fff}.revision-button.download:hover{border-color:#3e7b27;color:#3e7b27}@media(max-width:576px){.revision-history{margin:0 15px 20px;padding:18px}.revision-subtitle{margin-left:0}.revision-item{align-items:flex-start;flex-direction:column}.revision-actions{width:100%}.revision-button.view{flex:1;justify-content:center}}
 /* Main Container */
 .documents-preview {
     background: #fff !important;

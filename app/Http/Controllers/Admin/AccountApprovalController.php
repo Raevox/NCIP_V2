@@ -386,6 +386,7 @@ class AccountApprovalController extends Controller
         $application->save();
 
         NotificationService::notifyCocApproved($application);
+        NotificationService::notifyApplicantApproved($application);
 
         return redirect()->back()
                          ->with('success', 'Application status updated to Approved.');

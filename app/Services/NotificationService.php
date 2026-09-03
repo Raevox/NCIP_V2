@@ -7,9 +7,86 @@ use App\Models\User;
 use App\Models\CocApplication;
 use App\Models\IpAccount;
 use Illuminate\Support\Facades\Log;
+use App\Notifications\ApplicantStatusNotification;
 
 class NotificationService
 {
+    public static function notifyApplicantSubmitted(CocApplication $application): void
+    {
+        self::notifyApplicant(
+            $application,
+            'application_submitted',
+            'Application Submitted',
+            'Your COC application has been submitted and is now under staff review.',
+            'normal'
+        );
+    }
+
+    public static function notifyApplicantForwarded(CocApplication $application): void
+    {
+        self::notifyApplicant(
+            $application,
+            'application_forwarded',
+            'Application Forwarded',
+            'Your COC application passed staff review and was forwarded to the administrator for final approval.',
+            'normal'
+        );
+    }
+
+    public static function notifyApplicantReturned(CocApplication $application, string $issues = ''): void
+    {
+        $message = 'Your COC application needs corrections. Please review the staff remarks and resubmit it.';
+        if ($issues !== '') {
+            $message .= " Sections requiring attention: {$issues}.";
+        }
+
+        self::notifyApplicant($application, 'application_returned', 'Corrections Required', $message, 'high');
+    }
+
+    public static function notifyApplicantApproved(CocApplication $application): void
+    {
+        self::notifyApplicant(
+            $application,
+            'application_approved',
+            'COC Application Approved',
+            'Your COC application has been approved and your Certificate of Confirmation has been issued.',
+            'high'
+        );
+    }
+
+    public static function notifyApplicantDeclined(CocApplication $application, string $reason): void
+    {
+        self::notifyApplicant(
+            $application,
+            'application_declined',
+            'COC Application Declined',
+            "Your COC application was declined. Reason: {$reason}",
+            'high'
+        );
+    }
+
+    private static function notifyApplicant(
+        CocApplication $application,
+        string $type,
+        string $title,
+        string $message,
+        string $priority
+    ): void {
+        try {
+            $applicant = $application->applicant ?: IpAccount::find($application->user_id);
+            $applicant?->notify(new ApplicantStatusNotification(
+                $type,
+                $title,
+                $message,
+                route('applicant.track-status', [], false),
+                $application->id,
+                $priority
+            ));
+        } catch (\Throwable $e) {
+            Log::error('Applicant notification error: ' . $e->getMessage());
+        }
+    }
+
     public static function notifyNewAccount(IpAccount $account): void
 {
     try {
@@ -40,7 +117,7 @@ class NotificationService
     }
 }
 
-    public static function notifyCocNeedsApproval(CocApplication $application): void
+    public static function notifyCocNeedsApproval(CocApplication $application, bool $isResubmission = false): void
     {
         try {
             $name = self::getApplicantName($application);
@@ -60,11 +137,14 @@ class NotificationService
                     ],
                     [
                         'type'       => 'coc_approval',
-                        'title'      => 'COC Application Pending Review',
-                        'message'    => "COC application from {$name} is submitted and waiting for approval.",
+                        'title'      => $isResubmission ? 'COC Application Resubmitted' : 'COC Application Pending Review',
+                        'message'    => $isResubmission
+                            ? "COC application from {$name} was corrected and resubmitted for review."
+                            : "COC application from {$name} is submitted and waiting for approval.",
                         'action_url' => $url,
                         'priority'   => 'high',
                         'is_read'    => false,
+                        'read_at'    => null,
                     ]
                 );
             }
@@ -100,27 +180,6 @@ class NotificationService
                 );
             }
 
-            $staffMembers = User::where('role', 'staff')->where('status', 'active')->get();
-            $staffUrl = self::safeRoute('admin.applicants.coc.view', $application->id)
-                ?? '/admin/applicants/coc/' . $application->id . '/view';
-
-            foreach ($staffMembers as $staff) {
-                AdminNotification::updateOrCreate(
-                    [
-                        'user_id'      => $staff->id,
-                        'related_id'   => $application->id,
-                        'related_type' => 'CocApplication',
-                    ],
-                    [
-                        'type'       => 'coc_approved',
-                        'title'      => 'Forwarded Application Approved',
-                        'message'    => "Forwarded COC application from {$name} has been approved by Admin.",
-                        'action_url' => $staffUrl,
-                        'priority'   => 'normal',
-                        'is_read'    => false,
-                    ]
-                );
-            }
         } catch (\Exception $e) {
             Log::error('notifyCocApproved error: ' . $e->getMessage());
         }
@@ -155,6 +214,30 @@ class NotificationService
                     ]
                 );
             }
+
+            $staffUrl = self::safeRoute('staff.review.show', $application->id)
+                ?? '/staff/review/' . $application->id;
+            $staffMembers = User::where('role', 'staff')->where('status', 'active')->get();
+
+            foreach ($staffMembers as $staff) {
+                AdminNotification::updateOrCreate(
+                    [
+                        'user_id' => $staff->id,
+                        'related_id' => $application->id,
+                        'related_type' => 'CocApplication',
+                    ],
+                    [
+                        'type' => 'coc_returned',
+                        'title' => 'COC Application Returned',
+                        'message' => $msg,
+                        'action_url' => $staffUrl,
+                        'priority' => 'high',
+                        'is_read' => false,
+                        'read_at' => null,
+                    ]
+                );
+            }
+
         } catch (\Exception $e) {
             Log::error('notifyCocReturned error: ' . $e->getMessage());
         }
@@ -183,6 +266,29 @@ class NotificationService
                         'action_url' => $url,
                         'priority'   => 'high',
                         'is_read'    => false,
+                    ]
+                );
+            }
+
+            // Replace the staff review notification with a forwarding activity,
+            // keeping one lifecycle entry per application in the staff feed.
+            $staffMembers = User::where('role', 'staff')->where('status', 'active')->get();
+
+            foreach ($staffMembers as $staff) {
+                AdminNotification::updateOrCreate(
+                    [
+                        'user_id' => $staff->id,
+                        'related_id' => $application->id,
+                        'related_type' => 'CocApplication',
+                    ],
+                    [
+                        'type' => 'application_forwarded',
+                        'title' => 'Application Forwarded to Admin',
+                        'message' => "COC application from {$name} was forwarded to the administrator for final approval.",
+                        'action_url' => null,
+                        'priority' => 'normal',
+                        'is_read' => false,
+                        'read_at' => null,
                     ]
                 );
             }

@@ -27,6 +27,7 @@ use App\Http\Middleware\AdminOrStaffOnly;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Api\NotificationController   as ApiNotificationController;
 use App\Http\Controllers\WebsiteChatbotController;
+use App\Http\Controllers\ApplicantNotificationController;
 
 
 // ═══════════════════════════════════════════════════════════
@@ -289,6 +290,12 @@ Route::middleware(['auth:applicant'])->prefix('applicant')->name('applicant.')->
 
     // Dashboard
     Route::get('/dashboard', [ApplicantDashboardController::class, 'dashboard'])->name('dashboard');
+
+    // Notification Center
+    Route::get('/notifications', [ApplicantNotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all', [ApplicantNotificationController::class, 'readAll'])->name('notifications.read-all');
+    Route::post('/notifications/{notification}/read', [ApplicantNotificationController::class, 'read'])->name('notifications.read');
+    Route::delete('/notifications/{notification}', [ApplicantNotificationController::class, 'destroy'])->name('notifications.destroy');
 
     // Profile
     Route::get('/profile', [ApplicantDashboardController::class, 'profile'])->name('profile');

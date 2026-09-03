@@ -54,7 +54,8 @@
         .pbox {
             border: 1px solid #000;
             padding: 3px;
-            height: 76px;
+            min-height: 76px;
+            height: auto;
             font-size: 9px;
             text-align: center;
             margin: 0 2px;
@@ -86,6 +87,19 @@
             display: inline-block;
             width: 52%;
             min-width: 0;
+        }
+        .pfields .origin-field {
+            white-space: normal;
+            overflow: visible;
+            line-height: 1.15;
+        }
+        .pfields .origin-field span {
+            display: block;
+            width: 100%;
+            white-space: normal;
+            word-wrap: break-word;
+            word-break: normal;
+            line-height: 1.15;
         }
 
         /* ── couple unit: box = box (matches preview's .couple / .couple-eq) ── */
@@ -141,7 +155,7 @@
                 <div class="pname">' . e($name ?: '&nbsp;') . '</div>
                 <div class="pfields">
                     <div class="pfield">IPs/ICCs: <span>' . e($ip) . '</span></div>
-                    <div class="pfield">Place of Origin: <span>' . e($origin) . '</span></div>
+                    <div class="pfield origin-field">Place of Origin: <span>' . e($origin) . '</span></div>
                 </div>
             </div>
         </div>';

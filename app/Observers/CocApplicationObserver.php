@@ -44,7 +44,10 @@ class CocApplicationObserver
         // Check if application was submitted (Draft -> Under Review)
         if ($application->wasChanged('coc_status') && $application->coc_status === 'Under Review') {
             Log::info('✅ COC status changed to "Under Review" - notifying reviewers');
-            NotificationService::notifyCocNeedsApproval($application);
+            NotificationService::notifyCocNeedsApproval(
+                $application,
+                $application->getOriginal('coc_status') === 'Returned'
+            );
         }
         
         // Check if status was changed to "Returned"

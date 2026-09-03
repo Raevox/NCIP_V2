@@ -236,8 +236,14 @@ class StaffController extends Controller
     {
         $application = CocApplication::findOrFail($id);
         $application->status = 'Returned';
+        $application->coc_status = 'Returned';
         $application->remarks = $request->input('remarks', 'No remarks provided');
         $application->save();
+
+        \App\Services\NotificationService::notifyApplicantReturned(
+            $application,
+            (string) $request->input('remarks', 'No remarks provided')
+        );
 
         return redirect()->route('staff.review')->with('success', 'Application returned successfully.');
     }
@@ -266,6 +272,8 @@ class StaffController extends Controller
                 $application->approved_by = Auth::id();
                 $application->approved_at = now();
                 $application->save();
+
+                \App\Services\NotificationService::notifyApplicantForwarded($application);
 
                 $classifications = $application->classification;
                 $message = '';
@@ -309,6 +317,8 @@ class StaffController extends Controller
                 $issueList = collect($application->getReturnedSections())
                     ->map(fn($section) => $sectionLabels[$section] ?? $section)
                     ->implode(', ');
+
+                \App\Services\NotificationService::notifyApplicantReturned($application, $issueList);
 
                 $applicant = $application->applicant;
 

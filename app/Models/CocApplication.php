@@ -51,6 +51,11 @@ class CocApplication extends Model
         return $this->belongsTo(IpAccount::class, 'user_id', 'id');
     }
 
+    public function documentVersions()
+    {
+        return $this->hasMany(DocumentVersion::class)->orderByDesc('revision');
+    }
+
     // 🔹 Relationship: applicant registration
     public function applicantRegistration()
     {

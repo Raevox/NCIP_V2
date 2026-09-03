@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends(Auth::user()?->role === 'staff' ? 'layouts.staff' : 'layouts.admin')
 
 @section('title', 'Notifications')
 
@@ -232,13 +232,17 @@
             <button class="np-tab active" onclick="switchTab(this,'all')">
                 <i class="fas fa-inbox"></i> All
             </button>
-<button class="np-tab" onclick="switchTab(this,'new_account')">
-    <i class="fas fa-user-plus"></i> New Accounts
-</button>
+@if(Auth::user()?->role !== 'staff')
+    <button class="np-tab" onclick="switchTab(this,'new_account')">
+        <i class="fas fa-user-plus"></i> New Accounts
+    </button>
+@endif
 
-<button class="np-tab" onclick="switchTab(this,'coc_approved')">
-    <i class="fas fa-check-circle"></i> COC Approved
-</button>
+@if(Auth::user()?->role !== 'staff')
+    <button class="np-tab" onclick="switchTab(this,'coc_approved')">
+        <i class="fas fa-check-circle"></i> COC Approved
+    </button>
+@endif
 
 <button class="np-tab" onclick="switchTab(this,'coc_approval')">
     <i class="fas fa-file-alt"></i> COC Review
@@ -298,6 +302,7 @@
 <script>
 /* ── CSRF (from layout meta tag) ─────────────────────── */
 const CSRF = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+const IS_STAFF = @json(Auth::user()?->role === 'staff');
 
 /* Let Laravel build URLs so this page also works when the app is hosted in a subdirectory. */
 const NOTIFICATION_URLS = {
@@ -458,9 +463,10 @@ function render(data) {
                 </div>
                 <p class="np-cb-msg">${esc(n.message)}</p>
                 <div class="np-cb-foot">
+                    ${!IS_STAFF ? `
                     <span class="np-tag-pri ${pri}">
                         <i class="fas fa-${pIco}"></i> ${pri}
-                    </span>
+                    </span>` : ''}
                     <span class="np-tag-type" style="color:${c.color};background:${c.bg}">
                         ${c.label}
                     </span>
@@ -469,7 +475,7 @@ function render(data) {
    
     ${''}
 
-    ${n.action_url ? `
+    ${n.action_url && !IS_STAFF ? `
     <button class="np-btn np-btn-view" data-id="${n.id}"
         onclick="viewDetail(event,this)">
         <i class="fas fa-external-link-alt"></i> View

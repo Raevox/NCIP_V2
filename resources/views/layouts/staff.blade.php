@@ -98,6 +98,14 @@
                     <span class="sb-nav-dot {{ (!empty($applicantBadge['main_dot'])) ? 'show' : '' }}" id="staffReviewNavDot" title="New or pending applicant updates"></span>
                 </a>
             </li>
+            <li>
+                <a href="{{ route('admin.notifications.index') }}"
+                   class="sb-nav-link {{ request()->routeIs('admin.notifications.index') ? 'active' : '' }}">
+                    <i class="sb-nav-icon fas fa-bell"></i>
+                    <span class="sb-nav-label">Notifications</span>
+                    <span class="sb-nav-dot" id="staffNotificationNavDot" title="Unread notifications"></span>
+                </a>
+            </li>
            
         </ul>
     </nav>
@@ -128,6 +136,12 @@
     </div>
 
     <div class="tb-right">
+
+        <a href="{{ route('admin.notifications.index') }}" class="tb-icon-btn text-decoration-none"
+           id="staffNotificationBell" title="Notifications" aria-label="Notifications">
+            <i class="fas fa-bell"></i>
+            <span class="tb-notif-badge" id="staffNotificationBadge"></span>
+        </a>
 
         <span class="tb-role-pill">
             <i class="fas fa-id-badge"></i> Staff
@@ -217,8 +231,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     refreshStaffBadges();
+    refreshStaffNotifications();
     setInterval(refreshStaffBadges, 30000);
+    setInterval(refreshStaffNotifications, 30000);
 });
+
+async function refreshStaffNotifications() {
+    try {
+        const res = await fetch('{{ route('api.admin.notifications.unread-count') }}', {
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin'
+        });
+        if (!res.ok) return;
+
+        const data = await res.json();
+        const count = Number(data.unreadCount || 0);
+        const badge = document.getElementById('staffNotificationBadge');
+        const navDot = document.getElementById('staffNotificationNavDot');
+        const bell = document.getElementById('staffNotificationBell');
+
+        if (badge) {
+            badge.textContent = count > 99 ? '99+' : count;
+            badge.classList.toggle('show', count > 0);
+        }
+        navDot?.classList.toggle('show', count > 0);
+        bell?.classList.toggle('has-notif', count > 0);
+    } catch {}
+}
 
 async function refreshStaffBadges() {
     try {

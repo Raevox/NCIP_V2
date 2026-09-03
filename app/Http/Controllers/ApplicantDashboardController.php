@@ -11,6 +11,8 @@ use App\Models\IpApplicant;
 use App\Models\CocApplication;
 use App\Models\IpAncestor;
 use App\Models\IpAccount;
+use App\Models\DocumentVersion;
+use Illuminate\Http\UploadedFile;
 use Spatie\Browsershot\Browsershot;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -105,11 +107,13 @@ public function resetDraft(CocApplication $application)
         404
     );
 
-    foreach (['applicant_picture', 'tribal_certificate', 'birth_certificate', 'genealogy_form'] as $field) {
-        if (filled($application->{$field})) {
-            Storage::disk('public')->delete($application->{$field});
-        }
-    }
+    $documentPaths = $application->documentVersions()->pluck('path')
+        ->merge(collect(['applicant_picture', 'tribal_certificate', 'birth_certificate', 'genealogy_form'])
+            ->map(fn (string $field) => $application->{$field}))
+        ->filter()
+        ->unique();
+
+    Storage::disk('public')->delete($documentPaths->all());
 
     $application->delete();
     session()->forget([
@@ -790,20 +794,23 @@ public function saveCocStep5(Request $request)
     try {
         // Handle file uploads
         if ($request->hasFile('applicant_picture')) {
-            $application->applicant_picture = $request->file('applicant_picture')
-                ->store('applications/pictures', 'public');
+            $application->applicant_picture = $this->storeDocumentVersion(
+                $application, 'applicant_picture', $request->file('applicant_picture'), 'applications/pictures', $user->id
+            );
         }
 
         // signature field removed from step 5 — no longer stored here
 
         if ($request->hasFile('tribal_certificate')) {
-            $application->tribal_certificate = $request->file('tribal_certificate')
-                ->store('applications/certificates', 'public');
+            $application->tribal_certificate = $this->storeDocumentVersion(
+                $application, 'tribal_certificate', $request->file('tribal_certificate'), 'applications/certificates', $user->id
+            );
         }
 
         if ($request->hasFile('genealogy_form')) {
-            $application->genealogy_form = $request->file('genealogy_form')
-                ->store('applications/genealogy', 'public');
+            $application->genealogy_form = $this->storeDocumentVersion(
+                $application, 'genealogy_form', $request->file('genealogy_form'), 'applications/genealogy', $user->id
+            );
         }
 
         // Handle Returned application logic
@@ -907,6 +914,8 @@ public function submitCoc(Request $request, $id)
     
     $application->save();
 
+    \App\Services\NotificationService::notifyApplicantSubmitted($application);
+
     return redirect()->route('applicant.dashboard')
         ->with('success', 'Your COC application has been submitted and is now under staff review.');
 }
@@ -914,6 +923,53 @@ public function submitCoc(Request $request, $id)
     // ===========================
     // Helper
     // ===========================
+    private function storeDocumentVersion(
+        CocApplication $application,
+        string $documentType,
+        UploadedFile $file,
+        string $directory,
+        int $applicantId
+    ): string {
+        $currentPath = $application->{$documentType};
+        $lastRevision = (int) $application->documentVersions()
+            ->where('document_type', $documentType)
+            ->max('revision');
+
+        // Register an existing pre-versioning upload before replacing it.
+        if ($currentPath && ! $application->documentVersions()->where('path', $currentPath)->exists()) {
+            $disk = Storage::disk('public');
+            $exists = $disk->exists($currentPath);
+
+            DocumentVersion::create([
+                'coc_application_id' => $application->id,
+                'document_type' => $documentType,
+                'revision' => ++$lastRevision,
+                'path' => $currentPath,
+                'original_name' => basename($currentPath),
+                'mime_type' => $exists ? $disk->mimeType($currentPath) : null,
+                'file_size' => $exists ? $disk->size($currentPath) : null,
+                'uploaded_by_id' => $applicantId,
+                'uploaded_by_type' => 'applicant',
+            ]);
+        }
+
+        $path = $file->store($directory, 'public');
+
+        DocumentVersion::create([
+            'coc_application_id' => $application->id,
+            'document_type' => $documentType,
+            'revision' => $lastRevision + 1,
+            'path' => $path,
+            'original_name' => $file->getClientOriginalName(),
+            'mime_type' => $file->getMimeType(),
+            'file_size' => $file->getSize(),
+            'uploaded_by_id' => $applicantId,
+            'uploaded_by_type' => 'applicant',
+        ]);
+
+        return $path;
+    }
+
     private function splitName($fullName)
     {
         $parts = preg_split('/\s+/', trim($fullName));
@@ -1075,6 +1131,7 @@ public function resubmitFinal(Request $request, $id)
 
     // kapag naayos na lahat ng steps → iset to Under Review
     $application->status = 'Under Review';
+    $application->coc_status = 'Under Review';
     $application->submitted_at = now();
 
     // clear per-section flags

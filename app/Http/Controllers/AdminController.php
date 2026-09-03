@@ -212,6 +212,8 @@ public function search(Request $request)
                 $application->coc_status = 'Approved';
                 $application->save();
 
+                \App\Services\NotificationService::notifyApplicantApproved($application);
+
                 // 3. Kunin ang step1 data (JSON decode)
                 $step1 = $application->step1 ? json_decode($application->step1, true) : [];
 
@@ -283,6 +285,8 @@ public function search(Request $request)
                 $application->coc_status = 'Declined';
                 $application->remarks = $reason;
                 $application->save();
+
+                \App\Services\NotificationService::notifyApplicantDeclined($application, $reason);
             }
 
             // Send notification email if needed

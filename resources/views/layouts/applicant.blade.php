@@ -319,6 +319,15 @@
             <li class="{{ request()->routeIs('applicant.history') ? 'active' : '' }}">
                 <a href="{{ route('applicant.history') }}"><i class="fas fa-history"></i> {{ __('COC History') }}</a>
             </li>
+            <li class="{{ request()->routeIs('applicant.notifications.*') ? 'active' : '' }}">
+                <a href="{{ route('applicant.notifications.index') }}">
+                    <i class="fas fa-bell"></i> {{ __('Notifications') }}
+                    @php($layoutUnreadNotifications = Auth::guard('applicant')->user()->unreadNotifications()->count())
+                    @if($layoutUnreadNotifications)
+                        <span class="badge rounded-pill bg-danger ms-auto">{{ $layoutUnreadNotifications > 99 ? '99+' : $layoutUnreadNotifications }}</span>
+                    @endif
+                </a>
+            </li>
             <li class="{{ request()->routeIs('applicant.coc.application') ? 'active' : '' }}">
                 <a href="{{ route('applicant.coc.application') }}"><i class="fas fa-file-alt"></i> {{ __('COC Application') }}</a>
             </li>
@@ -342,6 +351,15 @@
         <div class="topbar-wrapper">
             <h2>@yield('page-title', 'Dashboard')</h2>
 
+            <div class="d-flex align-items-center gap-3">
+                <a href="{{ route('applicant.notifications.index') }}" class="position-relative text-dark" title="Notifications" aria-label="Notifications">
+                    <i class="fas fa-bell fs-5"></i>
+                    @if($layoutUnreadNotifications)
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: .65rem;">
+                            {{ $layoutUnreadNotifications > 99 ? '99+' : $layoutUnreadNotifications }}
+                        </span>
+                    @endif
+                </a>
             <div class="lang-switcher">
                 <button onclick="document.getElementById('langDropdown').classList.toggle('show')">
                     <i class="fas fa-globe"></i> {{ app()->getLocale() === 'tl' ? 'Filipino' : 'English' }}
@@ -350,6 +368,7 @@
                     <a href="{{ route('lang.switch', 'en') }}">English</a>
                     <a href="{{ route('lang.switch', 'tl') }}">Filipino</a>
                 </div>
+            </div>
             </div>
         </div>
 

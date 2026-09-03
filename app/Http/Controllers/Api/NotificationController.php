@@ -23,17 +23,29 @@ class NotificationController extends Controller
             $query = AdminNotification::where('user_id', Auth::id())
                 ->where('type', '!=', 'pending_account')
                 ->where(function ($q) {
-                    $q->where('related_type', '!=', 'IpAccount')
-                      ->orWhereExists(function ($sub) {
-                          $sub->select(DB::raw(1))
-                              ->from('ip_accounts')
-                              ->whereColumn('ip_accounts.id', 'admin_notifications.related_id');
-                      });
+                    $q->whereNull('related_type')
+                        ->orWhere(function ($related) {
+                            $related->where('related_type', 'IpAccount')
+                                ->whereExists(function ($sub) {
+                                    $sub->select(DB::raw(1))->from('ip_accounts')
+                                        ->whereColumn('ip_accounts.id', 'admin_notifications.related_id');
+                                });
+                        })
+                        ->orWhere(function ($related) {
+                            $related->where('related_type', 'CocApplication')
+                                ->whereExists(function ($sub) {
+                                    $sub->select(DB::raw(1))->from('coc_applications')
+                                        ->whereColumn('coc_applications.id', 'admin_notifications.related_id')
+                                        ->whereNull('coc_applications.deleted_at');
+                                });
+                        });
                 });
 
             // Staff handles initial COC review. Admin only enters the flow after forwarding.
             if (Auth::user()?->role === 'admin') {
                 $query->where('type', '!=', 'coc_approval');
+            } elseif (Auth::user()?->role === 'staff') {
+                $query->whereNotIn('type', ['new_account', 'pending_account', 'account_approved', 'coc_approved']);
             }
 
             if ($type !== 'all') {
@@ -59,7 +71,9 @@ class NotificationController extends Controller
                         'application_forwarded' => route('admin.applicants.index', ['status' => 'Admin Approval']),
                         'coc_approved' => route('admin.applicants.coc.view', $notification->related_id),
                         'coc_returned' => $application
-                            ? route('admin.applicants.transaction', $application->user_id)
+                            ? (Auth::user()?->role === 'staff'
+                                ? route('staff.review.show', $application->id)
+                                : route('admin.applicants.transaction', $application->user_id))
                             : null,
                         default => $notification->action_url,
                     };
@@ -102,6 +116,8 @@ class NotificationController extends Controller
 
             if (Auth::user()?->role === 'admin') {
                 $countQuery->where('type', '!=', 'coc_approval');
+            } elseif (Auth::user()?->role === 'staff') {
+                $countQuery->whereNotIn('type', ['new_account', 'pending_account', 'account_approved', 'coc_approved']);
             }
 
             $count = $countQuery->count();
