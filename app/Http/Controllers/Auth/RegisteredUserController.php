@@ -34,6 +34,7 @@ class RegisteredUserController extends Controller
             'email.regex' => 'Please use Gmail address only (@gmail.com)',
             'contact.size' => 'Phone number must be 11 digits, your input is ' . strlen($request->contact) . ' digits',
             'contact.regex' => 'Phone number must contain only numbers',
+            'password.regex' => 'Password must contain at least one uppercase letter and one number.',
         ];
 
         $request->validate([
@@ -61,7 +62,7 @@ class RegisteredUserController extends Controller
             'barangay_name'    => ['required', 'string'],
             'tribe'            => ['nullable', 'string', 'max:255'],
             'leader'           => ['nullable', 'string', 'max:255'],
-            'password'         => ['required', 'confirmed', Rules\Password::defaults()],
+            'password'         => ['required', 'confirmed', Rules\Password::defaults(), 'regex:/^(?=.*[A-Z])(?=.*\d).+$/'],
             'birth_certificate'=> ['required', 'file', 'mimes:jpg,jpeg,png,gif,bmp,tiff,pdf', 'max:10240'],
         ]);
 

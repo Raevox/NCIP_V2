@@ -636,11 +636,15 @@
             <label class="form-label" for="password">Password</label>
             <div class="input-group has-icon">
               <input type="password" id="password" name="password"
-                     placeholder="Create a password" required>
+                     placeholder="Create a password" minlength="8"
+                     pattern="(?=.*[A-Z])(?=.*[0-9]).{8,}"
+                     title="Use at least 8 characters, including one uppercase letter and one number."
+                     required>
               <span class="icon" onclick="togglePwd('password','eyePass')" title="Show / hide">
                 <i id="eyePass" class="fas fa-eye"></i>
               </span>
             </div>
+            <span class="file-note">At least 8 characters with one uppercase letter and one number.</span>
           </div>
           <div>
             <label class="form-label" for="password_confirmation">Confirm Password</label>
@@ -801,6 +805,8 @@
         phoneError.style.display = 'block'; contactInput.classList.add('is-invalid'); if (valid) contactInput.focus(); valid = false;
       }
       if (pwd.length < 8)    { alert('Password must be at least 8 characters.'); valid = false; }
+      else if (!/[A-Z]/.test(pwd)) { alert('Password must contain at least one uppercase letter.'); valid = false; }
+      else if (!/[0-9]/.test(pwd)) { alert('Password must contain at least one number.'); valid = false; }
       else if (pwd !== pwdC) { alert('Passwords do not match.');                  valid = false; }
 
       if (!valid) return;
