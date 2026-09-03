@@ -117,7 +117,7 @@ class WebsiteChatbotController extends Controller
                 $message,
                 (string) config('services.openrouter.url', 'https://openrouter.ai/api/v1/chat/completions'),
                 $openrouterKey,
-                (string) config('services.openrouter.model', 'meta-llama/llama-3.3-70b-instruct:free')
+                (string) config('services.openrouter.model', 'meta-llama/llama-3.3-70b-instruct')
             );
             if ($answer !== null) {
                 return $answer;
@@ -168,8 +168,8 @@ class WebsiteChatbotController extends Controller
 
         try {
             $response = Http::acceptJson()
-                ->connectTimeout(2)
-                ->timeout(4)
+                ->connectTimeout(5)
+                ->timeout((int) env('AI_TIMEOUT', 15))
                 ->post($endpoint, [
                     'system_instruction' => [
                         'parts' => [
@@ -228,8 +228,8 @@ class WebsiteChatbotController extends Controller
         try {
             $response = Http::withHeaders($headers)
                 ->acceptJson()
-                ->connectTimeout(2)
-                ->timeout(4)
+                ->connectTimeout(5)
+                ->timeout((int) env('AI_TIMEOUT', 15))
                 ->post($endpoint, [
                     'model' => $model,
                     'temperature' => 0.2,
