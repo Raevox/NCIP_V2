@@ -226,6 +226,12 @@ class StaffController extends Controller
     public function approve($id)
     {
         $application = CocApplication::findOrFail($id);
+
+        if ($application->coc_status === 'Approved') {
+            return redirect()->route('staff.review')
+                ->with('error', 'This application already has final administrator approval.');
+        }
+
         $application->status = 'Approved';
         $application->save();
 
@@ -235,6 +241,12 @@ class StaffController extends Controller
     public function return($id, Request $request)
     {
         $application = CocApplication::findOrFail($id);
+
+        if ($application->coc_status === 'Approved') {
+            return redirect()->route('staff.review')
+                ->with('error', 'This application already has final administrator approval.');
+        }
+
         $application->status = 'Returned';
         $application->coc_status = 'Returned';
         $application->remarks = $request->input('remarks', 'No remarks provided');
@@ -253,6 +265,20 @@ class StaffController extends Controller
     {
         try {
             $application = CocApplication::findOrFail($id);
+
+            if ($application->coc_status === 'Approved') {
+                $message = 'This application already has final administrator approval and is view-only.';
+
+                if ($request->ajax() || $request->has('ajax') || $request->has('json')) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $message,
+                        'type' => 'error',
+                    ], 409);
+                }
+
+                return redirect()->route('staff.review')->with('error', $message);
+            }
 
             $application->index_status = $request->input('index_status');
             $application->index_remarks = $request->input('index_remarks');

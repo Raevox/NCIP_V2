@@ -40,7 +40,17 @@
             <!-- Right Column: Review Decision panel -->
             <div class="col-md-3 d-flex flex-column align-items-start">
                 <div class="review-panel sticky-sidebar w-100">
-                    @include('staff.applications.review_decision')
+                    @if($application->coc_status === 'Approved')
+                        <div class="card shadow-sm border-success p-3 w-100" style="max-width: 350px;">
+                            <h5 class="fw-bold text-success mb-3">
+                                <i class="fas fa-circle-check me-1"></i> Final Approval Complete
+                            </h5>
+                            <p class="mb-2">This application has already been approved by the administrator.</p>
+                            <p class="text-muted small mb-0">It is available to staff for viewing only. No further forwarding or review decision is required.</p>
+                        </div>
+                    @else
+                        @include('staff.applications.review_decision')
+                    @endif
                 </div>
             </div>
         </div>
