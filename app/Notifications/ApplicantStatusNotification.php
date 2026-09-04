@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class ApplicantStatusNotification extends Notification
@@ -20,7 +21,24 @@ class ApplicantStatusNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return $this->eventType === 'application_returned'
+            ? ['database', 'mail']
+            : ['database'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        $applicantName = trim((string) ($notifiable->first_name ?? ''));
+        $actionUrl = $this->actionUrl
+            ? url($this->actionUrl)
+            : route('applicant.track-status');
+
+        return (new MailMessage)
+            ->subject('NCIP Application Returned for Correction')
+            ->greeting($applicantName !== '' ? "Hello {$applicantName}," : 'Hello,')
+            ->line($this->message)
+            ->action('Review Application', $actionUrl)
+            ->line('Please review the staff remarks, correct the returned document or section, and resubmit your application.');
     }
 
     public function toArray(object $notifiable): array
