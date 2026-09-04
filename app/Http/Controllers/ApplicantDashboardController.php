@@ -340,6 +340,9 @@ public function saveCocStep2(Request $request)
     'date_accomplishment' => 'required|date',
 ]);
 
+    $degree = trim((string) ($data['degree_obtained'] ?? ''));
+    $data['degree_obtained'] = $degree !== '' ? $degree : 'N/A';
+
     // Save to session
     $data['land_matter'] = $request->has('land_matter');
     session(['coc_step2' => $data]);
@@ -356,7 +359,24 @@ public function saveCocStep2(Request $request)
         $application->status  = 'Draft';
     }
 
-    $application->step2 = json_encode($data);
+    $application->step2 = $data;
+
+    // Step 2 is the shared source for the parent/grandparent fields. Keep any
+    // genealogy steps that were already completed synchronized with this edit.
+    $storedStep3 = $this->decodeArrayValue($application->step3);
+    if (! empty($storedStep3)) {
+        $storedStep3 = array_replace($storedStep3, $this->onlyFields($data, $this->paternalSharedFields()));
+        $application->step3 = $storedStep3;
+        session(['coc_step3' => $storedStep3]);
+    }
+
+    $storedStep4 = $this->decodeArrayValue($application->step4);
+    if (! empty($storedStep4)) {
+        $storedStep4 = array_replace($storedStep4, $this->onlyFields($data, $this->maternalSharedFields()));
+        $application->step4 = $storedStep4;
+        session(['coc_step4' => $storedStep4]);
+    }
+
     $application->save();
 
     // ✅ Check kung index lang ang nireturned
@@ -565,8 +585,17 @@ public function saveCocStep3(Request $request, $id = null)
                 ->with('error', 'The application being edited could not be found. Please continue from Step 1.');
         }
 
+        // A Step 3 edit must also update the matching paternal fields in Step 2.
+        $storedStep2 = $this->decodeArrayValue($application->step2);
+        $storedStep2 = array_replace($storedStep2, $this->onlyFields($finalStep3, $this->paternalSharedFields()));
+
+        $application->step2 = $storedStep2;
         $application->step3 = $finalStep3;
         $application->save();
+        session([
+            'coc_step2' => $storedStep2,
+            'coc_step3' => $finalStep3,
+        ]);
     return redirect()->route('applicant.coc.step4', ['id' => $application->id])
         ->with('success', 'Step 3 saved successfully.');
 }
@@ -717,8 +746,17 @@ public function saveCocStep4(Request $request, $id = null)
             ->with('error', 'The application being edited could not be found. Please continue from Step 1.');
     }
 
+    // A Step 4 edit must also update the matching maternal fields in Step 2.
+    $storedStep2 = $this->decodeArrayValue($application->step2);
+    $storedStep2 = array_replace($storedStep2, $this->onlyFields($finalStep4, $this->maternalSharedFields()));
+
+    $application->step2 = $storedStep2;
     $application->step4 = $finalStep4;
     $application->save();
+    session([
+        'coc_step2' => $storedStep2,
+        'coc_step4' => $finalStep4,
+    ]);
 // ✅ Check kung genealogy lang ang nireturned
 if ($application->status === 'Returned' && in_array('genealogy', $application->getReturnedSections())) {
     $application->genealogy_status = null; // clear remarks
@@ -759,44 +797,88 @@ if ($application->status === 'Returned' && in_array('genealogy', $application->g
         $allData = array_merge($step1, $step2, $step3, $step4);
         
         $application = CocApplication::where('user_id', $user->id)->latest()->first();
-        $remarks = $application ? $this->decodeArrayValue($application->remarks) : [];
-        $stepRemarks = $remarks['documents'] ?? null;
-        $stepRemarks = $remarks['genealogy_form'] ?? null; // adjust key kung needed
+        $returnedDocuments = $application?->getReturnedDocuments() ?? [];
+        if ($application?->documents_status === 'returned' && empty($returnedDocuments)) {
+            // Compatibility for applications returned before per-document
+            // review fields were introduced.
+            $returnedDocuments = ['applicant_picture', 'tribal_certificate', 'genealogy_form'];
+        }
+        $documentRemarks = collect($returnedDocuments)->mapWithKeys(
+            fn (string $type) => [$type => $application->{$type . '_remarks'}]
+        )->all();
         if (!$this->canAccessStep($application, 5)) {
         return redirect()->route('applicant.dashboard')->with('error', 'You can only access the returned step(s).');
         }
 
-        return view('applicant.coc.step5', compact('user', 'allData', 'stepRemarks', 'application'));
+        return view('applicant.coc.step5', compact('user', 'allData', 'application', 'returnedDocuments', 'documentRemarks'));
 
     }
-public function saveCocStep5(Request $request)
+public function saveCocStep5(Request $request, $id = null)
 {
     $user = Auth::guard('applicant')->user();
 
-    // Validate required files
-    $request->validate([
-        'applicant_picture'  => 'required|file|mimes:jpg,png,jpeg|max:5120', // 5MB
-        'tribal_certificate' => 'required|file|mimes:jpg,png,jpeg,pdf|max:10240', // 10MB
-        'genealogy_form'     => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
-    ]);
-
     // Find the application
-    $application = CocApplication::where('user_id', $user->id)
-        ->whereIn('status', ['Draft', 'Returned'])
-        ->latest()
-        ->first();
+    $applicationQuery = CocApplication::where('user_id', $user->id)
+        ->whereIn('status', ['Draft', 'Returned']);
+    $application = $id
+        ? $applicationQuery->whereKey($id)->first()
+        : $applicationQuery->latest()->first();
 
     if (!$application) {
         return redirect()->route('applicant.coc.step1')
             ->with('error', 'Please start your application from Step 1.');
     }
 
+    $uploadRules = [
+        'applicant_picture' => 'file|mimes:jpg,png,jpeg|max:5120',
+        'birth_certificate' => 'file|mimes:jpg,png,jpeg,pdf|max:10240',
+        'tribal_certificate' => 'file|mimes:jpg,png,jpeg,pdf|max:10240',
+        'genealogy_form' => 'file|mimes:pdf,jpg,jpeg,png|max:10240',
+    ];
+
+    $requiredDocuments = $application->status === 'Returned'
+        ? $application->getReturnedDocuments()
+        : ['applicant_picture', 'tribal_certificate', 'genealogy_form'];
+
+    if ($application->status === 'Returned' && $application->documents_status === 'returned' && empty($requiredDocuments)) {
+        $requiredDocuments = ['applicant_picture', 'tribal_certificate', 'genealogy_form'];
+    }
+
+    if ($application->status === 'Returned' && empty($requiredDocuments)) {
+        return redirect()->route('applicant.dashboard')
+            ->with('error', 'No document is currently marked for replacement.');
+    }
+
+    $request->validate(collect($uploadRules)->mapWithKeys(
+        fn (string $rules, string $field) => [
+            $field => (in_array($field, $requiredDocuments, true) ? 'required|' : 'nullable|') . $rules,
+        ]
+    )->all());
+
     try {
+        // Snapshot the profile-owned birth certificate on the COC record so a
+        // later profile replacement cannot change this application's history.
+        if (! $application->birth_certificate && $user->document_path) {
+            $application->birth_certificate = $user->document_path;
+        }
+
         // Handle file uploads
         if ($request->hasFile('applicant_picture')) {
             $application->applicant_picture = $this->storeDocumentVersion(
                 $application, 'applicant_picture', $request->file('applicant_picture'), 'applications/pictures', $user->id
             );
+        }
+
+        if ($request->hasFile('birth_certificate')) {
+            // The profile owns the current birth certificate. Copy its previous
+            // value into this application so both old and new files are audited.
+            $application->birth_certificate = $application->birth_certificate ?: $user->document_path;
+            $newBirthCertificate = $this->storeDocumentVersion(
+                $application, 'birth_certificate', $request->file('birth_certificate'), 'applications/birth-certificates', $user->id
+            );
+            $application->birth_certificate = $newBirthCertificate;
+            $user->document_path = $newBirthCertificate;
+            $user->save();
         }
 
         // signature field removed from step 5 — no longer stored here
@@ -816,6 +898,10 @@ public function saveCocStep5(Request $request)
         // Handle Returned application logic
         if ($application->status === 'Returned') {
             if (in_array('documents', $application->getReturnedSections())) {
+                foreach ($requiredDocuments as $documentType) {
+                    $application->{$documentType . '_status'} = null;
+                    $application->{$documentType . '_remarks'} = null;
+                }
                 $application->documents_status = null;
                 $application->save();
 
@@ -1203,6 +1289,7 @@ private function applicationDocuments(CocApplication $application): array
 {
     $documentFields = [
         'applicant_picture' => ['label' => 'Applicant Photo', 'icon' => 'fa-user'],
+        'birth_certificate' => ['label' => 'Birth Certificate', 'icon' => 'fa-file-medical'],
         'tribal_certificate' => ['label' => 'Tribal Certificate', 'icon' => 'fa-file-contract'],
         'genealogy_form' => ['label' => 'Genealogy Form', 'icon' => 'fa-sitemap'],
     ];
@@ -1449,8 +1536,15 @@ public function autosaveStep4(Request $request)
     // Lenient save - no strict validation, just capture whatever is currently filled.
     $data = $request->except(['_token', 'application_id']);
 
-    session(['coc_step4' => $data]);
+    $storedStep2 = $this->decodeArrayValue($application->step2);
+    $storedStep2 = array_replace($storedStep2, $this->onlyFields($data, $this->maternalSharedFields()));
 
+    session([
+        'coc_step2' => $storedStep2,
+        'coc_step4' => $data,
+    ]);
+
+    $application->step2 = $storedStep2;
     $application->step4 = $data;
     $application->save();
 
@@ -1478,6 +1572,33 @@ private function decodeArrayValue(mixed $value): array
     }
 
     return is_array($decoded) ? $decoded : [];
+}
+
+private function paternalSharedFields(): array
+{
+    return [
+        'father_first_name', 'father_last_name', 'father_origin', 'father_ipgroup',
+        'paternal_grandfather_first_name', 'paternal_grandfather_last_name',
+        'paternal_grandfather_origin', 'paternal_grandfather_ipgroup',
+        'paternal_grandmother_first_name', 'paternal_grandmother_last_name',
+        'paternal_grandmother_origin', 'paternal_grandmother_ipgroup',
+    ];
+}
+
+private function maternalSharedFields(): array
+{
+    return [
+        'mother_first_name', 'mother_last_name', 'mother_origin', 'mother_ipgroup',
+        'maternal_grandfather_first_name', 'maternal_grandfather_last_name',
+        'maternal_grandfather_origin', 'maternal_grandfather_ipgroup',
+        'maternal_grandmother_first_name', 'maternal_grandmother_last_name',
+        'maternal_grandmother_origin', 'maternal_grandmother_ipgroup',
+    ];
+}
+
+private function onlyFields(array $data, array $fields): array
+{
+    return array_intersect_key($data, array_flip($fields));
 }
 
 }

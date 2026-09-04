@@ -49,27 +49,41 @@
                 style="{{ $application->genealogy_status === 'returned' ? '' : 'display:none;' }}">{{ $application->genealogy_remarks }}</textarea>
         </div>
 
-        {{-- Documents --}}
-        <div class="mb-3 text-start">
-            <label class="form-label fw-bold d-block">Documents</label>
-            <div class="form-check text-success">
-                <input class="form-check-input" type="radio" name="documents_status" value="approved"
-                    id="documents_approved"
-                    {{ $application->documents_status === 'approved' ? 'checked' : '' }}
-                    onchange="toggleRemarks('documents', false)">
-                <label class="form-check-label fw-bold" for="documents_approved">Approved</label>
+        {{-- Individual uploaded documents --}}
+        @php
+            $reviewDocuments = [
+                'applicant_picture' => 'Applicant Photo',
+                'birth_certificate' => 'Birth Certificate',
+                'tribal_certificate' => 'Tribal Certificate',
+                'genealogy_form' => 'Genealogy Form Upload',
+            ];
+        @endphp
+        @foreach($reviewDocuments as $documentKey => $documentLabel)
+            @php
+                $statusField = $documentKey . '_status';
+                $remarksField = $documentKey . '_remarks';
+            @endphp
+            <div class="mb-3 text-start">
+                <label class="form-label fw-bold d-block">{{ $documentLabel }}</label>
+                <div class="form-check text-success">
+                    <input class="form-check-input document-status" type="radio" required
+                        name="{{ $statusField }}" value="approved" id="{{ $documentKey }}_approved"
+                        {{ $application->{$statusField} === 'approved' ? 'checked' : '' }}
+                        onchange="toggleRemarks('{{ $documentKey }}', false)">
+                    <label class="form-check-label fw-bold" for="{{ $documentKey }}_approved">Approved</label>
+                </div>
+                <div class="form-check text-danger">
+                    <input class="form-check-input document-status" type="radio" required
+                        name="{{ $statusField }}" value="returned" id="{{ $documentKey }}_returned"
+                        {{ $application->{$statusField} === 'returned' ? 'checked' : '' }}
+                        onchange="toggleRemarks('{{ $documentKey }}', true)">
+                    <label class="form-check-label fw-bold" for="{{ $documentKey }}_returned">Return for Correction</label>
+                </div>
+                <textarea name="{{ $remarksField }}" id="{{ $documentKey }}_remarks" rows="2"
+                    class="form-control mt-2" placeholder="Remarks if returned..."
+                    style="{{ $application->{$statusField} === 'returned' ? '' : 'display:none;' }}">{{ $application->{$remarksField} }}</textarea>
             </div>
-            <div class="form-check text-danger">
-                <input class="form-check-input" type="radio" name="documents_status" value="returned"
-                    id="documents_returned"
-                    {{ $application->documents_status === 'returned' ? 'checked' : '' }}
-                    onchange="toggleRemarks('documents', true)">
-                <label class="form-check-label fw-bold" for="documents_returned">Return for Correction</label>
-            </div>
-            <textarea name="documents_remarks" id="documents_remarks" rows="2" class="form-control mt-2"
-                placeholder="Remarks if returned..."
-                style="{{ $application->documents_status === 'returned' ? '' : 'display:none;' }}">{{ $application->documents_remarks }}</textarea>
-        </div>
+        @endforeach
 
         {{-- Classification --}}
         <div class="p-2 border rounded bg-light text-start mb-3">
@@ -143,9 +157,9 @@
     function updateButton() {
         const indexStatus = document.querySelector('input[name="index_status"]:checked')?.value;
         const genealogyStatus = document.querySelector('input[name="genealogy_status"]:checked')?.value;
-        const documentsStatus = document.querySelector('input[name="documents_status"]:checked')?.value;
-
-        const allApproved = indexStatus === 'approved' && genealogyStatus === 'approved' && documentsStatus === 'approved';
+        const documentStatuses = Array.from(document.querySelectorAll('.document-status:checked')).map(input => input.value);
+        const allDocumentsApproved = documentStatuses.length === 4 && documentStatuses.every(status => status === 'approved');
+        const allApproved = indexStatus === 'approved' && genealogyStatus === 'approved' && allDocumentsApproved;
 
         // Update submit button
         if (allApproved) {
@@ -171,9 +185,13 @@ function submitForm() {
     // Check if all sections are approved
     const indexStatus = document.querySelector('input[name="index_status"]:checked')?.value;
     const genealogyStatus = document.querySelector('input[name="genealogy_status"]:checked')?.value;
-    const documentsStatus = document.querySelector('input[name="documents_status"]:checked')?.value;
+    const documentStatuses = Array.from(document.querySelectorAll('.document-status:checked')).map(input => input.value);
+    const allDocumentsApproved = documentStatuses.length === 4 && documentStatuses.every(status => status === 'approved');
+    const allApproved = indexStatus === 'approved' && genealogyStatus === 'approved' && allDocumentsApproved;
 
-    const allApproved = indexStatus === 'approved' && genealogyStatus === 'approved' && documentsStatus === 'approved';
+    if (!reviewForm.reportValidity()) {
+        return;
+    }
 
     // Validate classification if all approved
     if (allApproved) {

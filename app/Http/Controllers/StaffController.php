@@ -264,6 +264,23 @@ class StaffController extends Controller
     public function decision(Request $request, $id)
     {
         try {
+            $request->validate([
+                'index_status' => ['required', 'in:approved,returned'],
+                'genealogy_status' => ['required', 'in:approved,returned'],
+                'applicant_picture_status' => ['required', 'in:approved,returned'],
+                'birth_certificate_status' => ['required', 'in:approved,returned'],
+                'tribal_certificate_status' => ['required', 'in:approved,returned'],
+                'genealogy_form_status' => ['required', 'in:approved,returned'],
+                'index_remarks' => ['nullable', 'required_if:index_status,returned', 'string'],
+                'genealogy_remarks' => ['nullable', 'required_if:genealogy_status,returned', 'string'],
+                'applicant_picture_remarks' => ['nullable', 'required_if:applicant_picture_status,returned', 'string'],
+                'birth_certificate_remarks' => ['nullable', 'required_if:birth_certificate_status,returned', 'string'],
+                'tribal_certificate_remarks' => ['nullable', 'required_if:tribal_certificate_status,returned', 'string'],
+                'genealogy_form_remarks' => ['nullable', 'required_if:genealogy_form_status,returned', 'string'],
+                'classification' => ['nullable', 'array'],
+                'classification.*' => ['in:national,local'],
+            ]);
+
             $application = CocApplication::findOrFail($id);
 
             if ($application->coc_status === 'Approved') {
@@ -284,8 +301,19 @@ class StaffController extends Controller
             $application->index_remarks = $request->input('index_remarks');
             $application->genealogy_status = $request->input('genealogy_status');
             $application->genealogy_remarks = $request->input('genealogy_remarks');
-            $application->documents_status = $request->input('documents_status');
-            $application->documents_remarks = $request->input('documents_remarks');
+            $documentTypes = ['applicant_picture', 'birth_certificate', 'tribal_certificate', 'genealogy_form'];
+            foreach ($documentTypes as $documentType) {
+                $application->{$documentType . '_status'} = $request->input($documentType . '_status');
+                $application->{$documentType . '_remarks'} = $request->input($documentType . '_remarks');
+            }
+
+            $hasReturnedDocument = collect($documentTypes)
+                ->contains(fn (string $type) => $application->{$type . '_status'} === 'returned');
+            $application->documents_status = $hasReturnedDocument ? 'returned' : 'approved';
+            $application->documents_remarks = collect($documentTypes)
+                ->filter(fn (string $type) => $application->{$type . '_status'} === 'returned')
+                ->map(fn (string $type) => str($type)->replace('_', ' ')->title() . ': ' . $application->{$type . '_remarks'})
+                ->implode("\n");
             $application->classification = $request->input('classification', []);
 
             $allApproved = $application->index_status === 'approved' &&
@@ -343,6 +371,19 @@ class StaffController extends Controller
                 $issueList = collect($application->getReturnedSections())
                     ->map(fn($section) => $sectionLabels[$section] ?? $section)
                     ->implode(', ');
+
+                $returnedDocumentLabels = [
+                    'applicant_picture' => 'Applicant Photo',
+                    'birth_certificate' => 'Birth Certificate',
+                    'tribal_certificate' => 'Tribal Certificate',
+                    'genealogy_form' => 'Genealogy Form Upload',
+                ];
+                $documentIssues = collect($application->getReturnedDocuments())
+                    ->map(fn (string $type) => $returnedDocumentLabels[$type])
+                    ->implode(', ');
+                if ($documentIssues !== '') {
+                    $issueList = collect([$issueList, $documentIssues])->filter()->implode(': ');
+                }
 
                 \App\Services\NotificationService::notifyApplicantReturned($application, $issueList);
 

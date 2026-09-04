@@ -634,13 +634,16 @@ html, body { background: #f0f0f0; }
    Drawn via JavaScript after DOM render
    ══════════════════════════════════════════════ */
 function boxGeom(id) {
+    const unit = document.getElementById(id);
     const box  = document.querySelector('#' + id + ' .pu-box');
     const area = document.getElementById('treeArea');
+    const ur   = unit.getBoundingClientRect();
     const br   = box.getBoundingClientRect();
     const ar   = area.getBoundingClientRect();
     return {
         top:  br.top    - ar.top,
-        bot:  br.bottom - ar.top,
+        // Leave a small clearance below the Place of Origin underline.
+        bot:  ur.bottom - ar.top + 4,
         cx:   br.left   - ar.left + br.width / 2,
         left: br.left   - ar.left,
         right:br.right  - ar.left,
@@ -659,8 +662,12 @@ function ln(svg, x1, y1, x2, y2) {
 function drawConnectors() {
     const svg  = document.getElementById('treeSvg');
     const area = document.getElementById('treeArea');
+    if (!svg || !area || area.offsetWidth === 0) return;
+
     svg.innerHTML = '';
+    svg.setAttribute('width', area.offsetWidth);
     svg.setAttribute('height', area.offsetHeight + 10);
+    svg.setAttribute('viewBox', `0 0 ${area.offsetWidth} ${area.offsetHeight + 10}`);
 
     /* helper: couple → child */
     function coupleToChild(idA, idB, idC) {
@@ -690,6 +697,12 @@ function drawConnectors() {
 
 window.addEventListener('load', drawConnectors);
 window.addEventListener('resize', drawConnectors);
+
+// This form starts inside a hidden Bootstrap tab. Its dimensions are zero on
+// initial page load, so draw the family lines after the tab becomes visible.
+document.getElementById('genealogy-tab')?.addEventListener('shown.bs.tab', () => {
+    requestAnimationFrame(() => requestAnimationFrame(drawConnectors));
+});
 
 /* ══════════════════════════════════════════════
    FILL TREE WITH BACKEND DATA

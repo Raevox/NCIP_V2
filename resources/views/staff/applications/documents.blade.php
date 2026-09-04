@@ -85,7 +85,7 @@
                     <p class="doc-subtitle">Official document</p>
                 </div>
                 <div class="doc-status">
-                    @if($ipAccount && !empty($ipAccount->document_path))
+                    @if(!empty($application->birth_certificate) || ($ipAccount && !empty($ipAccount->document_path)))
                         <span class="status-badge uploaded">
                             <i class="fas fa-check-circle"></i>
                         </span>
@@ -98,12 +98,15 @@
             </div>
             
             <div class="doc-actions">
-                @if($ipAccount && !empty($ipAccount->document_path))
-                    <a href="{{ asset('storage/' . $ipAccount->document_path) }}" target="_blank" class="action-btn view-btn">
+                @php
+                    $birthCertificatePath = $application->birth_certificate ?: ($ipAccount->document_path ?? null);
+                @endphp
+                @if($birthCertificatePath)
+                    <a href="{{ asset('storage/' . $birthCertificatePath) }}" target="_blank" class="action-btn view-btn">
                         <i class="fas fa-eye"></i>
                         <span>View</span>
                     </a>
-                    <a href="{{ asset('storage/' . $ipAccount->document_path) }}" download class="action-btn download-btn">
+                    <a href="{{ asset('storage/' . $birthCertificatePath) }}" download class="action-btn download-btn">
                         <i class="fas fa-download"></i>
                         <span>Download</span>
                     </a>
@@ -211,6 +214,7 @@
         $versionGroups = $application->documentVersions->groupBy('document_type');
         $versionLabels = [
             'applicant_picture' => 'Applicant Photo',
+            'birth_certificate' => 'Birth Certificate',
             'tribal_certificate' => 'Tribal Certificate',
             'genealogy_form' => 'Genealogy Form',
         ];
@@ -270,7 +274,7 @@
                 $totalDocs = 4; // Updated: removed signature from count
                 $uploadedDocs = 0;
                 if (!empty($application->applicant_picture)) $uploadedDocs++;
-                if ($ipAccount && !empty($ipAccount->document_path)) $uploadedDocs++;
+                if (!empty($application->birth_certificate) || ($ipAccount && !empty($ipAccount->document_path))) $uploadedDocs++;
                 if (!empty($application->tribal_certificate)) $uploadedDocs++;
                 if (!empty($application->genealogy_form)) $uploadedDocs++;
                 $percentage = ($uploadedDocs / $totalDocs) * 100;
@@ -294,8 +298,8 @@
             </div>
             
             <div class="status-item">
-                <div class="status-icon {{ ($ipAccount && !empty($ipAccount->document_path)) ? 'uploaded' : 'missing' }}">
-                    <i class="fas {{ ($ipAccount && !empty($ipAccount->document_path)) ? 'fa-check' : 'fa-times' }}"></i>
+                <div class="status-icon {{ (!empty($application->birth_certificate) || ($ipAccount && !empty($ipAccount->document_path))) ? 'uploaded' : 'missing' }}">
+                    <i class="fas {{ (!empty($application->birth_certificate) || ($ipAccount && !empty($ipAccount->document_path))) ? 'fa-check' : 'fa-times' }}"></i>
                 </div>
                 <span class="status-label">Birth Certificate</span>
             </div>

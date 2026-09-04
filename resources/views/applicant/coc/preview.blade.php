@@ -985,7 +985,7 @@ div[style*="display: flex"] {
     <h3>{{ __('II. Educational Background') }}</h3>
     <div class="grid-2">
         <div><label>{{ __('Highest Educational Attainment') }}</label><input type="text" value="{{ $step2['educational_attainment'] ?? '' }}" readonly></div>
-        <div><label>{{ __('Degree Obtained') }}</label><input type="text" value="{{ $step2['degree_obtained'] ?? '' }}" readonly></div>
+        <div><label>{{ __('Degree Obtained') }}</label><input type="text" value="{{ filled($step2['degree_obtained'] ?? null) ? $step2['degree_obtained'] : 'N/A' }}" readonly></div>
     </div>
     
     <h3>{{ __('III. Parental Background') }}</h3>

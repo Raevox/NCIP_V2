@@ -26,6 +26,14 @@ class CocApplication extends Model
         'index_status',
         'genealogy_status',
         'documents_status',
+        'applicant_picture_status',
+        'applicant_picture_remarks',
+        'birth_certificate_status',
+        'birth_certificate_remarks',
+        'tribal_certificate_status',
+        'tribal_certificate_remarks',
+        'genealogy_form_status',
+        'genealogy_form_remarks',
         'submitted_at',
         'coc_status',
         'approved_by',
@@ -107,6 +115,18 @@ class CocApplication extends Model
     {
         $steps = $this->getReturnedSteps();
         return !empty($steps) ? min($steps) : null;
+    }
+
+    public function getReturnedDocuments(): array
+    {
+        return collect([
+            'applicant_picture',
+            'birth_certificate',
+            'tribal_certificate',
+            'genealogy_form',
+        ])->filter(fn (string $document) => $this->{$document . '_status'} === 'returned')
+          ->values()
+          ->all();
     }
   public function ipRecord()
 {

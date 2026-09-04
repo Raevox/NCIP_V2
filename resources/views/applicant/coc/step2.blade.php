@@ -56,7 +56,6 @@
                                     placeholder="{{ __('Enter your degree (if any)') }}"
                                     autocomplete="off"
                                     value="{{ old('degree_obtained', $step2['degree_obtained'] ?? '') }}"
-                                    {{ $showDegree ? 'required' : '' }}
                                     {{ $showDegree ? '' : 'disabled' }}>
                             </div>
                             </div>

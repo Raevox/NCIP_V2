@@ -480,7 +480,7 @@
     <h6>II. Educational Background</h6>
     <div class="grid-2">
         <div><label>Highest Educational Attainment</label><input type="text" value="{{ $step2['educational_attainment'] ?? '' }}" readonly></div>
-        <div><label>Degree Obtained</label><input type="text" value="{{ $step2['degree_obtained'] ?? '' }}" readonly></div>
+        <div><label>Degree Obtained</label><input type="text" value="{{ filled($step2['degree_obtained'] ?? null) ? $step2['degree_obtained'] : 'N/A' }}" readonly></div>
     </div>
 
     <!-- PARENTAL -->

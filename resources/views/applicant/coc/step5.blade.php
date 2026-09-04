@@ -15,86 +15,58 @@
                     </div>
 
                     <div class="card-body">
-                             <form id="uploadForm" action="{{ route('applicant.coc.step5.store') }}" method="POST" enctype="multipart/form-data">
+                        @php
+                            $isReturned = $application->status === 'Returned';
+                            $uploadDocuments = [
+                                'applicant_picture' => ['label' => 'Applicant Picture', 'icon' => 'fa-user-circle', 'accept' => 'image/*', 'hint' => 'JPG, PNG, JPEG (Max 5MB)'],
+                                'birth_certificate' => ['label' => 'Birth Certificate', 'icon' => 'fa-file-medical', 'accept' => '.pdf,.jpg,.jpeg,.png', 'hint' => 'PDF, JPG, PNG, JPEG (Max 10MB)'],
+                                'tribal_certificate' => ['label' => 'Tribal Certificate', 'icon' => 'fa-certificate', 'accept' => '.pdf,.jpg,.jpeg,.png', 'hint' => 'PDF, JPG, PNG, JPEG (Max 10MB)'],
+                                'genealogy_form' => ['label' => 'Completed Genealogy Form', 'icon' => 'fa-file-alt', 'accept' => '.pdf,.jpg,.jpeg,.png', 'hint' => 'PDF, JPG, PNG, JPEG (Max 10MB)'],
+                            ];
+                            $visibleDocuments = $isReturned
+                                ? array_intersect_key($uploadDocuments, array_flip($returnedDocuments))
+                                : array_diff_key($uploadDocuments, ['birth_certificate' => true]);
+                        @endphp
+
+                        @if($isReturned)
+                            <div class="alert alert-warning mb-4">
+                                <strong>{{ __('Replace only the returned document(s).') }}</strong>
+                                {{ __('Your accepted files will remain unchanged.') }}
+                            </div>
+                        @endif
+
+                        <form id="uploadForm" action="{{ route('applicant.coc.step5.store', $application->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
-                            {{-- Applicant Picture --}}
-                            <div class="upload-section">
-                                <label class="upload-label required" for="applicant_picture">
-                                    <i class="fas fa-user-circle"></i>
-                                    {{ __('Applicant Picture') }}
-                                </label>
-                                <div class="upload-wrapper">
-                                    <input type="file" 
-                                           name="applicant_picture" 
-                                           id="applicant_picture"
-                                           class="upload-input" 
-                                           required 
-                                           accept="image/*">
-                                    <div class="upload-placeholder">
-                                        <i class="fas fa-cloud-upload-alt"></i>
-                                        <span class="upload-text">{{ __('Choose file or drag here') }}</span>
-                                        <span class="upload-hint">JPG, PNG, JPEG</span>
+                            @foreach($visibleDocuments as $field => $document)
+                                <div class="upload-section">
+                                    <label class="upload-label required" for="{{ $field }}">
+                                        <i class="fas {{ $document['icon'] }}"></i>
+                                        {{ __($document['label']) }}
+                                    </label>
+                                    @if($isReturned && !empty($documentRemarks[$field]))
+                                        <div class="alert alert-danger py-2 mb-2">
+                                            <strong>{{ __('Staff remarks:') }}</strong> {{ $documentRemarks[$field] }}
+                                        </div>
+                                    @endif
+                                    <div class="upload-wrapper">
+                                        <input type="file" name="{{ $field }}" id="{{ $field }}"
+                                            class="upload-input" required accept="{{ $document['accept'] }}">
+                                        <div class="upload-placeholder">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <span class="upload-text">{{ __('Choose file or drag here') }}</span>
+                                            <span class="upload-hint">{{ $document['hint'] }}</span>
+                                        </div>
+                                        <div class="file-info d-none"></div>
                                     </div>
-                                    <div class="file-info d-none"></div>
+                                    @error($field)
+                                        <span class="error-message">{{ $message }}</span>
+                                    @enderror
                                 </div>
-                                @error('applicant_picture')
-                                    <span class="error-message">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-
-                            {{-- Tribal Certificate --}}
-                            <div class="upload-section">
-                                <label class="upload-label required" for="tribal_certificate">
-                                    <i class="fas fa-certificate"></i>
-                                    {{ __('Tribal Certificate') }}
-                                </label>
-                                <div class="upload-wrapper">
-                                    <input type="file" 
-                                           name="tribal_certificate" 
-                                           id="tribal_certificate"
-                                           class="upload-input" 
-                                           required 
-                                           accept=".pdf,.jpg,.jpeg,.png">
-                                    <div class="upload-placeholder">
-                                        <i class="fas fa-cloud-upload-alt"></i>
-                                        <span class="upload-text">{{ __('Choose file or drag here') }}</span>
-                                        <span class="upload-hint">PDF, JPG, PNG (Max 10MB)</span>
-                                    </div>
-                                    <div class="file-info d-none"></div>
-                                </div>
-                                @error('tribal_certificate')
-                                    <span class="error-message">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            {{-- Genealogy Form --}}
-                            <div class="upload-section">
-                                <label class="upload-label required" for="genealogy_form">
-                                    <i class="fas fa-file-alt"></i>
-                                    {{ __('Completed Genealogy Form') }}
-                                </label>
-                                <div class="upload-wrapper">
-                                    <input type="file" 
-                                           name="genealogy_form" 
-                                           id="genealogy_form"
-                                           class="upload-input" 
-                                           required 
-                                           accept=".pdf,image/*">
-                                    <div class="upload-placeholder">
-                                        <i class="fas fa-cloud-upload-alt"></i>
-                                        <span class="upload-text">{{ __('Choose file or drag here') }}</span>
-                                        <span class="upload-hint">PDF, JPG, PNG, JPEG (Max 10MB)</span>
-                                    </div>
-                                    <div class="file-info d-none"></div>
-                                </div>
-                                @error('genealogy_form')
-                                    <span class="error-message">{{ $message }}</span>
-                                @enderror
-                            </div>
+                            @endforeach
 
                             {{-- Important Notice --}}
+                            @if(!$isReturned || array_key_exists('genealogy_form', $visibleDocuments))
                             <div class="notice-box">
                                 <div class="notice-header">
                                     <i class="fas fa-exclamation-triangle"></i>
@@ -106,10 +78,11 @@
                                     {{ __('with') }} <strong>{{ __('SIGNATURE OVER PRINTED NAME') }}</strong>. {{ __('Only completed and signed forms can be uploaded here.') }}
                                 </p>
                             </div>
+                            @endif
 
                             {{-- Action Buttons --}}
                             <div class="action-buttons">
-                                <a href="{{ route('applicant.coc.step4') }}" class="btn-secondary">
+                                <a href="{{ $isReturned ? route('applicant.dashboard') : route('applicant.coc.step4') }}" class="btn-secondary">
                                     <i class="fas fa-arrow-left"></i>
                                     {{ __('Back') }}
                                 </a>
