@@ -565,7 +565,7 @@ public function saveCocStep3(Request $request, $id = null)
                 ->with('error', 'The application being edited could not be found. Please continue from Step 1.');
         }
 
-        $application->step3 = json_encode($finalStep3);
+        $application->step3 = $finalStep3;
         $application->save();
     return redirect()->route('applicant.coc.step4', ['id' => $application->id])
         ->with('success', 'Step 3 saved successfully.');
@@ -590,11 +590,11 @@ public function showCocFormStep4($id = null)
         session(['coc_step2' => $step2]);
     }
 
-    $step4 = session('coc_step4', []);
-    if (empty($step4) && $application && $application->step4) {
-        $step4 = $this->decodeArrayValue($application->step4);
-        session(['coc_step4' => $step4]);
-    }
+    // The database record for the selected application is authoritative.
+    // A session value may belong to another draft and can otherwise overwrite
+    // newer genealogy details when previewing or downloading the PDF.
+    $step4 = $application ? $this->decodeArrayValue($application->step4) : [];
+    session(['coc_step4' => $step4]);
 
     // Split mother name
     $motherFirst = $step2['mother_first_name'] ?? '';
@@ -717,7 +717,7 @@ public function saveCocStep4(Request $request, $id = null)
             ->with('error', 'The application being edited could not be found. Please continue from Step 1.');
     }
 
-    $application->step4 = json_encode($finalStep4);
+    $application->step4 = $finalStep4;
     $application->save();
 // ✅ Check kung genealogy lang ang nireturned
 if ($application->status === 'Returned' && in_array('genealogy', $application->getReturnedSections())) {
@@ -879,14 +879,17 @@ public function previewCoc($id)
 
     $ipAccount = IpAccount::find($application->user_id);
 
-    return view('applicant.coc.preview', compact(
+    return response()->view('applicant.coc.preview', compact(
         'application',
         'step1',
         'step2',
         'step3',
         'step4',
         'ipAccount'
-    ));
+    ))->withHeaders([
+        'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+        'Pragma' => 'no-cache',
+    ]);
 }
     // ----- Final Submission -----
 public function submitCoc(Request $request, $id)
@@ -1384,7 +1387,11 @@ public function showGenealogyPrint($id = null)
     $step3 = $this->decodeArrayValue($application->step3);
     $step4 = $this->decodeArrayValue($application->step4);
 
-    return view('applicant.coc.genealogy-print', compact('step3', 'step4'));
+    return response()->view('applicant.coc.genealogy-print', compact('step3', 'step4'))
+        ->withHeaders([
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache',
+        ]);
 }
 
 
@@ -1410,7 +1417,11 @@ public function downloadGenealogyPdf($id = null)
     $pdf = Pdf::loadView('applicant.coc.genealogy-pdf', compact('step3', 'step4'))
         ->setPaper('legal', 'landscape');
 
-    return $pdf->download('genealogy-form-' . $application->id . '.pdf');
+    return $pdf->download('genealogy-form-' . $application->id . '-' . now()->format('YmdHis') . '.pdf')
+        ->withHeaders([
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache',
+        ]);
 }
 
 public function autosaveStep4(Request $request)
@@ -1440,7 +1451,7 @@ public function autosaveStep4(Request $request)
 
     session(['coc_step4' => $data]);
 
-    $application->step4 = json_encode($data);
+    $application->step4 = $data;
     $application->save();
 
     return response()->json(['success' => true]);
