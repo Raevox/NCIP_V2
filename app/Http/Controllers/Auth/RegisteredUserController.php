@@ -90,7 +90,7 @@ class RegisteredUserController extends Controller
                     if (preg_match('/Birth\s*Date:\s*([0-9]{2}\/[0-9]{2}\/[0-9]{4})/i', $documentText, $matches)) {
                         $ocrBirthDate = trim($matches[1]);
                     }
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $documentText = null;
                     $ocrName = null;
                     $ocrBirthDate = null;
