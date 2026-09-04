@@ -14,8 +14,6 @@ Homestead.json
 /.idea
 .DS_Store
 Thumbs.db
-composer.lock
-package-lock.json
 yarn.lock
 
 
@@ -24,3 +22,8 @@ yarn.lock
 /storage/framework/cache/data
 /storage/framework/sessions
 /storage/framework/views
+/vendor
+/vendor
+missing_keys.txt
+translation_report.txt
+vendor/composer/autoload_classmap.php
