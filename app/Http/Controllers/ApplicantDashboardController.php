@@ -905,15 +905,12 @@ public function saveCocStep5(Request $request, $id = null)
                 $application->documents_status = null;
                 $application->save();
 
-                // Check if all returned sections are fixed
+                // When documents are the last returned section, let the
+                // applicant review the corrected application in Step 6. The
+                // final submit action is responsible for resubmitting it.
                 if ($application->countReturnedSections() === 0) {
-                    $application->status = 'Under Review';
-                    $application->coc_status = 'Under Review';
-                    $application->submitted_at = now();
-                    $application->save();
-
-                    return redirect()->route('applicant.dashboard')
-                        ->with('success', 'Application resubmitted successfully!');
+                    return redirect()->route('applicant.coc.preview', $application->id)
+                        ->with('success', 'Documents uploaded successfully! Please review your corrections before resubmitting.');
                 }
 
                 // Redirect to next returned step
