@@ -15,7 +15,13 @@
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
+            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password"
+                          required minlength="8" pattern="(?=.*[A-Z])(?=.*[0-9]).{8,}"
+                          title="Use at least 8 characters, including one uppercase letter and one number."
+                          autocomplete="new-password" />
+            <p class="mt-2 text-sm text-gray-600">
+                {{ __('Use at least 8 characters, including one uppercase letter and one number.') }}
+            </p>
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 

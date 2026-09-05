@@ -34,7 +34,14 @@ class NewPasswordController extends Controller
         $request->validate([
             'token' => ['required'],
             'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => [
+                'required',
+                'confirmed',
+                Rules\Password::defaults(),
+                'regex:/^(?=.*[A-Z])(?=.*\d).+$/',
+            ],
+        ], [
+            'password.regex' => 'Password must contain at least one uppercase letter and one number.',
         ]);
 
         // Determine which provider to use based on email existence
