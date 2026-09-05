@@ -121,7 +121,7 @@
         <div class="modal-content">
             <div class="modal-header" id="modalHeader">
                 <h5 class="modal-title" id="resultModalLabel"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center">
                 <div id="modalIcon" class="mb-3"></div>
@@ -237,7 +237,7 @@ function submitForm() {
     .then(response => {
         clearTimeout(timeoutId);
         console.log('Response received:', response.status, response.statusText);
-        
+
         return response.text(); // Get as text first
     })
     .then(text => {
@@ -277,13 +277,7 @@ function submitForm() {
             loadingModal.dispose();
         }
         loadingModalEl.style.display = 'none';
-        document.body.classList.remove('modal-open');
-        
-        // Remove any existing backdrop
-        const existingBackdrop = document.querySelector('.modal-backdrop');
-        if (existingBackdrop) {
-            existingBackdrop.remove();
-        }
+        unlockPageScrolling();
 
         const modal = document.getElementById('resultModal');
         const modalHeader = document.getElementById('modalHeader');
@@ -318,14 +312,14 @@ function submitForm() {
 
         // Add click event listener to OK button and close button
         modalOkBtn.onclick = function() {
-            redirectToReview();
+            closeResultModal(success);
         };
 
         // Add click event to close button (X)
         const closeBtn = modal.querySelector('.btn-close');
         if (closeBtn) {
             closeBtn.onclick = function() {
-                redirectToReview();
+                closeResultModal(success);
             };
         }
 
@@ -335,7 +329,7 @@ function submitForm() {
         backdrop.setAttribute('id', 'resultModalBackdrop');
         backdrop.style.opacity = '0.3'; // Lighter backdrop
         backdrop.onclick = function() {
-            redirectToReview();
+            closeResultModal(success);
         };
 
         // Force show the modal
@@ -354,27 +348,34 @@ function submitForm() {
                 console.error('Error showing modal:', error);
                 // Fallback: simple alert
                 alert(message + '\n\nClick OK to continue.');
-                redirectToReview();
+                closeResultModal(success);
             }
         }, 100);
     }
 
-    function redirectToReview() {
+    function closeResultModal(success) {
         // Clean up modal manually
         const modal = document.getElementById('resultModal');
-        const backdrop = document.getElementById('resultModalBackdrop');
-        
+
         if (modal) {
             modal.classList.remove('show');
             modal.style.display = 'none';
         }
-        if (backdrop) {
-            backdrop.remove();
+        unlockPageScrolling();
+
+        // Keep the current form and entered values available when a decision fails.
+        if (success) {
+            window.location.href = "{{ route('staff.review') }}";
         }
+    }
+
+    function unlockPageScrolling() {
+        // Bootstrap adds these while a modal is open. Clear all of them because
+        // the loading and result modals are closed manually in this view.
+        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
         document.body.classList.remove('modal-open');
-        
-        // Redirect to staff review page
-        window.location.href = "{{ route('staff.review') }}";
+        document.body.style.removeProperty('overflow');
+        document.body.style.removeProperty('padding-right');
     }
 
     // Initial load
