@@ -424,8 +424,6 @@ function render(data) {
     let html = '<div class="np-list">';
     items.forEach(n => {
         const c   = C(n.type);
-        const pri = (n.priority||'normal').toLowerCase();
-        const pIco= {high:'exclamation',normal:'minus',low:'arrow-down'}[pri]||'minus';
         const unr = !n.is_read;
 
         /*
@@ -463,10 +461,6 @@ function render(data) {
                 </div>
                 <p class="np-cb-msg">${esc(n.message)}</p>
                 <div class="np-cb-foot">
-                    ${!IS_STAFF ? `
-                    <span class="np-tag-pri ${pri}">
-                        <i class="fas fa-${pIco}"></i> ${pri}
-                    </span>` : ''}
                     <span class="np-tag-type" style="color:${c.color};background:${c.bg}">
                         ${c.label}
                     </span>
