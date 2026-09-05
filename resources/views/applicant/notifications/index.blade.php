@@ -1,6 +1,6 @@
 @extends('layouts.applicant')
-@section('title', 'Notifications')
-@section('page-title', 'Notification Center')
+@section('title', 'Notification')
+@section('page-title', 'Notification')
 @section('content')
 <style>
 .notification-page{max-width:960px;margin:1rem auto}.notification-shell{background:#fff;border:1px solid #e0e0e0;border-radius:12px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.05)}
@@ -12,12 +12,16 @@
 .notification-copy{flex:1;min-width:0}.notification-title-line{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.notification-title-line h6{margin:0 0 6px;color:#252b23;font-size:.96rem;font-weight:600}.notification-new{background:#3e7b27;color:#fff;border-radius:20px;padding:3px 9px;font-size:.65rem;font-weight:600}.notification-message{color:#60675d;font-size:.86rem;line-height:1.6;margin:0 0 8px}.notification-time{color:#92988f;font-size:.75rem}
 .notification-actions{display:flex;gap:8px;margin-top:13px}.notification-view,.notification-delete{border-radius:7px;padding:7px 12px;font-size:.76rem;font-weight:600;text-decoration:none;transition:.2s}.notification-view{border:0;background:#3e7b27;color:#fff}.notification-view:hover{background:#245524;color:#fff}.notification-delete{border:1px solid #e1b7b3;color:#b53a30;background:#fff}.notification-delete:hover{background:#b53a30;color:#fff}.notification-empty{padding:65px 20px;text-align:center;color:#6c757d}.notification-empty-icon{width:70px;height:70px;display:grid;place-items:center;margin:0 auto 16px;border-radius:50%;background:#f1f4ef;color:#78906e;font-size:26px}.notification-pagination{padding:16px 24px;border-top:1px solid #edf0eb}.notification-pagination nav>div{align-items:center}.notification-pagination .pagination{margin:0}.notification-pagination .page-link{color:#3e7b27;border-color:#dbe4d7}.notification-pagination .page-link:hover{color:#fff;background:#3e7b27;border-color:#3e7b27}.notification-pagination .active>.page-link{color:#fff;background:#3e7b27;border-color:#3e7b27}.notification-pagination .disabled>.page-link{color:#9aa397;background:#f7f8f6}
 @media(max-width:576px){.notification-heading,.notification-filters,.notification-row{padding-left:18px;padding-right:18px}.notification-heading{align-items:flex-start}.notification-mark-all{width:100%}.notification-row{gap:12px}.notification-type-icon{width:38px;height:38px;flex-basis:38px}.notification-title-line{flex-direction:column}}
+.notification-mark-all:disabled{opacity:.5;cursor:not-allowed;color:#3e7b27;background:#fff}
 </style>
 <div class="notification-page">
 @if(session('success'))<div class="alert alert-success border-0 shadow-sm">{{ session('success') }}</div>@endif
 <section class="notification-shell">
-<header class="notification-heading"><div class="notification-heading-main"><div class="notification-heading-icon"><i class="fas fa-bell"></i></div><div><h4>Your Notifications</h4><p>{{ $unreadCount }} unread {{ Str::plural('notification',$unreadCount) }}</p></div></div>
-@if($unreadCount)<form method="POST" action="{{ route('applicant.notifications.read-all') }}">@csrf<button class="notification-mark-all" type="submit"><i class="fas fa-check-double me-1"></i> Mark all as read</button></form>@endif</header>
+<header class="notification-heading"><div class="notification-heading-main"><div class="notification-heading-icon"><i class="fas fa-bell"></i></div><div><h4>Notification</h4><p>{{ $unreadCount }} unread {{ Str::plural('notification',$unreadCount) }}</p></div></div>
+<form method="POST" action="{{ route('applicant.notifications.read-all') }}">
+@csrf
+<button class="notification-mark-all" type="submit" @disabled($unreadCount === 0)><i class="fas fa-check-double me-1"></i> Mark all as read</button>
+</form></header>
 <nav class="notification-filters" aria-label="Notification filters">@foreach(['all'=>'All','unread'=>'Unread','application_submitted'=>'Submitted','application_forwarded'=>'In Progress','application_returned'=>'Corrections','application_approved'=>'Approved'] as $value=>$label)<a href="{{ route('applicant.notifications.index',['filter'=>$value]) }}" class="notification-filter {{ $filter===$value?'active':'' }}">{{ $label }}</a>@endforeach</nav>
 <div>@forelse($notifications as $notification)
 @php $data=$notification->data;$type=$data['type']??'general';[$tone,$icon]=match($type){'application_approved'=>['approved','fa-check'],'application_returned','application_declined'=>['attention','fa-exclamation'],'application_forwarded'=>['progress','fa-arrow-right'],'application_submitted'=>['info','fa-file-circle-check'],default=>['info','fa-bell']}; @endphp

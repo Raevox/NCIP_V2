@@ -664,8 +664,9 @@
         <label class="form-label" for="birth_certificate">Birth Certificate</label>
         <div class="input-group">
           <input type="file" id="birth_certificate" name="birth_certificate"
-                 accept=".jpg,.jpeg,.png,.pdf" required>
+                 accept=".jpg,.jpeg,.png,.pdf" aria-describedby="birthCertificateNote fileNote" required>
         </div>
+        <span class="file-note" id="birthCertificateNote">Please upload a clear, readable copy of your birth certificate. Make sure all details are visible.</span>
         <span class="file-note" id="fileNote">Accepted: JPG, PNG, PDF — max 5 MB</span>
 
         <button type="submit" class="btn-register">
