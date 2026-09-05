@@ -13,11 +13,8 @@ use App\Http\Controllers\Admin\AccountApprovalController;
 use App\Http\Controllers\StaffAccountController;
 use App\Http\Controllers\ApplicantDashboardController;
 use App\Http\Controllers\OCRController;
-use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\SignatureController;
 use App\Http\Controllers\NewsController;
-use App\Http\Controllers\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Admin\TribeController;
 use App\Http\Controllers\Admin\AccomplishmentController;
@@ -101,13 +98,6 @@ Route::get('/login', function () {
 
 require __DIR__.'/auth.php';
 
-// Password Reset
-Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
-Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
-Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
-Route::post('/reset-password', [NewPasswordController::class, 'store'])->name('password.store');
-
-
 // ═══════════════════════════════════════════════════════════
 //  UTILITY ROUTES
 // ═══════════════════════════════════════════════════════════
@@ -116,15 +106,6 @@ Route::post('/reset-password', [NewPasswordController::class, 'store'])->name('p
 Route::post('/api/process-signature', [SignatureController::class, 'processSignature'])->name('api.process-signature');
 Route::get('/api/signature-preview/{path}', [SignatureController::class, 'getPreview'])->name('api.signature-preview');
 Route::post('/api/compare-signatures', [SignatureController::class, 'compareSignatures'])->name('api.compare-signatures');
-
-// Test Email (Remove in production)
-Route::get('/test-mail', function () {
-    Mail::raw('This is a test email from NCIP system.', function ($message) {
-        $message->to('ninoemmanueltadeo@gmail.com')->subject('Test Mail');
-    });
-    return 'Test email sent!';
-});
-
 
 // ═══════════════════════════════════════════════════════════
 //  IP RECORDS ROUTES (Keep original naming: ip_records.*)

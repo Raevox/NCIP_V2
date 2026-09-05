@@ -40,6 +40,11 @@ class PasswordResetLinkController extends Controller
             $request->only('email')
         );
 
+        // Do not reveal whether an email address belongs to an account.
+        if ($status === Password::INVALID_USER) {
+            $status = Password::RESET_LINK_SENT;
+        }
+
         return $status == Password::RESET_LINK_SENT
                     ? back()->with('status', __($status))
                     : back()->withInput($request->only('email'))

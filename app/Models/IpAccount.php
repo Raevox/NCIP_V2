@@ -38,6 +38,11 @@ class IpAccount extends Authenticatable
         'document_text',    
     ];
 
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
     // 🔹 Relationship to applications (IpApplicants table)
     public function application()
     {
